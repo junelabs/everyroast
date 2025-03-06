@@ -36,6 +36,18 @@ export default {
 					800: '#2C1F13', // almost black brown
 					900: '#1A130C', // blackish brown
 				},
+				roast: {
+					50: '#FFF5F5',  // lightest pink
+					100: '#FFDEE2',  // light pink
+					200: '#FDC2C7',  // soft pink
+					300: '#FCA5AC',  // medium pink
+					400: '#F87F89',  // darker pink
+					500: '#E85A66',  // soft red (primary)
+					600: '#D43E4A',  // medium red
+					700: '#B92D38',  // darker red
+					800: '#8C1D25',  // deep red
+					900: '#5F1218',  // darkest red
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
