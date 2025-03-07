@@ -9,8 +9,8 @@ const Footer = () => {
           {/* Logo and description */}
           <div className="mb-8 md:mb-0 md:w-1/3">
             <div className="flex items-center gap-2 mb-4">
-              <Coffee className="h-6 w-6 text-coffee-400" />
-              <span className="text-xl font-bold text-white">CoffeeChronicle</span>
+              <Coffee className="h-6 w-6 text-roast-400" />
+              <span className="text-xl font-bold text-white">Every Roast</span>
             </div>
             <p className="text-coffee-300 max-w-md">
               The community platform for coffee enthusiasts to discover, record, and share their coffee experiences.
@@ -50,7 +50,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-coffee-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-coffee-400 mb-4 md:mb-0">© 2023 Coffee Chronicle. All rights reserved.</p>
+          <p className="text-coffee-400 mb-4 md:mb-0">© 2023 Every Roast. All rights reserved.</p>
           <div className="flex space-x-6">
             <a href="#" className="text-coffee-400 hover:text-white transition-colors">
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

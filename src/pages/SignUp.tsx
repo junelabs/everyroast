@@ -16,7 +16,7 @@ const SignUp = () => {
     e.preventDefault();
     toast({
       title: "Account created!",
-      description: "Welcome to Coffee Chronicle!",
+      description: "Welcome to Every Roast!",
     });
   };
 
@@ -35,7 +35,7 @@ const SignUp = () => {
           <div className="absolute top-8 left-8">
             <div className="flex items-center gap-2">
               <Coffee className="h-8 w-8 text-white" />
-              <span className="text-xl font-bold text-white">CoffeeChronicle</span>
+              <span className="text-xl font-bold text-white">Every Roast</span>
             </div>
           </div>
         </div>
@@ -43,15 +43,15 @@ const SignUp = () => {
         {/* Right Column - Form */}
         <div className="w-full sm:w-1/2 lg:w-1/3 bg-white flex items-center justify-center p-8">
           <div className="w-full max-w-md">
-            <Link to="/" className="inline-flex items-center text-coffee-600 mb-8 hover:text-coffee-700 transition-colors">
+            <Link to="/" className="inline-flex items-center text-roast-600 mb-8 hover:text-roast-700 transition-colors">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to home
             </Link>
             
             <div className="sm:hidden mb-6">
               <div className="flex items-center gap-2">
-                <Coffee className="h-8 w-8 text-coffee-500" />
-                <span className="text-xl font-bold text-coffee-700">CoffeeChronicle</span>
+                <Coffee className="h-8 w-8 text-roast-500" />
+                <span className="text-xl font-bold text-roast-700">Every Roast</span>
               </div>
             </div>
             
@@ -101,7 +101,7 @@ const SignUp = () => {
               
               <Button 
                 type="submit" 
-                className="w-full bg-coffee-500 hover:bg-coffee-600 text-white font-medium"
+                className="w-full bg-roast-500 hover:bg-roast-600 text-white font-medium"
               >
                 Create account
               </Button>
@@ -113,7 +113,7 @@ const SignUp = () => {
             
             <p className="mt-8 text-center text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="text-coffee-600 hover:text-coffee-700 font-medium">
+              <Link to="/login" className="text-roast-600 hover:text-roast-700 font-medium">
                 Sign in
               </Link>
             </p>

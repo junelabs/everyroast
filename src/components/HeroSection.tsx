@@ -12,7 +12,7 @@ const HeroSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Welcome to Coffee Chronicle!",
+      title: "Welcome to Every Roast!",
       description: "We've sent a confirmation email to your inbox.",
     });
   };
@@ -101,7 +101,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">💬</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Join Coffee Chronicle discussions and events
+                Join Every Roast discussions and events
               </span>
             </div>
           </div>
@@ -118,7 +118,7 @@ const HeroSection = () => {
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                 <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center">
-                  <div className="h-14 w-14 bg-coffee-500 rounded-full flex items-center justify-center">
+                  <div className="h-14 w-14 bg-roast-500 rounded-full flex items-center justify-center">
                     <div className="border-t-4 border-r-4 border-white w-5 h-5 transform rotate-45 translate-x-[-2px]"></div>
                   </div>
                 </div>
@@ -136,9 +136,9 @@ const HeroSection = () => {
               />
               <Button 
                 type="submit" 
-                className="w-full bg-coffee-500 hover:bg-coffee-600 text-white py-6 text-lg font-medium rounded-lg"
+                className="w-full bg-roast-500 hover:bg-roast-600 text-white py-6 text-lg font-medium rounded-lg"
               >
-                Join Coffee Chronicle →
+                Join Every Roast →
               </Button>
               <p className="text-center text-sm text-gray-500">
                 If you already have an account, we'll log you in
