@@ -12,6 +12,7 @@ interface CoffeeCardProps {
   id: number;
   name: string;
   origin: CoffeeOrigin;
+  roaster: string;
   image: string;
   rating: number;
   price: number;
@@ -25,6 +26,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 1,
     name: "Ethiopian Yirgacheffe",
     origin: "Ethiopia",
+    roaster: "Stumptown Coffee",
     image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.8,
     price: 18.50,
@@ -36,6 +38,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 2,
     name: "Colombian Supremo",
     origin: "Colombia",
+    roaster: "Blue Bottle Coffee",
     image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.5,
     price: 16.95,
@@ -47,6 +50,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 3,
     name: "Brazil Cerrado",
     origin: "Brazil",
+    roaster: "Intelligentsia",
     image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.2,
     price: 15.75,
@@ -58,6 +62,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 4,
     name: "Guatemalan Antigua",
     origin: "Guatemala",
+    roaster: "Counter Culture",
     image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.6,
     price: 19.25,
@@ -69,6 +74,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 5,
     name: "Costa Rica Tarrazu",
     origin: "Costa Rica",
+    roaster: "Verve Coffee",
     image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.4,
     price: 17.50,
@@ -80,6 +86,7 @@ const coffeeData: CoffeeCardProps[] = [
     id: 6,
     name: "Kenya AA",
     origin: "Kenya",
+    roaster: "Heart Coffee",
     image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
     rating: 4.7,
     price: 21.00,
@@ -102,13 +109,13 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
 
   return (
     <div className="relative rounded-xl overflow-hidden shadow-md group transition-all hover:shadow-xl">
-      <div className="h-72 relative">
+      <div className="h-[400px] relative">
         <img 
           src={coffee.image} 
           alt={coffee.name} 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         
         {/* Top indicators */}
         <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
@@ -121,53 +128,46 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
           <span className="text-lg font-medium">{coffee.rating}</span>
         </div>
         
-        {/* Location info */}
-        <div className="absolute bottom-4 left-4 right-4 z-10 text-white">
-          <h3 className="text-3xl font-bold mb-1">{coffee.name}</h3>
-          <div className="flex items-center">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>{coffee.origin}</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Bottom stats */}
-      <div className="bg-white p-4">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-1">
-            <div className="text-lg font-bold text-roast-500">
-              ${coffee.price.toFixed(2)}
+        {/* Bottom info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4 bg-gradient-to-t from-black via-black/80 to-transparent pt-20">
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <h3 className="text-2xl font-bold">{coffee.name}</h3>
+              <div className="flex items-center text-gray-300">
+                <Coffee className="h-4 w-4 mr-1" />
+                <span>{coffee.roaster}</span>
+              </div>
             </div>
-            <div className="text-xs text-gray-500">/lb</div>
+            <div className="flex items-end flex-col">
+              <div className="text-2xl font-bold text-white">
+                ${coffee.price.toFixed(2)}
+              </div>
+              <div className="text-xs text-gray-300">/lb</div>
+            </div>
           </div>
-          <Button className="bg-roast-500 hover:bg-roast-600 text-white">
+          
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
+            <div className="flex items-center">
+              <span className="text-lg mr-1">{getRoastLevelEmoji(coffee.roastLevel)}</span>
+              <div className="text-sm">{coffee.roastLevel}</div>
+            </div>
+            
+            <div className="flex items-center">
+              <ThermometerSun className="h-4 w-4 mr-1 text-gray-300" />
+              <div className="text-sm">{coffee.processMethod}</div>
+            </div>
+            
+            <div className="flex items-center">
+              <MapPin className="h-4 w-4 mr-1 text-gray-300" />
+              <div className="text-sm truncate">{coffee.origin}</div>
+            </div>
+          </div>
+          
+          <Button 
+            className="w-full mt-3 bg-roast-500 hover:bg-roast-600 text-white"
+          >
             View Details
           </Button>
-        </div>
-        
-        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-          <div className="flex items-center space-x-2">
-            <span className="text-lg">{getRoastLevelEmoji(coffee.roastLevel)}</span>
-            <div>
-              <div className="text-sm font-medium">{coffee.roastLevel}</div>
-              <div className="text-xs text-gray-500">Roast Level</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <ThermometerSun className="h-5 w-5 text-roast-500" />
-            <div>
-              <div className="text-sm font-medium">{coffee.processMethod}</div>
-              <div className="text-xs text-gray-500">Process</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Coffee className="h-5 w-5 text-roast-500" />
-            <div className="text-xs text-gray-500 truncate max-w-[80px]" title={coffee.flavor}>
-              {coffee.flavor}
-            </div>
-          </div>
         </div>
       </div>
     </div>
