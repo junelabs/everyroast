@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Search, Coffee, Filter, LayoutGrid, ChevronDown, Star, ThermometerSun, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 
 type CoffeeOrigin = 'Ethiopia' | 'Colombia' | 'Brazil' | 'Guatemala' | 'Costa Rica' | 'Kenya';
 type RoastLevel = 'Light' | 'Medium' | 'Medium-Dark' | 'Dark';
@@ -108,7 +108,10 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden shadow-md group transition-all hover:shadow-xl">
+    <Link 
+      to={`/coffee/${coffee.id}`}
+      className="relative rounded-xl overflow-hidden shadow-md group transition-all hover:shadow-xl block"
+    >
       <div className="h-[400px] relative">
         <img 
           src={coffee.image} 
@@ -162,15 +165,9 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
               <div className="text-sm truncate">{coffee.origin}</div>
             </div>
           </div>
-          
-          <Button 
-            className="w-full mt-3 bg-roast-500 hover:bg-roast-600 text-white"
-          >
-            View Details
-          </Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -237,7 +234,7 @@ const CoffeeExplorerSection = () => {
           </div>
         </div>
         
-        {/* Coffee cards grid */}
+        {/* Coffee cards grid - updated to show 3 cards per row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {coffeeData.map((coffee) => (
             <CoffeeCard key={coffee.id} coffee={coffee} />
