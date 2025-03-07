@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, Coffee, Filter, LayoutGrid, ChevronDown, Star, ThermometerSun, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -110,33 +111,35 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
   return (
     <Link 
       to={`/coffee/${coffee.id}`}
-      className="relative rounded-xl overflow-hidden shadow-md group transition-all hover:shadow-xl block"
+      className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block aspect-square"
     >
-      <div className="h-[400px] relative">
+      <div className="w-full h-full relative">
         <img 
           src={coffee.image} 
           alt={coffee.name} 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+        
+        {/* Consistent overlay over the whole card */}
+        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
         
         {/* Top indicators */}
         <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
           <span className="text-lg">{coffee.id}</span>
         </div>
         
-        {/* Wi-Fi speed equivalent for coffee rating */}
+        {/* Rating */}
         <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           <span className="text-lg font-medium">{coffee.rating}</span>
         </div>
         
-        {/* Bottom info overlay */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4 bg-gradient-to-t from-black via-black/80 to-transparent pt-20">
+        {/* Bottom info */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
           <div className="flex justify-between items-start mb-2">
             <div>
               <h3 className="text-2xl font-bold">{coffee.name}</h3>
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-gray-100">
                 <Coffee className="h-4 w-4 mr-1" />
                 <span>{coffee.roaster}</span>
               </div>
@@ -145,7 +148,7 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
               <div className="text-2xl font-bold text-white">
                 ${coffee.price.toFixed(2)}
               </div>
-              <div className="text-xs text-gray-300">/lb</div>
+              <div className="text-xs text-gray-200">/lb</div>
             </div>
           </div>
           
@@ -156,12 +159,12 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
             </div>
             
             <div className="flex items-center">
-              <ThermometerSun className="h-4 w-4 mr-1 text-gray-300" />
+              <ThermometerSun className="h-4 w-4 mr-1 text-gray-200" />
               <div className="text-sm">{coffee.processMethod}</div>
             </div>
             
             <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-1 text-gray-300" />
+              <MapPin className="h-4 w-4 mr-1 text-gray-200" />
               <div className="text-sm truncate">{coffee.origin}</div>
             </div>
           </div>
