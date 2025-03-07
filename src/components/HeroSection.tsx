@@ -96,12 +96,6 @@ const HeroSection = () => {
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-2xl">🔍</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Discover new roasters and recipes
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
               <span className="text-2xl">📊</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
                 Track your flavor preferences over time
@@ -111,6 +105,12 @@ const HeroSection = () => {
               <span className="text-2xl">💬</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
                 Join coffee discussions and events
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <span className="text-lg font-medium underline decoration-coffee-300/50">
+                Discover new roasters and recipes
               </span>
             </div>
           </div>
