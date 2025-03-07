@@ -10,6 +10,8 @@ const CoffeeExplorerSection = () => {
   return (
     <section className="py-8 bg-roast-50/50">
       <div className="container mx-auto px-6">
+        <h2 className="text-3xl font-bold text-roast-800 mb-6 pl-0">Top Coffees This Week</h2>
+        
         {/* Horizontal tabs/filter */}
         <FilterTabs />
         
