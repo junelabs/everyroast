@@ -1,8 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -10,6 +9,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +17,7 @@ const Login = () => {
       title: "Login Successful",
       description: "Welcome back to Every Roast!",
     });
+    navigate("/profile");
   };
 
   return (

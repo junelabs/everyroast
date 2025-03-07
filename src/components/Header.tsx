@@ -1,9 +1,13 @@
 
 import { Button } from "@/components/ui/button";
-import { Coffee } from "lucide-react";
+import { Coffee, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
+  // This is a simple mockup of an authenticated state
+  // In a real app, you would check if the user is authenticated
+  const isAuthenticated = false;
+
   return (
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between z-10 relative">
       {/* Logo */}
@@ -27,14 +31,25 @@ const Header = () => {
       
       {/* Auth Buttons */}
       <div className="flex items-center gap-4">
-        <Link to="/login">
-          <Button variant="ghost" className="text-gray-700 hover:text-roast-500">Log in</Button>
-        </Link>
-        <Link to="/signup">
-          <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6">
-            Join Every Roast →
-          </Button>
-        </Link>
+        {isAuthenticated ? (
+          <Link to="/profile">
+            <Button variant="outline" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Profile
+            </Button>
+          </Link>
+        ) : (
+          <>
+            <Link to="/login">
+              <Button variant="ghost" className="text-gray-700 hover:text-roast-500">Log in</Button>
+            </Link>
+            <Link to="/signup">
+              <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6">
+                Join Every Roast →
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );
