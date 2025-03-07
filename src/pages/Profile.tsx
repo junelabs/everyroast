@@ -1,17 +1,21 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft, Coffee, User, Settings, Heart, Bookmark, BookOpen } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { ArrowLeft, Coffee, User, Settings, Heart, Bookmark, BookOpen, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [name, setName] = useState("Coffee Lover");
+  const [username, setUsername] = useState("coffeelover");
   const [email, setEmail] = useState("user@example.com");
   const [bio, setBio] = useState("I'm a passionate coffee enthusiast who loves trying new roasts and brewing methods.");
   const [isEditing, setIsEditing] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleSaveProfile = () => {
@@ -20,6 +24,25 @@ const Profile = () => {
       title: "Profile updated",
       description: "Your profile information has been saved successfully.",
     });
+  };
+
+  const handleProfileImageClick = () => {
+    if (isEditing && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setProfileImage(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -47,8 +70,37 @@ const Profile = () => {
       <div className="container max-w-5xl mx-auto py-8 px-4">
         {/* Profile header */}
         <div className="flex flex-col md:flex-row gap-6 items-start mb-8">
-          <div className="w-24 h-24 md:w-32 md:h-32 bg-roast-100 rounded-full flex items-center justify-center">
-            <User className="w-12 h-12 md:w-16 md:h-16 text-roast-500" />
+          <div 
+            className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden ${isEditing ? 'cursor-pointer' : ''}`}
+            onClick={handleProfileImageClick}
+          >
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleFileChange}
+            />
+            {profileImage ? (
+              <Avatar className="w-full h-full">
+                <AvatarImage src={profileImage} alt={name} className="object-cover" />
+                <AvatarFallback className="bg-roast-100 text-roast-500 text-2xl">
+                  {name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+            ) : (
+              <Avatar className="w-full h-full">
+                <AvatarFallback className="bg-roast-100 text-roast-500 flex items-center justify-center">
+                  <User className="w-12 h-12 md:w-16 md:h-16" />
+                </AvatarFallback>
+              </Avatar>
+            )}
+            
+            {isEditing && (
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity hover:bg-opacity-60">
+                <Upload className="w-8 h-8 text-white" />
+              </div>
+            )}
           </div>
           
           <div className="flex-1">
@@ -62,6 +114,20 @@ const Profile = () => {
                     onChange={(e) => setName(e.target.value)} 
                     className="max-w-md"
                   />
+                </div>
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <div className="flex max-w-md">
+                    <div className="flex items-center px-3 bg-gray-100 border border-r-0 border-input rounded-l-md">
+                      <span className="text-gray-500">@</span>
+                    </div>
+                    <Input 
+                      id="username" 
+                      value={username} 
+                      onChange={(e) => setUsername(e.target.value)} 
+                      className="rounded-l-none"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -93,6 +159,7 @@ const Profile = () => {
             ) : (
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
+                <p className="text-gray-500 mb-1">@{username}</p>
                 <p className="text-gray-600 mb-4">{email}</p>
                 <p className="text-gray-800 mb-6 max-w-xl">{bio}</p>
                 <Button onClick={() => setIsEditing(true)} className="bg-roast-500 hover:bg-roast-600">
