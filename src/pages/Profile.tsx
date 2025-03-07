@@ -160,7 +160,7 @@ const Profile = () => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
                 <p className="text-gray-500 mb-1">@{username}</p>
-                <p className="text-gray-600 mb-4">{email}</p>
+                {/* Email is now hidden in the non-edit view */}
                 <p className="text-gray-800 mb-6 max-w-xl">{bio}</p>
                 <Button onClick={() => setIsEditing(true)} className="bg-roast-500 hover:bg-roast-600">
                   Edit Profile
