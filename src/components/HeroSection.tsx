@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -19,7 +18,6 @@ const HeroSection = () => {
 
   return (
     <div className="relative w-full min-h-screen flex items-center">
-      {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
@@ -29,9 +27,7 @@ const HeroSection = () => {
       />
       
       <div className="container mx-auto px-6 md:px-12 z-10 flex flex-col md:flex-row items-center gap-12 py-20">
-        {/* Left Column - Text Content */}
         <div className="md:w-7/12 text-white">
-          {/* Badge */}
           <div className="mb-8 inline-block">
             <div className="flex items-center gap-2 border border-coffee-300/30 bg-coffee-900/30 backdrop-blur-sm py-2 px-4 rounded-full text-sm">
               <div className="flex items-center">
@@ -46,18 +42,15 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Main Title */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            Discover and chronicle your coffee journey
+            Discover the best coffee has to offer
           </h1>
           
-          {/* Description */}
           <p className="text-xl mb-8 text-coffee-100/90 max-w-2xl">
             Join the #1 global community of 37,098 coffee enthusiasts logging and sharing their experiences. 
             Don't sip alone, connect with fellow coffee lovers and expand your palate!
           </p>
           
-          {/* Avatar row */}
           <div className="flex mb-10">
             <div className="flex -space-x-3">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -72,7 +65,6 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Feature List */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">☕</span>
@@ -107,7 +99,6 @@ const HeroSection = () => {
           </div>
         </div>
         
-        {/* Right Column - Sign Up Card */}
         <div className="md:w-5/12 w-full max-w-md">
           <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
             <div className="relative w-full h-48 mb-6 rounded-lg overflow-hidden">
