@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, Coffee, Filter, LayoutGrid, ChevronDown, Star, ThermometerSun, MapPin } from 'lucide-react';
+import { Search, Filter, LayoutGrid, ChevronDown, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
@@ -99,13 +99,24 @@ const coffeeData: CoffeeCardProps[] = [
 
 const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
   const getRoastLevelEmoji = (level: RoastLevel) => {
-    switch (level) {
-      case 'Light': return '☀️';
-      case 'Medium': return '🌤️';
-      case 'Medium-Dark': return '⛅';
-      case 'Dark': return '☁️';
-      default: return '☀️';
+    return '🔥'; // Using fire emoji for all roast levels as requested
+  };
+  
+  const getProcessMethodEmoji = (method: ProcessMethod) => {
+    switch (method) {
+      case 'Washed': return '💦';
+      case 'Natural': return '🌿';
+      case 'Honey': return '🍯';
+      case 'Anaerobic': return '🔄'; // Default for anaerobic
+      default: return '🔄';
     }
+  };
+  
+  const getCountryEmoji = (origin: CoffeeOrigin) => {
+    // Americas: Colombia, Brazil, Guatemala, Costa Rica
+    // Africa/Europe: Ethiopia, Kenya
+    const americasCountries = ['Colombia', 'Brazil', 'Guatemala', 'Costa Rica'];
+    return americasCountries.includes(origin) ? '🌎' : '🌍';
   };
 
   return (
@@ -140,15 +151,13 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
             <div>
               <h3 className="text-2xl font-bold">{coffee.name}</h3>
               <div className="flex items-center text-gray-100">
-                <Coffee className="h-4 w-4 mr-1" />
+                <span className="mr-1">📍</span>
                 <span>{coffee.roaster}</span>
               </div>
             </div>
-            <div className="flex items-end flex-col">
-              <div className="text-2xl font-bold text-white">
-                ${coffee.price.toFixed(2)}
-              </div>
-              <div className="text-xs text-gray-200">/lb</div>
+            <div className="flex items-center">
+              <span className="mr-1">{getCountryEmoji(coffee.origin)}</span>
+              <span className="text-gray-200">{coffee.origin}</span>
             </div>
           </div>
           
@@ -159,13 +168,15 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
             </div>
             
             <div className="flex items-center">
-              <ThermometerSun className="h-4 w-4 mr-1 text-gray-200" />
+              <span className="text-lg mr-1">{getProcessMethodEmoji(coffee.processMethod)}</span>
               <div className="text-sm">{coffee.processMethod}</div>
             </div>
             
-            <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-1 text-gray-200" />
-              <div className="text-sm truncate">{coffee.origin}</div>
+            <div className="text-right">
+              <div className="text-xl font-bold text-white">
+                ${coffee.price.toFixed(2)}
+              </div>
+              <div className="text-xs text-gray-200">/lb</div>
             </div>
           </div>
         </div>
