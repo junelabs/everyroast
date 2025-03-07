@@ -28,11 +28,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               alt={coffee.name} 
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 right-4">
-              <DialogClose className="h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70">
-                <X className="h-4 w-4" />
-              </DialogClose>
-            </div>
           </div>
           
           {/* Coffee Details Section */}
