@@ -13,7 +13,7 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
   return (
     <Link 
       to={`/coffee/${coffee.id}`}
-      className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block aspect-square"
+      className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block aspect-square bg-white"
     >
       <div className="w-full h-full relative">
         <img 
