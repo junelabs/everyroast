@@ -64,8 +64,8 @@ const HeroSection = () => {
           </h1>
           
           <p className="text-xl mb-8 text-coffee-100/90 max-w-2xl">
-            Join the #1 global community of 37,098 coffee enthusiasts logging and sharing their experiences. 
-            Don't sip alone, connect with fellow coffee lovers and expand your palate!
+            We're building the #1 community of coffee enthusiasts logging and sharing their experiences. 
+            Don't sip alone, connect with fellow coffee lovers here.
           </p>
           
           <div className="flex mb-10">
@@ -86,7 +86,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">☕</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Record and rate over 1000+ coffee varieties
+                Record and rate your favorite coffees and roasters
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -98,7 +98,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">🔍</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Discover new roasters and brewing methods
+                Discover new roasters and recipes
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -110,7 +110,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">💬</span>
               <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Join Every Roast discussions and events
+                Join coffee discussions and events
               </span>
             </div>
           </div>
