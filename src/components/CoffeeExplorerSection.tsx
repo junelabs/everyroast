@@ -234,8 +234,8 @@ const CoffeeExplorerSection = () => {
           </div>
         </div>
         
-        {/* Coffee cards grid - updated to show 3 cards per row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Coffee cards grid - updated to show 4 cards per row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {coffeeData.map((coffee) => (
             <CoffeeCard key={coffee.id} coffee={coffee} />
           ))}
