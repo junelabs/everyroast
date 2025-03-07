@@ -1,25 +1,30 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 const SignUp = () => {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { signUp, user, isLoading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Account created!",
-      description: "Welcome to Every Roast!",
+    await signUp(email, password, { 
+      full_name: name,
+      username: username
     });
-    navigate("/profile");
   };
+
+  // Redirect if already logged in
+  if (user && !isLoading) {
+    return <Navigate to="/profile" replace />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -74,6 +79,19 @@ const SignUp = () => {
               </div>
               
               <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Choose a username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <Input
                   id="email"
@@ -102,9 +120,10 @@ const SignUp = () => {
               
               <Button 
                 type="submit" 
+                disabled={isLoading}
                 className="w-full bg-roast-500 hover:bg-roast-600 text-white font-medium"
               >
-                Create account
+                {isLoading ? 'Creating account...' : 'Create account'}
               </Button>
               
               <p className="text-xs text-center text-gray-500">

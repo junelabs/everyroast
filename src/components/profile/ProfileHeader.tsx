@@ -1,10 +1,12 @@
 
-import { Coffee } from "lucide-react";
+import { Coffee, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const ProfileHeader = () => {
+  const { signOut } = useAuth();
+
   return (
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between bg-white border-b">
       <div className="flex items-center gap-2">
@@ -19,9 +21,9 @@ const ProfileHeader = () => {
           <Settings className="h-5 w-5 mr-2" />
           Settings
         </Button>
-        <Link to="/">
-          <Button variant="outline">Sign Out</Button>
-        </Link>
+        <Button variant="outline" onClick={signOut}>
+          Sign Out
+        </Button>
       </div>
     </header>
   );

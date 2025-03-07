@@ -1,24 +1,25 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { signIn, user, isLoading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Login Successful",
-      description: "Welcome back to Every Roast!",
-    });
-    navigate("/profile");
+    await signIn(email, password);
   };
+
+  // Redirect if already logged in
+  if (user && !isLoading) {
+    return <Navigate to="/profile" replace />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -90,9 +91,10 @@ const Login = () => {
               
               <Button 
                 type="submit" 
+                disabled={isLoading}
                 className="w-full bg-roast-500 hover:bg-roast-600 text-white font-medium"
               >
-                Sign in
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
             

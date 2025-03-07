@@ -9,7 +9,169 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      coffees: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          flavor_notes: string | null
+          id: string
+          image_url: string | null
+          name: string
+          origin: string | null
+          price: number | null
+          process_method: string | null
+          roast_level: string | null
+          roaster_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          flavor_notes?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          origin?: string | null
+          price?: number | null
+          process_method?: string | null
+          roast_level?: string | null
+          roaster_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          flavor_notes?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          origin?: string | null
+          price?: number | null
+          process_method?: string | null
+          roast_level?: string | null
+          roaster_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coffees_roaster_id_fkey"
+            columns: ["roaster_id"]
+            isOneToOne: false
+            referencedRelation: "roasters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          brewing_method: string | null
+          coffee_id: string
+          created_at: string
+          id: string
+          rating: number
+          review_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brewing_method?: string | null
+          coffee_id: string
+          created_at?: string
+          id?: string
+          rating: number
+          review_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brewing_method?: string | null
+          coffee_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_coffee_id_fkey"
+            columns: ["coffee_id"]
+            isOneToOne: false
+            referencedRelation: "coffees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roasters: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          location: string | null
+          logo_url: string | null
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
