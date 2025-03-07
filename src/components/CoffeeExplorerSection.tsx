@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, Filter, LayoutGrid, ChevronDown, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -146,17 +147,17 @@ const CoffeeCard = ({ coffee }: { coffee: CoffeeCardProps }) => {
         
         {/* Bottom info */}
         <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="text-2xl font-bold">{coffee.name}</h3>
-              <div className="flex items-center text-gray-100">
-                <span className="mr-1">☕️</span>
-                <span>{coffee.roaster}</span>
-              </div>
-            </div>
+          <div className="flex flex-col mb-2">
+            <h3 className="text-2xl font-bold">{coffee.name}</h3>
             <div className="flex items-center">
-              <span className="mr-1">📍</span>
-              <span className="text-gray-200">{coffee.origin}</span>
+              <div className="flex items-center mr-3">
+                <span className="mr-1">☕️</span>
+                <span className="text-gray-100">{coffee.roaster}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-1">📍</span>
+                <span className="text-gray-200">{coffee.origin}</span>
+              </div>
             </div>
           </div>
           
