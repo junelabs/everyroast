@@ -12,10 +12,10 @@ const FeatureCard = ({
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-      <div className="bg-coffee-100 p-3 rounded-lg inline-block mb-4">
-        <Icon className="h-6 w-6 text-coffee-600" />
+      <div className="bg-roast-100 p-3 rounded-lg inline-block mb-4">
+        <Icon className="h-6 w-6 text-roast-600" />
       </div>
-      <h3 className="text-xl font-semibold mb-2 text-coffee-800">{title}</h3>
+      <h3 className="text-xl font-semibold mb-2 text-roast-800">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </div>
   );
@@ -51,11 +51,11 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section id="features" className="py-20 bg-coffee-100/50">
+    <section id="features" className="py-20 bg-roast-50/50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-coffee-800 mb-4">Record Your Coffee Journey</h2>
-          <p className="text-xl text-coffee-600 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-roast-800 mb-4">Record Your Coffee Journey</h2>
+          <p className="text-xl text-roast-600 max-w-2xl mx-auto">
             From your morning brew to special coffee experiences, track your entire coffee journey in one place.
           </p>
         </div>
