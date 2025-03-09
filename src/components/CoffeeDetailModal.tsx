@@ -5,17 +5,20 @@ import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CoffeeDetailModalProps {
   coffee: Coffee;
   isOpen: boolean;
   onClose: () => void;
+  onReview?: () => void;  // Added this prop as optional
 }
 
 const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({ 
   coffee, 
   isOpen, 
-  onClose 
+  onClose,
+  onReview 
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -73,11 +76,23 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               <p className="text-gray-700">{coffee.flavor || "Flavor notes not available"}</p>
             </div>
             
-            <button 
-              className="w-full bg-roast-500 hover:bg-roast-600 text-white py-3 rounded-lg font-medium"
-            >
-              Add to Favorites
-            </button>
+            <div className="flex flex-col space-y-3">
+              <Button 
+                className="w-full bg-roast-500 hover:bg-roast-600 text-white"
+              >
+                Add to Favorites
+              </Button>
+              
+              {onReview && (
+                <Button 
+                  variant="outline"
+                  className="w-full"
+                  onClick={onReview}
+                >
+                  Write a Review
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </DialogContent>
