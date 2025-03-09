@@ -30,6 +30,7 @@ interface CoffeeDetailsSectionProps {
   processMethods: ProcessMethod[];
   coffeeTypes: CoffeeType[];
   sizeUnits: SizeUnit[];
+  readOnly?: boolean;
 }
 
 const CoffeeDetailsSection = ({
@@ -57,7 +58,8 @@ const CoffeeDetailsSection = ({
   roastLevels,
   processMethods,
   coffeeTypes,
-  sizeUnits
+  sizeUnits,
+  readOnly = false
 }: CoffeeDetailsSectionProps) => {
   return (
     <div className="space-y-4 border-b pb-4">
@@ -74,6 +76,7 @@ const CoffeeDetailsSection = ({
         setCoffeeType={setCoffeeType}
         origins={origins}
         coffeeTypes={coffeeTypes}
+        readOnly={readOnly}
       />
       
       <CoffeeSizePrice
@@ -84,6 +87,7 @@ const CoffeeDetailsSection = ({
         sizeUnit={sizeUnit}
         setSizeUnit={setSizeUnit}
         sizeUnits={sizeUnits}
+        readOnly={readOnly}
       />
       
       <CoffeeProcessDetails
@@ -95,6 +99,7 @@ const CoffeeDetailsSection = ({
         setFlavor={setFlavor}
         roastLevels={roastLevels}
         processMethods={processMethods}
+        readOnly={readOnly}
       />
     </div>
   );

@@ -19,6 +19,7 @@ interface CoffeeProcessDetailsProps {
   setFlavor: (flavor: string) => void;
   roastLevels: RoastLevel[];
   processMethods: ProcessMethod[];
+  readOnly?: boolean;
 }
 
 const CoffeeProcessDetails = ({
@@ -29,7 +30,8 @@ const CoffeeProcessDetails = ({
   flavor,
   setFlavor,
   roastLevels,
-  processMethods
+  processMethods,
+  readOnly = false
 }: CoffeeProcessDetailsProps) => {
   return (
     <>
@@ -42,8 +44,9 @@ const CoffeeProcessDetails = ({
           <Select 
             value={roastLevel} 
             onValueChange={(value: RoastLevel) => setRoastLevel(value)}
+            disabled={readOnly}
           >
-            <SelectTrigger>
+            <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
               <SelectValue placeholder="Select roast level" />
             </SelectTrigger>
             <SelectContent>
@@ -62,8 +65,9 @@ const CoffeeProcessDetails = ({
           <Select 
             value={processMethod} 
             onValueChange={(value: ProcessMethod) => setProcessMethod(value)}
+            disabled={readOnly}
           >
-            <SelectTrigger>
+            <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
               <SelectValue placeholder="Select process method" />
             </SelectTrigger>
             <SelectContent>
@@ -84,6 +88,8 @@ const CoffeeProcessDetails = ({
           placeholder="e.g., Floral, Citrus, Chocolate"
           value={flavor}
           onChange={(e) => setFlavor(e.target.value)}
+          readOnly={readOnly}
+          className={readOnly ? "bg-gray-100" : ""}
         />
       </div>
     </>

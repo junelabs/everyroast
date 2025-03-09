@@ -21,6 +21,7 @@ interface CoffeeBasicDetailsProps {
   setCoffeeType: (type: CoffeeType) => void;
   origins: CoffeeOrigin[];
   coffeeTypes: CoffeeType[];
+  readOnly?: boolean;
 }
 
 const CoffeeBasicDetails = ({
@@ -33,7 +34,8 @@ const CoffeeBasicDetails = ({
   coffeeType,
   setCoffeeType,
   origins,
-  coffeeTypes
+  coffeeTypes,
+  readOnly = false
 }: CoffeeBasicDetailsProps) => {
   return (
     <>
@@ -47,6 +49,8 @@ const CoffeeBasicDetails = ({
           value={coffeeName}
           onChange={(e) => setCoffeeName(e.target.value)}
           required
+          readOnly={readOnly}
+          className={readOnly ? "bg-gray-100" : ""}
         />
       </div>
       
@@ -60,6 +64,8 @@ const CoffeeBasicDetails = ({
           value={roaster}
           onChange={(e) => setRoaster(e.target.value)}
           required
+          readOnly={readOnly}
+          className={readOnly ? "bg-gray-100" : ""}
         />
       </div>
       
@@ -72,8 +78,9 @@ const CoffeeBasicDetails = ({
           <Select 
             value={origin} 
             onValueChange={(value: CoffeeOrigin) => setOrigin(value)}
+            disabled={readOnly}
           >
-            <SelectTrigger>
+            <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
               <SelectValue placeholder="Select origin" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
@@ -91,8 +98,9 @@ const CoffeeBasicDetails = ({
           <Select 
             value={coffeeType} 
             onValueChange={(value: CoffeeType) => setCoffeeType(value)}
+            disabled={readOnly}
           >
-            <SelectTrigger>
+            <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
               <SelectValue placeholder="Select coffee type" />
             </SelectTrigger>
             <SelectContent>

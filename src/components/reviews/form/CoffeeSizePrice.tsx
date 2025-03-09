@@ -18,6 +18,7 @@ interface CoffeeSizePriceProps {
   sizeUnit: SizeUnit;
   setSizeUnit: (unit: SizeUnit) => void;
   sizeUnits: SizeUnit[];
+  readOnly?: boolean;
 }
 
 const CoffeeSizePrice = ({
@@ -27,7 +28,8 @@ const CoffeeSizePrice = ({
   setSize,
   sizeUnit,
   setSizeUnit,
-  sizeUnits
+  sizeUnits,
+  readOnly = false
 }: CoffeeSizePriceProps) => {
   // Function to get full unit name
   const getUnitLabel = (unit: SizeUnit): string => {
@@ -53,6 +55,8 @@ const CoffeeSizePrice = ({
           placeholder="0.00"
           value={price || ''}
           onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
+          readOnly={readOnly}
+          className={readOnly ? "bg-gray-100" : ""}
         />
       </div>
       
@@ -68,6 +72,8 @@ const CoffeeSizePrice = ({
           placeholder="0"
           value={size || ''}
           onChange={(e) => setSize(parseInt(e.target.value) || 0)}
+          readOnly={readOnly}
+          className={readOnly ? "bg-gray-100" : ""}
         />
       </div>
       
@@ -78,8 +84,9 @@ const CoffeeSizePrice = ({
         <Select 
           value={sizeUnit} 
           onValueChange={(value: SizeUnit) => setSizeUnit(value)}
+          disabled={readOnly}
         >
-          <SelectTrigger>
+          <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
             <SelectValue placeholder="Unit" />
           </SelectTrigger>
           <SelectContent>

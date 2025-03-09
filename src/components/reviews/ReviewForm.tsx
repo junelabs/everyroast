@@ -83,40 +83,34 @@ const ReviewForm = ({
             />
           )}
           
-          {!isEdit ? (
-            <CoffeeDetailsSection 
-              coffeeName={form.coffeeName}
-              setCoffeeName={form.setCoffeeName}
-              roaster={form.roaster}
-              setRoaster={form.setRoaster}
-              origin={form.origin}
-              setOrigin={form.setOrigin}
-              coffeeType={form.coffeeType}
-              setCoffeeType={form.setCoffeeType}
-              price={form.price}
-              setPrice={form.setPrice}
-              size={form.size}
-              setSize={form.setSize}
-              sizeUnit={form.sizeUnit}
-              setSizeUnit={form.setSizeUnit}
-              roastLevel={form.roastLevel}
-              setRoastLevel={form.setRoastLevel}
-              processMethod={form.processMethod}
-              setProcessMethod={form.setProcessMethod}
-              flavor={form.flavor}
-              setFlavor={form.setFlavor}
-              origins={form.origins}
-              roastLevels={form.roastLevels}
-              processMethods={form.processMethods}
-              coffeeTypes={form.coffeeTypes}
-              sizeUnits={form.sizeUnits}
-            />
-          ) : (
-            <div className="mb-4">
-              <h3 className="font-medium">{form.coffeeName}</h3>
-              <p className="text-sm text-gray-500">{form.roaster}</p>
-            </div>
-          )}
+          <CoffeeDetailsSection 
+            coffeeName={form.coffeeName}
+            setCoffeeName={form.setCoffeeName}
+            roaster={form.roaster}
+            setRoaster={form.setRoaster}
+            origin={form.origin}
+            setOrigin={form.setOrigin}
+            coffeeType={form.coffeeType}
+            setCoffeeType={form.setCoffeeType}
+            price={form.price}
+            setPrice={form.setPrice}
+            size={form.size}
+            setSize={form.setSize}
+            sizeUnit={form.sizeUnit}
+            setSizeUnit={form.setSizeUnit}
+            roastLevel={form.roastLevel}
+            setRoastLevel={form.setRoastLevel}
+            processMethod={form.processMethod}
+            setProcessMethod={form.setProcessMethod}
+            flavor={form.flavor}
+            setFlavor={form.setFlavor}
+            origins={form.origins}
+            roastLevels={form.roastLevels}
+            processMethods={form.processMethods}
+            coffeeTypes={form.coffeeTypes}
+            sizeUnits={form.sizeUnits}
+            readOnly={false}
+          />
           
           <ReviewSection
             rating={form.rating}
