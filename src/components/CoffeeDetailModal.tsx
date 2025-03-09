@@ -11,7 +11,7 @@ interface CoffeeDetailModalProps {
   coffee: Coffee;
   isOpen: boolean;
   onClose: () => void;
-  onReview?: () => void;  // Added this prop as optional
+  onReview?: () => void;
 }
 
 const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({ 
@@ -74,7 +74,13 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-2">Your Review</h3>
-              <p className="text-gray-700">{coffee.flavor || "No review provided yet"}</p>
+              <p className="text-gray-700 mb-2">{coffee.flavor || "No review provided yet"}</p>
+              
+              {coffee.brewingMethod && (
+                <div className="text-sm text-gray-500">
+                  <span className="font-medium">Brewing Method:</span> {coffee.brewingMethod}
+                </div>
+              )}
             </div>
             
             <div className="flex flex-col space-y-3">

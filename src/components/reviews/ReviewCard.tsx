@@ -36,6 +36,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     roastLevel: (review.coffees?.roast_level || "Medium") as RoastLevel,
     processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod,
     flavor: review.review_text || "No flavor notes provided",
+    brewingMethod: review.brewing_method || ""
   };
 
   return (
