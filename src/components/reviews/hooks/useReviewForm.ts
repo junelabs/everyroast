@@ -38,7 +38,7 @@ export const useReviewForm = ({
   const [coffeeName, setCoffeeName] = useState("");
   const [roaster, setRoaster] = useState("");
   const [origin, setOrigin] = useState<CoffeeOrigin>("Ethiopia");
-  const [roastLevel, setRoastLevel] = useState<RoastLevel>("Light");
+  const [roastLevel, setRoastLevel] = useState<RoastLevel>("Medium");
   const [processMethod, setProcessMethod] = useState<ProcessMethod>("Washed");
   const [coffeeType, setCoffeeType] = useState<CoffeeType>("Single Origin");
   const [price, setPrice] = useState<number>(0);
@@ -57,7 +57,7 @@ export const useReviewForm = ({
   const coffeeTypes: CoffeeType[] = ['Single Origin', 'Blend', 'Espresso'];
   const sizeUnits: SizeUnit[] = ['g', 'oz'];
 
-  // Reset form when dialog opens/closes or isEdit changes
+  // Effect to fetch coffee details when editing a review
   useEffect(() => {
     if (isEdit && coffeeId) {
       fetchCoffeeDetails();
@@ -69,6 +69,9 @@ export const useReviewForm = ({
 
   const fetchCoffeeDetails = async () => {
     try {
+      console.log("Fetching coffee details for ID:", coffeeId);
+      
+      // First fetch the coffee details
       const { data: coffeeData, error: coffeeError } = await supabase
         .from('coffees')
         .select(`
@@ -80,17 +83,20 @@ export const useReviewForm = ({
       
       if (coffeeError) throw coffeeError;
       
+      // Log what we got back
+      console.log("Coffee data retrieved:", coffeeData);
+      
       if (coffeeData) {
         setCoffeeName(coffeeData.name || "");
         setRoaster(coffeeData.roasters?.name || "");
         setOrigin(coffeeData.origin as CoffeeOrigin || "Ethiopia");
-        setRoastLevel(coffeeData.roast_level as RoastLevel || "Light");
+        setRoastLevel(coffeeData.roast_level as RoastLevel || "Medium");
         setProcessMethod(coffeeData.process_method as ProcessMethod || "Washed");
         setImageUrl(coffeeData.image_url);
         setPrice(coffeeData.price || 0);
         setFlavor(coffeeData.flavor_notes || "");
         
-        // Try to parse size and type from description
+        // Parse size and type from description
         if (coffeeData.description) {
           const match = coffeeData.description.match(/(\w+) coffee, (\d+) (\w+)/);
           if (match) {
@@ -100,8 +106,27 @@ export const useReviewForm = ({
           }
         }
       }
+      
+      // If we have a reviewId, fetch the review details also
+      if (reviewId) {
+        const { data: reviewData, error: reviewError } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('id', reviewId)
+          .single();
+          
+        if (reviewError) throw reviewError;
+        
+        console.log("Review data retrieved:", reviewData);
+        
+        if (reviewData) {
+          setRating(reviewData.rating || 0);
+          setReviewText(reviewData.review_text || "");
+          setBrewingMethod(reviewData.brewing_method || "");
+        }
+      }
     } catch (error) {
-      console.error("Error fetching coffee details:", error);
+      console.error("Error fetching coffee/review details:", error);
       toast({
         title: "Error",
         description: "Could not load coffee details.",
@@ -155,14 +180,34 @@ export const useReviewForm = ({
       let coffeeRecord;
       
       if (coffeeId) {
-        const { data } = await supabase
+        // Update existing coffee record if we're editing
+        const { data, error } = await supabase
           .from('coffees')
           .select('*')
           .eq('id', coffeeId)
           .single();
         
+        if (error) throw error;
         coffeeRecord = data;
+        
+        // Update coffee details if we're editing
+        if (isEdit) {
+          const { error: updateError } = await supabase
+            .from('coffees')
+            .update({
+              origin: origin,
+              roast_level: roastLevel,
+              process_method: processMethod,
+              price: price,
+              flavor_notes: flavor,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', coffeeId);
+            
+          if (updateError) throw updateError;
+        }
       } else {
+        // Create a new coffee record
         const { data: roasterData, error: roasterError } = await supabase
           .from('roasters')
           .select('id')
@@ -200,6 +245,8 @@ export const useReviewForm = ({
           description: `${coffeeType} coffee, ${size} ${sizeUnit}`
         };
         
+        console.log("Creating new coffee with data:", coffeeData);
+        
         const { data: newCoffee, error: newCoffeeError } = await supabase
           .from('coffees')
           .insert(coffeeData)
@@ -210,6 +257,7 @@ export const useReviewForm = ({
         coffeeRecord = newCoffee;
       }
       
+      // Now handle the review data
       const reviewData = {
         coffee_id: coffeeRecord.id,
         user_id: user.id,
@@ -217,6 +265,8 @@ export const useReviewForm = ({
         review_text: reviewText,
         brewing_method: brewingMethod || null
       };
+
+      console.log("Review data being saved:", reviewData);
 
       if (reviewId) {
         // Update existing review
@@ -268,7 +318,7 @@ export const useReviewForm = ({
     setCoffeeName("");
     setRoaster("");
     setOrigin("Ethiopia");
-    setRoastLevel("Light");
+    setRoastLevel("Medium");
     setProcessMethod("Washed");
     setCoffeeType("Single Origin");
     setPrice(0);

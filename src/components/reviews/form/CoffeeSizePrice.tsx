@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DollarSign } from "lucide-react";
 import { SizeUnit } from "@/types/coffee";
 
 interface CoffeeSizePriceProps {
@@ -40,7 +41,8 @@ const CoffeeSizePrice = ({
   return (
     <div className="grid grid-cols-3 gap-4">
       <div className="space-y-2 col-span-1">
-        <label htmlFor="price" className="block text-sm font-medium">
+        <label htmlFor="price" className="block text-sm font-medium flex items-center gap-1">
+          <DollarSign className="h-4 w-4 text-green-500" />
           Price (USD)
         </label>
         <Input

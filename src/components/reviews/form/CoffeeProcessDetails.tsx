@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Flame, Droplets } from "lucide-react"; 
 import { RoastLevel, ProcessMethod } from "@/types/coffee";
 
 interface CoffeeProcessDetailsProps {
@@ -34,7 +35,8 @@ const CoffeeProcessDetails = ({
     <>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="roastLevel" className="block text-sm font-medium">
+          <label htmlFor="roastLevel" className="block text-sm font-medium flex items-center gap-1">
+            <Flame className="h-4 w-4 text-orange-500" />
             Roast Level
           </label>
           <Select 
@@ -53,7 +55,8 @@ const CoffeeProcessDetails = ({
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="processMethod" className="block text-sm font-medium">
+          <label htmlFor="processMethod" className="block text-sm font-medium flex items-center gap-1">
+            <Droplets className="h-4 w-4 text-blue-500" />
             Process Method
           </label>
           <Select 

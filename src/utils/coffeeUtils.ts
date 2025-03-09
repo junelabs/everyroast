@@ -1,23 +1,26 @@
 
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
-export const getRoastLevelEmoji = (level: RoastLevel) => {
-  return '🔥'; // Using fire emoji for all roast levels
+// These functions return icon names from lucide-react that match the data
+export const getRoastLevelIcon = (level: RoastLevel): string => {
+  return 'flame'; // Use flame icon for all roast levels
 };
 
-export const getProcessMethodEmoji = (method: ProcessMethod) => {
+export const getProcessMethodIcon = (method: ProcessMethod): string => {
   switch (method) {
-    case 'Washed': return '💦';
-    case 'Natural': return '🌿';
-    case 'Honey': return '🍯';
-    case 'Anaerobic': return '🔄'; // Default for anaerobic
-    default: return '🔄';
+    case 'Washed': return 'droplets';
+    case 'Natural': return 'leaf';
+    case 'Honey': return 'beaker';
+    case 'Anaerobic': return 'flask-round'; 
+    default: return 'beaker';
   }
 };
 
-export const getCountryEmoji = (origin: CoffeeOrigin) => {
-  // Americas: Colombia, Brazil, Guatemala, Costa Rica
-  // Africa/Europe: Ethiopia, Kenya
-  const americasCountries = ['Colombia', 'Brazil', 'Guatemala', 'Costa Rica'];
-  return americasCountries.includes(origin) ? '🌎' : '🌍';
+export const getOriginIcon = (origin: CoffeeOrigin): string => {
+  // Return map-pin for all origins
+  return 'map-pin';
+};
+
+export const getPriceIcon = (): string => {
+  return 'dollar-sign';
 };
