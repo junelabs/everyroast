@@ -7,21 +7,28 @@ interface ProfileImageProps {
   profileImage: string | null;
   name: string;
   isEditing: boolean;
+  isUploading: boolean;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ProfileImage = ({ profileImage, name, isEditing, onFileChange }: ProfileImageProps) => {
+const ProfileImage = ({ 
+  profileImage, 
+  name, 
+  isEditing, 
+  isUploading, 
+  onFileChange 
+}: ProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleProfileImageClick = () => {
-    if (isEditing && fileInputRef.current) {
+    if (isEditing && fileInputRef.current && !isUploading) {
       fileInputRef.current.click();
     }
   };
 
   return (
     <div 
-      className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden ${isEditing ? 'cursor-pointer' : ''}`}
+      className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden ${isEditing && !isUploading ? 'cursor-pointer' : ''}`}
       onClick={handleProfileImageClick}
     >
       <input 
@@ -30,6 +37,7 @@ const ProfileImage = ({ profileImage, name, isEditing, onFileChange }: ProfileIm
         className="hidden" 
         accept="image/*" 
         onChange={onFileChange}
+        disabled={isUploading}
       />
       {profileImage ? (
         <Avatar className="w-full h-full">
@@ -48,7 +56,11 @@ const ProfileImage = ({ profileImage, name, isEditing, onFileChange }: ProfileIm
       
       {isEditing && (
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center transition-opacity hover:bg-opacity-60">
-          <Upload className="w-8 h-8 text-white" />
+          {isUploading ? (
+            <div className="animate-spin h-8 w-8 border-2 border-white rounded-full border-t-transparent" />
+          ) : (
+            <Upload className="w-8 h-8 text-white" />
+          )}
         </div>
       )}
     </div>

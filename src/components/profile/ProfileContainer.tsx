@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,10 +97,12 @@ const ProfileContainer = () => {
       const userId = user?.id;
       if (!userId) throw new Error('No user ID found');
 
+      // Create a unique file name to prevent collisions
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Math.random()}.${fileExt}`;
+      const fileName = `${userId}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
+      // Display a preview immediately while uploading
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -108,20 +111,24 @@ const ProfileContainer = () => {
       };
       reader.readAsDataURL(file);
 
-      const { error } = await supabase.storage
+      // Upload the file to Supabase Storage
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
 
-      if (error) throw error;
+      if (uploadError) throw uploadError;
 
+      // Get the public URL for the uploaded image
       const { data: publicURL } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
       if (publicURL) {
+        // Update the profile with the new avatar URL
         await updateProfile({
           avatar_url: publicURL.publicUrl
         });
+        
         toast({
           title: "Image uploaded",
           description: "Your profile picture has been updated",

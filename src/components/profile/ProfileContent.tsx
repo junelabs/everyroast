@@ -45,6 +45,7 @@ const ProfileContent = ({
           profileImage={profileImage}
           name={name || "User"}
           isEditing={isEditing}
+          isUploading={isUploading}
           onFileChange={handleFileChange}
         />
         
