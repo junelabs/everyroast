@@ -1,14 +1,13 @@
 
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Star, Calendar } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
-import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface CoffeeDetailModalProps {
-  coffee: Coffee;
+  coffee: Coffee & { reviewDate?: string };
   isOpen: boolean;
   onClose: () => void;
   onReview?: () => void;
@@ -20,6 +19,16 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   onClose,
   onReview 
 }) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
@@ -76,11 +85,20 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               <h3 className="text-lg font-medium mb-2">Your Review</h3>
               <p className="text-gray-700 mb-2">{coffee.flavor || "No review provided yet"}</p>
               
-              {coffee.brewingMethod && (
-                <div className="text-sm text-gray-500">
-                  <span className="font-medium">Brewing Method:</span> {coffee.brewingMethod}
-                </div>
-              )}
+              <div className="flex flex-wrap gap-2 text-sm text-gray-500">
+                {coffee.brewingMethod && (
+                  <div>
+                    <span className="font-medium">Brewing Method:</span> {coffee.brewingMethod}
+                  </div>
+                )}
+                
+                {coffee.reviewDate && (
+                  <div className="flex items-center">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    <span>Reviewed on {formatDate(coffee.reviewDate)}</span>
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="flex flex-col space-y-3">
