@@ -55,18 +55,11 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           {/* Consistent overlay over the whole card */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
           
-          {/* Top indicators - ID (optional, could be removed) */}
-          {review.id && (
-            <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
-              <span className="text-lg">{review.id}</span>
-            </div>
-          )}
-          
           {/* Rating - top right as requested */}
           {review.rating && (
             <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-lg font-medium">{review.rating}</span>
+              <span className="text-base font-medium">{review.rating}</span>
             </div>
           )}
           
@@ -74,17 +67,19 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
             <div className="flex justify-between mb-2">
               <div>
-                <h3 className="text-2xl font-bold">{review.coffees?.name || "Unnamed Coffee"}</h3>
+                <h3 className="text-xl font-bold">{review.coffees?.name || "Unnamed Coffee"}</h3>
               </div>
             </div>
             
             <div className="flex justify-between mb-2">
-              <div className="flex items-center text-gray-100">
-                <span className="mr-1">☕️</span>
-                <span>{review.coffees?.roasters?.name || ""}</span>
-              </div>
+              {review.coffees?.roasters?.name && (
+                <div className="flex items-center text-gray-100 text-sm">
+                  <span className="mr-1">☕️</span>
+                  <span>{review.coffees.roasters.name}</span>
+                </div>
+              )}
               {review.coffees?.origin && (
-                <div className="flex items-center text-gray-200">
+                <div className="flex items-center text-gray-200 text-sm">
                   <span className="mr-1">📍</span>
                   <span>{review.coffees.origin}</span>
                 </div>
@@ -94,22 +89,22 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
               {review.coffees?.roast_level && (
                 <div className="flex items-center">
-                  <span className="text-lg mr-1">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
-                  <div className="text-sm">{review.coffees.roast_level}</div>
+                  <span className="text-base mr-1">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
+                  <div className="text-xs">{review.coffees.roast_level}</div>
                 </div>
               )}
               
               {review.coffees?.process_method && (
                 <div className="flex items-center">
-                  <span className="text-lg mr-1">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
-                  <div className="text-sm">{review.coffees.process_method}</div>
+                  <span className="text-base mr-1">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
+                  <div className="text-xs">{review.coffees.process_method}</div>
                 </div>
               )}
               
               {review.coffees?.price && (
                 <div className="flex items-center justify-end">
-                  <span className="text-lg mr-1">💰</span>
-                  <div className="text-sm">${Number(review.coffees.price).toFixed(2)}</div>
+                  <span className="text-base mr-1">💰</span>
+                  <div className="text-xs">${Number(review.coffees.price).toFixed(2)}</div>
                 </div>
               )}
             </div>
