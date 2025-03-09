@@ -6,8 +6,12 @@ import { Heart, Bookmark, BookOpen } from "lucide-react";
 
 const ProfileTabs = () => {
   return (
-    <Tabs defaultValue="favorites" className="w-full">
+    <Tabs defaultValue="reviews" className="w-full">
       <TabsList className="grid grid-cols-3 max-w-md mb-8">
+        <TabsTrigger value="reviews" className="flex items-center gap-2">
+          <BookOpen className="h-4 w-4" />
+          <span>Reviews</span>
+        </TabsTrigger>
         <TabsTrigger value="favorites" className="flex items-center gap-2">
           <Heart className="h-4 w-4" />
           <span>Favorites</span>
@@ -16,11 +20,24 @@ const ProfileTabs = () => {
           <Bookmark className="h-4 w-4" />
           <span>Saved</span>
         </TabsTrigger>
-        <TabsTrigger value="reviews" className="flex items-center gap-2">
-          <BookOpen className="h-4 w-4" />
-          <span>Reviews</span>
-        </TabsTrigger>
       </TabsList>
+      
+      <TabsContent value="reviews" className="space-y-4">
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="text-center py-8">
+            <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No reviews yet</h3>
+            <p className="text-gray-600 max-w-md mx-auto mb-6">
+              Share your thoughts on coffees you've tried to help the community.
+            </p>
+            <Link to="/">
+              <Button className="bg-roast-500 hover:bg-roast-600">
+                Write a Review
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </TabsContent>
       
       <TabsContent value="favorites" className="space-y-4">
         <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -50,23 +67,6 @@ const ProfileTabs = () => {
             <Link to="/">
               <Button className="bg-roast-500 hover:bg-roast-600">
                 Discover Content
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </TabsContent>
-      
-      <TabsContent value="reviews" className="space-y-4">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="text-center py-8">
-            <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No reviews yet</h3>
-            <p className="text-gray-600 max-w-md mx-auto mb-6">
-              Share your thoughts on coffees you've tried to help the community.
-            </p>
-            <Link to="/">
-              <Button className="bg-roast-500 hover:bg-roast-600">
-                Write a Review
               </Button>
             </Link>
           </div>
