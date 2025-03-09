@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -14,7 +15,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { CoffeeOrigin, RoastLevel, ProcessMethod } from "@/types/coffee";
+import { CoffeeOrigin, RoastLevel, ProcessMethod, CoffeeType, SizeUnit } from "@/types/coffee";
 import { 
   Select,
   SelectContent,
@@ -45,12 +46,22 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   const [origin, setOrigin] = useState<CoffeeOrigin>("Ethiopia");
   const [roastLevel, setRoastLevel] = useState<RoastLevel>("Light");
   const [processMethod, setProcessMethod] = useState<ProcessMethod>("Washed");
+  const [coffeeType, setCoffeeType] = useState<CoffeeType>("Single Origin");
   const [price, setPrice] = useState<number>(0);
   const [flavor, setFlavor] = useState("");
+  const [size, setSize] = useState<number>(0);
+  const [sizeUnit, setSizeUnit] = useState<SizeUnit>("g");
 
-  const origins: CoffeeOrigin[] = ['Ethiopia', 'Colombia', 'Brazil', 'Guatemala', 'Costa Rica', 'Kenya'];
+  const origins: CoffeeOrigin[] = [
+    'Ethiopia', 'Colombia', 'Brazil', 'Guatemala', 'Costa Rica', 'Kenya',
+    'Peru', 'Indonesia', 'Vietnam', 'Honduras', 'Mexico', 'Rwanda',
+    'Tanzania', 'Uganda', 'India', 'Panama', 'Jamaica', 'Haiti',
+    'El Salvador', 'Yemen'
+  ];
   const roastLevels: RoastLevel[] = ['Light', 'Medium', 'Medium-Dark', 'Dark'];
   const processMethods: ProcessMethod[] = ['Washed', 'Natural', 'Honey', 'Anaerobic'];
+  const coffeeTypes: CoffeeType[] = ['Single Origin', 'Blend', 'Espresso'];
+  const sizeUnits: SizeUnit[] = ['g', 'oz'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +93,15 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
       return;
     }
     
+    if (!roaster) {
+      toast({
+        title: "Roaster required",
+        description: "Please enter a roaster name.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
@@ -108,7 +128,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
           const { data: newRoaster, error: newRoasterError } = await supabase
             .from('roasters')
             .insert({
-              name: roaster || 'Unknown Roaster',
+              name: roaster,
               created_by: user.id
             })
             .select('id')
@@ -120,18 +140,21 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
           roasterId = roasterData.id;
         }
         
+        const coffeeData = {
+          name: coffeeName,
+          roaster_id: roasterId,
+          origin: origin,
+          roast_level: roastLevel,
+          process_method: processMethod,
+          price: price,
+          flavor_notes: flavor,
+          created_by: user.id,
+          description: `${coffeeType} coffee, ${size} ${sizeUnit}`
+        };
+        
         const { data: newCoffee, error: newCoffeeError } = await supabase
           .from('coffees')
-          .insert({
-            name: coffeeName,
-            roaster_id: roasterId,
-            origin: origin,
-            roast_level: roastLevel,
-            process_method: processMethod,
-            price: price,
-            flavor_notes: flavor,
-            created_by: user.id
-          })
+          .insert(coffeeData)
           .select('id')
           .single();
         
@@ -164,8 +187,11 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
       setOrigin("Ethiopia");
       setRoastLevel("Light");
       setProcessMethod("Washed");
+      setCoffeeType("Single Origin");
       setPrice(0);
       setFlavor("");
+      setSize(0);
+      setSizeUnit("g");
       onClose();
       
       navigate("/profile");
@@ -214,13 +240,14 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
             
             <div className="space-y-2">
               <label htmlFor="roaster" className="block text-sm font-medium">
-                Roaster
+                Roaster *
               </label>
               <Input
                 id="roaster"
                 placeholder="e.g., Stumptown Coffee"
                 value={roaster}
                 onChange={(e) => setRoaster(e.target.value)}
+                required
               />
             </div>
             
@@ -245,6 +272,27 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
               </div>
               
               <div className="space-y-2">
+                <label htmlFor="coffeeType" className="block text-sm font-medium">
+                  Type
+                </label>
+                <Select 
+                  value={coffeeType} 
+                  onValueChange={(value: CoffeeType) => setCoffeeType(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select coffee type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {coffeeTypes.map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2 col-span-1">
                 <label htmlFor="price" className="block text-sm font-medium">
                   Price (USD)
                 </label>
@@ -257,6 +305,40 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
                   value={price || ''}
                   onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                 />
+              </div>
+              
+              <div className="space-y-2 col-span-1">
+                <label htmlFor="size" className="block text-sm font-medium">
+                  Size
+                </label>
+                <Input
+                  id="size"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="0"
+                  value={size || ''}
+                  onChange={(e) => setSize(parseInt(e.target.value) || 0)}
+                />
+              </div>
+              
+              <div className="space-y-2 col-span-1">
+                <label htmlFor="sizeUnit" className="block text-sm font-medium">
+                  Unit
+                </label>
+                <Select 
+                  value={sizeUnit} 
+                  onValueChange={(value: SizeUnit) => setSizeUnit(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sizeUnits.map((unit) => (
+                      <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             
