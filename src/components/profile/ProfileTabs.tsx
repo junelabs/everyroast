@@ -21,6 +21,13 @@ const ProfileTabs = () => {
     }
   }, [user]);
 
+  // Add a new effect to properly reset the selectedReview when the form closes
+  useEffect(() => {
+    if (!isReviewFormOpen) {
+      setSelectedReview(null);
+    }
+  }, [isReviewFormOpen]);
+
   const fetchUserReviews = async () => {
     setIsLoading(true);
     try {
@@ -74,8 +81,13 @@ const ProfileTabs = () => {
 
   const handleCloseReviewForm = () => {
     setIsReviewFormOpen(false);
-    setSelectedReview(null);
+    // Note: We've added a useEffect to handle this reset when isReviewFormOpen changes
     fetchUserReviews();
+  };
+
+  const handleAddNewReview = () => {
+    setSelectedReview(null); // Explicitly set to null when adding a new review
+    setIsReviewFormOpen(true);
   };
 
   return (
@@ -99,10 +111,7 @@ const ProfileTabs = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Your Reviews</h2>
           <Button 
-            onClick={() => {
-              setSelectedReview(null);
-              setIsReviewFormOpen(true);
-            }} 
+            onClick={handleAddNewReview} 
             className="bg-roast-500 hover:bg-roast-600 flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -168,10 +177,7 @@ const ProfileTabs = () => {
                 Share your thoughts on coffees you've tried to help the community.
               </p>
               <Button 
-                onClick={() => {
-                  setSelectedReview(null);
-                  setIsReviewFormOpen(true);
-                }} 
+                onClick={handleAddNewReview} 
                 className="bg-roast-500 hover:bg-roast-600"
               >
                 Write a Review
