@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 const Profile = () => {
-  const { profile, updateProfile, isLoading } = useAuth();
+  const { profile, updateProfile, isLoading: authLoading, user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -17,7 +17,12 @@ const Profile = () => {
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
   const { toast } = useToast();
+
+  console.log("Auth loading state:", authLoading);
+  console.log("User state:", user);
+  console.log("Profile state:", profile);
 
   useEffect(() => {
     if (profile) {
@@ -25,8 +30,43 @@ const Profile = () => {
       setUsername(profile.username || "");
       setBio(profile.bio || "");
       setProfileImage(profile.avatar_url || null);
+      setProfileLoading(false);
+    } else if (!authLoading && user) {
+      // If auth is not loading and we have a user but no profile, try to fetch it
+      fetchProfileManually(user.id);
+    } else if (!authLoading && !user) {
+      // If auth is not loading and we don't have a user, exit loading state
+      setProfileLoading(false);
     }
-  }, [profile]);
+  }, [profile, authLoading, user]);
+
+  const fetchProfileManually = async (userId: string) => {
+    try {
+      console.log("Manually fetching profile for user:", userId);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile manually:", error);
+        setProfileLoading(false);
+        return;
+      }
+      
+      if (data) {
+        setName(data.full_name || "");
+        setUsername(data.username || "");
+        setBio(data.bio || "");
+        setProfileImage(data.avatar_url || null);
+      }
+    } catch (error) {
+      console.error("Error in manual profile fetch:", error);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
 
   useEffect(() => {
     const getSession = async () => {
@@ -44,6 +84,18 @@ const Profile = () => {
     
     getSession();
   }, []);
+
+  // Ensure we exit loading state after a maximum time
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (profileLoading || authLoading) {
+        console.log("Forcing exit from loading state after timeout");
+        setProfileLoading(false);
+      }
+    }, 5000); // 5 second fallback timeout
+
+    return () => clearTimeout(timeoutId);
+  }, [profileLoading, authLoading]);
 
   const handleSaveProfile = async () => {
     try {
@@ -75,7 +127,7 @@ const Profile = () => {
       setIsUploading(true);
       
       // Get user id from profile
-      const userId = profile?.id;
+      const userId = user?.id;
       if (!userId) throw new Error('No user ID found');
 
       // Upload the file to Supabase Storage
@@ -126,11 +178,15 @@ const Profile = () => {
     }
   };
 
-  if (isLoading) {
+  // Use a combined loading state
+  const isPageLoading = authLoading || profileLoading;
+
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
         <div className="text-roast-600">Loading profile...</div>
+        <div className="text-gray-500 text-sm mt-2">This should only take a moment.</div>
       </div>
     );
   }
