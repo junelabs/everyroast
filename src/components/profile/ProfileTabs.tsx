@@ -21,10 +21,13 @@ const ProfileTabs = () => {
     }
   }, [user]);
 
-  // Add a new effect to properly reset the selectedReview when the form closes
+  // Reset selectedReview when the form closes
   useEffect(() => {
     if (!isReviewFormOpen) {
-      setSelectedReview(null);
+      // This ensures selectedReview is completely reset when the form is closed
+      setTimeout(() => {
+        setSelectedReview(null);
+      }, 100); // Short delay to ensure the form is fully closed first
     }
   }, [isReviewFormOpen]);
 
@@ -81,13 +84,18 @@ const ProfileTabs = () => {
 
   const handleCloseReviewForm = () => {
     setIsReviewFormOpen(false);
-    // Note: We've added a useEffect to handle this reset when isReviewFormOpen changes
+    // The useEffect will handle resetting selectedReview after the form closes
     fetchUserReviews();
   };
 
   const handleAddNewReview = () => {
-    setSelectedReview(null); // Explicitly set to null when adding a new review
-    setIsReviewFormOpen(true);
+    // First ensure any existing selectedReview is cleared
+    setSelectedReview(null);
+    
+    // Small delay to ensure state is updated before opening the form
+    setTimeout(() => {
+      setIsReviewFormOpen(true);
+    }, 50);
   };
 
   return (
