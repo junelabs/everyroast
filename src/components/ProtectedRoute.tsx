@@ -12,23 +12,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   
   useEffect(() => {
-    if (!isLoading) return;
+    let timer: number | undefined;
     
-    const timer = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
-    }, 1000);
+    if (isLoading || !authInitialized) {
+      timer = window.setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+    } else {
+      setTimeElapsed(0);
+    }
     
-    return () => clearInterval(timer);
-  }, [isLoading]);
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isLoading, authInitialized]);
 
   console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
 
-  const longLoadingMessage = timeElapsed > 10 
-    ? "Loading is taking longer than expected. You may need to refresh the page."
-    : "Loading your profile...";
-
-  // Only check authentication after auth is initialized
+  // Don't make any decisions until auth is initialized
   if (!authInitialized || isLoading) {
+    const longLoadingMessage = timeElapsed > 10 
+      ? "Loading is taking longer than expected. You may need to refresh the page."
+      : "Loading your profile...";
+
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
@@ -45,11 +51,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
+  // Now that auth is initialized, check if user exists
   if (!user) {
     console.log("User not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
+  // User is authenticated, render the protected content
   return <>{children}</>;
 };
 

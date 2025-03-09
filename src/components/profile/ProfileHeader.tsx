@@ -1,6 +1,6 @@
 
 import { Coffee, Settings } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -13,7 +13,7 @@ const ProfileHeader = () => {
     try {
       console.log("ProfileHeader: Signing out");
       await signOut();
-      // Navigation is handled by auth state change listener
+      // Navigation is handled by auth state change listener in AuthContext
     } catch (error) {
       console.error("Error signing out:", error);
       toast({

@@ -24,23 +24,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let isMounted = true;
     console.log('[AuthProvider] Setting up auth state listener');
     
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!isMounted) return;
-      
-      console.log('[AuthProvider] Initial session:', session ? 'Exists' : 'None');
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        console.log('[AuthProvider] User exists in session, fetching profile');
-        fetchUserProfile(session.user.id);
-      } else {
-        console.log('[AuthProvider] No user in session, setting isLoading=false');
+    const initializeAuth = async () => {
+      try {
+        // Get initial session
+        const { data, error } = await supabase.auth.getSession();
+        if (!isMounted) return;
+        
+        if (error) {
+          console.error('[AuthProvider] Error getting session:', error);
+          setIsLoading(false);
+          setAuthInitialized(true);
+          return;
+        }
+        
+        const { session } = data;
+        console.log('[AuthProvider] Initial session:', session ? 'Exists' : 'None');
+        
+        if (session?.user) {
+          setSession(session);
+          setUser(session.user);
+          console.log('[AuthProvider] User exists in session, fetching profile');
+          await fetchUserProfile(session.user.id);
+        } else {
+          console.log('[AuthProvider] No user in session, setting isLoading=false');
+          setIsLoading(false);
+          setAuthInitialized(true);
+        }
+      } catch (error) {
+        console.error('[AuthProvider] Error initializing auth:', error);
         setIsLoading(false);
         setAuthInitialized(true);
       }
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -60,17 +77,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
         
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          console.log('[AuthProvider] User exists after state change, fetching profile');
-          await fetchUserProfile(session.user.id);
-        } else {
-          console.log('[AuthProvider] No user after state change, clearing profile');
-          setProfile(null);
-          setIsLoading(false);
-          setAuthInitialized(true);
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          console.log('[AuthProvider] User signed in or token refreshed:', event);
+          setSession(session);
+          setUser(session?.user ?? null);
+          
+          if (session?.user) {
+            console.log('[AuthProvider] User exists after state change, fetching profile');
+            await fetchUserProfile(session.user.id);
+          } else {
+            console.log('[AuthProvider] No user after state change, clearing profile');
+            setProfile(null);
+            setIsLoading(false);
+            setAuthInitialized(true);
+          }
         }
       }
     );
@@ -148,8 +168,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
       await signOutUser();
       
-      // Note: We don't need to clear state or navigate here as the onAuthStateChange 
-      // event will handle that when it receives the SIGNED_OUT event
+      // Note: The onAuthStateChange event will handle state clearing and navigation
+      console.log('[AuthProvider] Signout called successfully');
       
       toast({
         title: "Signed out successfully",
