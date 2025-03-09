@@ -25,13 +25,14 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         <img 
           src={review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
           alt={review.coffees?.name || "Coffee"} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover brightness-90"
         />
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* Enhanced overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"></div>
         
         {/* Rating badge */}
-        <div className="absolute top-2 right-2 flex items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
-          <Star className="h-3 w-3 text-yellow-400 fill-yellow-400 mr-1" />
+        <div className="absolute top-2 right-2 flex items-center bg-roast-500/80 backdrop-blur-sm px-2 py-1 rounded-full">
+          <Star className="h-3 w-3 text-white fill-white mr-1" />
           <span className="text-white font-medium text-xs">{review.rating}</span>
         </div>
         
