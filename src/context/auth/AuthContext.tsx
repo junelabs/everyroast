@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -17,14 +16,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  console.log('[AuthProvider] Initializing');
+
   useEffect(() => {
+    console.log('[AuthProvider] Setting up auth state listener');
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[AuthProvider] Initial session:', session ? 'Exists' : 'None');
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        console.log('[AuthProvider] User exists in session, fetching profile');
         fetchUserProfile(session.user.id);
       } else {
+        console.log('[AuthProvider] No user in session, setting isLoading=false');
         setIsLoading(false);
       }
     });
@@ -32,13 +37,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session);
+        console.log('[AuthProvider] Auth state changed:', event, session ? 'Session exists' : 'No session');
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          console.log('[AuthProvider] User exists after state change, fetching profile');
           await fetchUserProfile(session.user.id);
         } else {
+          console.log('[AuthProvider] No user after state change, clearing profile');
           setProfile(null);
           setIsLoading(false);
         }
@@ -50,19 +57,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     return () => {
+      console.log('[AuthProvider] Cleaning up auth state listener');
       subscription.unsubscribe();
     };
   }, [navigate]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log('[AuthProvider] Starting profile fetch for user:', userId);
       setIsLoading(true);
       const data = await fetchProfile(userId);
+      console.log('[AuthProvider] Profile fetch result:', data);
       setProfile(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('[AuthProvider] Error fetching profile:', error);
       setProfile(null);
     } finally {
+      console.log('[AuthProvider] Profile fetch complete, setting isLoading=false');
       setIsLoading(false);
     }
   };
@@ -168,6 +179,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     updateProfile
   };
+
+  console.log('[AuthProvider] Current auth state:', {
+    hasSession: !!session,
+    hasUser: !!user,
+    hasProfile: !!profile,
+    isLoading
+  });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
