@@ -1,13 +1,15 @@
-
-import React from 'react';
-import { Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Trash2 } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface CoffeeDetailModalProps {
-  coffee: Coffee & { reviewDate?: string };
+  coffee: Coffee & { reviewDate?: string; reviewId?: string };
   isOpen: boolean;
   onClose: () => void;
   onReview?: () => void;
@@ -19,6 +21,10 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   onClose,
   onReview 
 }) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -27,6 +33,43 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleDelete = async () => {
+    if (!coffee.reviewId) {
+      toast({
+        title: "Error",
+        description: "Cannot delete review: review ID not found.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', coffee.reviewId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Review has been deleted successfully."
+      });
+      onClose();
+      navigate('/profile', { replace: true });
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the review. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -113,6 +156,18 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                   onClick={onReview}
                 >
                   Edit Review
+                </Button>
+              )}
+              
+              {coffee.reviewId && (
+                <Button 
+                  variant="destructive"
+                  className="w-full"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {isDeleting ? "Deleting..." : "Delete Review"}
                 </Button>
               )}
             </div>

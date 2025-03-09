@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -39,7 +38,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod,
     flavor: review.review_text || "No flavor notes provided",
     brewingMethod: review.brewing_method || "",
-    reviewDate: review.created_at
+    reviewDate: review.created_at,
+    reviewId: review.id // Pass the review ID to the modal
   };
 
   return (
