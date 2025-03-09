@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, Bookmark, BookOpen, Plus, Star, Coffee } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import ReviewForm from "@/components/reviews/ReviewForm";
 

@@ -2,7 +2,7 @@
 import { Coffee, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfileHeader = () => {
