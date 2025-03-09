@@ -4,7 +4,7 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileImage from "@/components/profile/ProfileImage";
 import ProfileForm from "@/components/profile/ProfileForm";
 import ProfileTabs from "@/components/profile/ProfileTabs";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
