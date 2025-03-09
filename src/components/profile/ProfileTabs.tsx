@@ -14,6 +14,7 @@ const ProfileTabs = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState<any>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -21,13 +22,15 @@ const ProfileTabs = () => {
     }
   }, [user]);
 
-  // Reset selectedReview when the form closes
+  // Handle form state management
   useEffect(() => {
+    // When the form closes, reset everything
     if (!isReviewFormOpen) {
-      // This ensures selectedReview is completely reset when the form is closed
+      // We use setTimeout to ensure all state updates happen in the correct order
       setTimeout(() => {
         setSelectedReview(null);
-      }, 100); // Short delay to ensure the form is fully closed first
+        setIsAddingNew(false);
+      }, 200);
     }
   }, [isReviewFormOpen]);
 
@@ -78,24 +81,33 @@ const ProfileTabs = () => {
   };
 
   const handleEditReview = (review: any) => {
+    // Make sure we're not adding a new review
+    setIsAddingNew(false);
+    
+    // Set the review to edit
     setSelectedReview(review);
+    
+    // Open the form
     setIsReviewFormOpen(true);
   };
 
   const handleCloseReviewForm = () => {
+    // Close the form - useEffect will handle the state reset
     setIsReviewFormOpen(false);
-    // The useEffect will handle resetting selectedReview after the form closes
     fetchUserReviews();
   };
 
   const handleAddNewReview = () => {
-    // First ensure any existing selectedReview is cleared
+    // Mark that we're adding a new review
+    setIsAddingNew(true);
+    
+    // Ensure any existing selectedReview is cleared
     setSelectedReview(null);
     
-    // Small delay to ensure state is updated before opening the form
+    // Open the form after a delay to ensure state updates
     setTimeout(() => {
       setIsReviewFormOpen(true);
-    }, 50);
+    }, 100);
   };
 
   return (
@@ -198,12 +210,13 @@ const ProfileTabs = () => {
           isOpen={isReviewFormOpen} 
           onClose={handleCloseReviewForm} 
           coffeeId={selectedReview?.coffee_id}
-          reviewId={selectedReview?.id}
+          reviewId={!isAddingNew ? selectedReview?.id : undefined}
           initialData={{
             rating: selectedReview?.rating || 0,
             reviewText: selectedReview?.review_text || "",
             brewingMethod: selectedReview?.brewing_method || ""
           }}
+          isEdit={!isAddingNew && !!selectedReview}
         />
       </TabsContent>
       

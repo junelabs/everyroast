@@ -29,9 +29,10 @@ interface ReviewFormProps {
     reviewText: string;
     brewingMethod: string;
   };
+  isEdit?: boolean;
 }
 
-const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: ReviewFormProps) => {
+const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData, isEdit = false }: ReviewFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -52,7 +53,6 @@ const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: Review
   const [flavor, setFlavor] = useState("");
   const [size, setSize] = useState<number>(0);
   const [sizeUnit, setSizeUnit] = useState<SizeUnit>("g");
-  const [isEdit, setIsEdit] = useState(!!reviewId);
 
   const origins: CoffeeOrigin[] = [
     'Ethiopia', 'Colombia', 'Brazil', 'Guatemala', 'Costa Rica', 'Kenya',
@@ -65,15 +65,16 @@ const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: Review
   const coffeeTypes: CoffeeType[] = ['Single Origin', 'Blend', 'Espresso'];
   const sizeUnits: SizeUnit[] = ['g', 'oz'];
 
-  // Fetch coffee details if editing an existing review
+  // Reset form when dialog opens/closes or isEdit changes
   useEffect(() => {
-    if (coffeeId && isEdit) {
-      fetchCoffeeDetails();
-    }
-    
-    // Reset form on open
-    if (!isEdit) {
-      resetForm();
+    if (isOpen) {
+      // Only fetch coffee details when in edit mode and we have a coffeeId
+      if (isEdit && coffeeId) {
+        fetchCoffeeDetails();
+      } else if (!isEdit) {
+        // Reset form for new reviews
+        resetForm();
+      }
     }
   }, [coffeeId, isEdit, isOpen]);
 
@@ -272,9 +273,9 @@ const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: Review
   };
 
   const resetForm = () => {
-    setRating(initialData?.rating || 0);
-    setReviewText(initialData?.reviewText || "");
-    setBrewingMethod(initialData?.brewingMethod || "");
+    setRating(0);
+    setReviewText("");
+    setBrewingMethod("");
     setCoffeeName("");
     setRoaster("");
     setOrigin("Ethiopia");
@@ -286,7 +287,6 @@ const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: Review
     setSize(0);
     setSizeUnit("g");
     setImageUrl(null);
-    setIsEdit(!!reviewId);
   };
 
   return (
