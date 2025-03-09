@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Heart, Bookmark, BookOpen, Plus, Star, Coffee, Edit } from "lucide-reac
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import ReviewCard from "@/components/reviews/ReviewCard";
 
 const ProfileTabs = () => {
   const { user } = useAuth();
@@ -22,11 +22,8 @@ const ProfileTabs = () => {
     }
   }, [user]);
 
-  // Handle form state management
   useEffect(() => {
-    // When the form closes, reset everything
     if (!isReviewFormOpen) {
-      // We use setTimeout to ensure all state updates happen in the correct order
       setTimeout(() => {
         setSelectedReview(null);
         setIsAddingNew(false);
@@ -81,30 +78,19 @@ const ProfileTabs = () => {
   };
 
   const handleEditReview = (review: any) => {
-    // Make sure we're not adding a new review
     setIsAddingNew(false);
-    
-    // Set the review to edit
     setSelectedReview(review);
-    
-    // Open the form
     setIsReviewFormOpen(true);
   };
 
   const handleCloseReviewForm = () => {
-    // Close the form - useEffect will handle the state reset
     setIsReviewFormOpen(false);
     fetchUserReviews();
   };
 
   const handleAddNewReview = () => {
-    // Mark that we're adding a new review
     setIsAddingNew(true);
-    
-    // Ensure any existing selectedReview is cleared
     setSelectedReview(null);
-    
-    // Open the form after a delay to ensure state updates
     setTimeout(() => {
       setIsReviewFormOpen(true);
     }, 100);
@@ -144,48 +130,13 @@ const ProfileTabs = () => {
             <p>Loading reviews...</p>
           </div>
         ) : reviews.length > 0 ? (
-          <div className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {reviews.map((review) => (
-              <div key={review.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {review.coffees?.name || "Unnamed Coffee"}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {review.coffees?.roasters?.name || "Unknown Roaster"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="p-1 h-auto"
-                      onClick={() => handleEditReview(review)}
-                    >
-                      <Edit className="h-4 w-4 text-gray-500" />
-                    </Button>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      <span className="font-medium">{review.rating}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                {review.brewing_method && (
-                  <div className="mt-2 text-sm">
-                    <span className="font-medium">Brewing Method:</span> {review.brewing_method}
-                  </div>
-                )}
-                
-                {review.review_text && (
-                  <p className="mt-2 text-gray-700">{review.review_text}</p>
-                )}
-                
-                <div className="mt-3 text-xs text-gray-500">
-                  {formatDate(review.created_at)}
-                </div>
-              </div>
+              <ReviewCard 
+                key={review.id} 
+                review={review} 
+                onEdit={handleEditReview} 
+              />
             ))}
           </div>
         ) : (
