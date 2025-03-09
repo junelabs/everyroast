@@ -6,6 +6,7 @@ export interface AuthContextProps {
   user: User | null;
   profile: any | null;
   isLoading: boolean;
+  authInitialized: boolean;
   signUp: (email: string, password: string, metadata?: { full_name?: string, username?: string }) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;

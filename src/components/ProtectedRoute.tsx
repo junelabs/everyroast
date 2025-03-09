@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, authInitialized } = useAuth();
   const [timeElapsed, setTimeElapsed] = useState(0);
   
   useEffect(() => {
@@ -25,7 +25,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     ? "Loading is taking longer than expected. You may need to refresh the page."
     : "Loading your profile...";
 
-  if (isLoading) {
+  // Only check authentication after auth is initialized
+  if (!authInitialized || isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>

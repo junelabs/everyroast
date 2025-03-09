@@ -13,30 +13,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   console.log('[AuthProvider] Initializing');
 
   useEffect(() => {
+    let isMounted = true;
     console.log('[AuthProvider] Setting up auth state listener');
+    
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      
       console.log('[AuthProvider] Initial session:', session ? 'Exists' : 'None');
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
         console.log('[AuthProvider] User exists in session, fetching profile');
         fetchUserProfile(session.user.id);
       } else {
         console.log('[AuthProvider] No user in session, setting isLoading=false');
         setIsLoading(false);
+        setAuthInitialized(true);
       }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!isMounted) return;
+        
         console.log('[AuthProvider] Auth state changed:', event, session ? 'Session exists' : 'No session');
         setSession(session);
         setUser(session?.user ?? null);
@@ -48,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('[AuthProvider] No user after state change, clearing profile');
           setProfile(null);
           setIsLoading(false);
+          setAuthInitialized(true);
         }
 
         if (event === 'SIGNED_OUT') {
@@ -58,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       console.log('[AuthProvider] Cleaning up auth state listener');
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [navigate]);
@@ -75,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       console.log('[AuthProvider] Profile fetch complete, setting isLoading=false');
       setIsLoading(false);
+      setAuthInitialized(true);
     }
   };
 
@@ -174,6 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     profile,
     isLoading,
+    authInitialized,
     signUp,
     signIn,
     signOut,
@@ -184,7 +197,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     hasSession: !!session,
     hasUser: !!user,
     hasProfile: !!profile,
-    isLoading
+    isLoading,
+    authInitialized
   });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
