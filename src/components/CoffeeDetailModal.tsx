@@ -72,8 +72,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             </div>
             
             <div className="mb-6">
-              <h3 className="text-lg font-medium mb-2">Flavor Profile</h3>
-              <p className="text-gray-700">{coffee.flavor || "Flavor notes not available"}</p>
+              <h3 className="text-lg font-medium mb-2">Your Review</h3>
+              <p className="text-gray-700">{coffee.flavor || "No review provided yet"}</p>
             </div>
             
             <div className="flex flex-col space-y-3">
@@ -89,7 +89,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                   className="w-full"
                   onClick={onReview}
                 >
-                  Write a Review
+                  Edit Review
                 </Button>
               )}
             </div>
