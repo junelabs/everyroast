@@ -6,6 +6,7 @@ import ProfileForm from "@/components/profile/ProfileForm";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Profile = () => {
   const { profile, updateProfile, isLoading } = useAuth();
@@ -15,6 +16,8 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (profile) {
@@ -27,9 +30,15 @@ const Profile = () => {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session?.user) {
-        setEmail(data.session.user.email || "");
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (data.session?.user) {
+          setEmail(data.session.user.email || "");
+        }
+      } catch (error: any) {
+        console.error("Error fetching session:", error.message);
       }
     };
     
@@ -37,12 +46,25 @@ const Profile = () => {
   }, []);
 
   const handleSaveProfile = async () => {
-    await updateProfile({
-      full_name: name,
-      username,
-      bio
-    });
-    setIsEditing(false);
+    try {
+      setIsEditing(false);
+      await updateProfile({
+        full_name: name,
+        username,
+        bio
+      });
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated",
+      });
+    } catch (error: any) {
+      console.error("Error saving profile:", error);
+      toast({
+        title: "Update failed",
+        description: error.message || "Failed to update profile",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +72,8 @@ const Profile = () => {
     if (!file) return;
 
     try {
+      setIsUploading(true);
+      
       // Get user id from profile
       const userId = profile?.id;
       if (!userId) throw new Error('No user ID found');
@@ -85,16 +109,27 @@ const Profile = () => {
         await updateProfile({
           avatar_url: publicURL.publicUrl
         });
+        toast({
+          title: "Image uploaded",
+          description: "Your profile picture has been updated",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading image:', error);
-      // You could add a toast notification here for error handling
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload image",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
         <div className="text-roast-600">Loading profile...</div>
       </div>
     );
@@ -126,6 +161,7 @@ const Profile = () => {
             isEditing={isEditing}
             setIsEditing={setIsEditing}
             handleSaveProfile={handleSaveProfile}
+            isLoading={isUploading}
           />
         </div>
         

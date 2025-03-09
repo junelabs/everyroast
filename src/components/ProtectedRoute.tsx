@@ -10,9 +10,14 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading } = useAuth();
 
-  // If loading, you might want to show a loading spinner
+  // If loading, show a more informative loading spinner
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
+        <div className="text-roast-500">Loading your profile...</div>
+      </div>
+    );
   }
 
   // If not logged in, redirect to login page
