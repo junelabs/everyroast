@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, Trash2 } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
@@ -149,27 +150,29 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 Add to Favorites
               </Button>
               
-              {onReview && (
-                <Button 
-                  variant="outline"
-                  className="w-full"
-                  onClick={onReview}
-                >
-                  Edit Review
-                </Button>
-              )}
-              
-              {coffee.reviewId && (
-                <Button 
-                  variant="destructive"
-                  className="w-full"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {isDeleting ? "Deleting..." : "Delete Review"}
-                </Button>
-              )}
+              <div className="flex space-x-2">
+                {onReview && (
+                  <Button 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={onReview}
+                  >
+                    Edit Review
+                  </Button>
+                )}
+                
+                {coffee.reviewId && (
+                  <Button 
+                    variant="outline"
+                    className="border-rose-500 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
