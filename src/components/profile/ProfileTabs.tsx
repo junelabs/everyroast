@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Bookmark, BookOpen, Plus, Star, Coffee } from "lucide-react";
+import { Heart, Bookmark, BookOpen, Plus, Star, Coffee, Edit } from "lucide-react";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import ReviewForm from "@/components/reviews/ReviewForm";
@@ -13,6 +13,7 @@ const ProfileTabs = () => {
   const [reviews, setReviews] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -66,6 +67,17 @@ const ProfileTabs = () => {
     });
   };
 
+  const handleEditReview = (review: any) => {
+    setSelectedReview(review);
+    setIsReviewFormOpen(true);
+  };
+
+  const handleCloseReviewForm = () => {
+    setIsReviewFormOpen(false);
+    setSelectedReview(null);
+    fetchUserReviews();
+  };
+
   return (
     <Tabs defaultValue="reviews" className="w-full">
       <TabsList className="grid grid-cols-3 max-w-md mb-8">
@@ -87,7 +99,10 @@ const ProfileTabs = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Your Reviews</h2>
           <Button 
-            onClick={() => setIsReviewFormOpen(true)} 
+            onClick={() => {
+              setSelectedReview(null);
+              setIsReviewFormOpen(true);
+            }} 
             className="bg-roast-500 hover:bg-roast-600 flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -112,9 +127,19 @@ const ProfileTabs = () => {
                       {review.coffees?.roasters?.name || "Unknown Roaster"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                    <span className="font-medium">{review.rating}</span>
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="p-1 h-auto"
+                      onClick={() => handleEditReview(review)}
+                    >
+                      <Edit className="h-4 w-4 text-gray-500" />
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                      <span className="font-medium">{review.rating}</span>
+                    </div>
                   </div>
                 </div>
                 
@@ -143,7 +168,10 @@ const ProfileTabs = () => {
                 Share your thoughts on coffees you've tried to help the community.
               </p>
               <Button 
-                onClick={() => setIsReviewFormOpen(true)} 
+                onClick={() => {
+                  setSelectedReview(null);
+                  setIsReviewFormOpen(true);
+                }} 
                 className="bg-roast-500 hover:bg-roast-600"
               >
                 Write a Review
@@ -154,10 +182,14 @@ const ProfileTabs = () => {
         
         <ReviewForm 
           isOpen={isReviewFormOpen} 
-          onClose={() => {
-            setIsReviewFormOpen(false);
-            fetchUserReviews();
-          }} 
+          onClose={handleCloseReviewForm} 
+          coffeeId={selectedReview?.coffee_id}
+          reviewId={selectedReview?.id}
+          initialData={{
+            rating: selectedReview?.rating || 0,
+            reviewText: selectedReview?.review_text || "",
+            brewingMethod: selectedReview?.brewing_method || ""
+          }}
         />
       </TabsContent>
       

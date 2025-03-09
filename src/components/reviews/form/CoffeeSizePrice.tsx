@@ -28,6 +28,15 @@ const CoffeeSizePrice = ({
   setSizeUnit,
   sizeUnits
 }: CoffeeSizePriceProps) => {
+  // Function to get full unit name
+  const getUnitLabel = (unit: SizeUnit): string => {
+    switch(unit) {
+      case 'g': return 'grams';
+      case 'oz': return 'ounces';
+      default: return unit;
+    }
+  };
+
   return (
     <div className="grid grid-cols-3 gap-4">
       <div className="space-y-2 col-span-1">
@@ -73,7 +82,7 @@ const CoffeeSizePrice = ({
           </SelectTrigger>
           <SelectContent>
             {sizeUnits.map((unit) => (
-              <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+              <SelectItem key={unit} value={unit}>{getUnitLabel(unit)}</SelectItem>
             ))}
           </SelectContent>
         </Select>

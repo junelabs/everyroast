@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,16 +23,22 @@ interface ReviewFormProps {
   isOpen: boolean;
   onClose: () => void;
   coffeeId?: string;
+  reviewId?: string;
+  initialData?: {
+    rating: number;
+    reviewText: string;
+    brewingMethod: string;
+  };
 }
 
-const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
+const ReviewForm = ({ isOpen, onClose, coffeeId, reviewId, initialData }: ReviewFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-  const [brewingMethod, setBrewingMethod] = useState("");
+  const [rating, setRating] = useState(initialData?.rating || 0);
+  const [reviewText, setReviewText] = useState(initialData?.reviewText || "");
+  const [brewingMethod, setBrewingMethod] = useState(initialData?.brewingMethod || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   
@@ -46,6 +52,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   const [flavor, setFlavor] = useState("");
   const [size, setSize] = useState<number>(0);
   const [sizeUnit, setSizeUnit] = useState<SizeUnit>("g");
+  const [isEdit, setIsEdit] = useState(!!reviewId);
 
   const origins: CoffeeOrigin[] = [
     'Ethiopia', 'Colombia', 'Brazil', 'Guatemala', 'Costa Rica', 'Kenya',
@@ -57,6 +64,61 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   const processMethods: ProcessMethod[] = ['Washed', 'Natural', 'Honey', 'Anaerobic'];
   const coffeeTypes: CoffeeType[] = ['Single Origin', 'Blend', 'Espresso'];
   const sizeUnits: SizeUnit[] = ['g', 'oz'];
+
+  // Fetch coffee details if editing an existing review
+  useEffect(() => {
+    if (coffeeId && isEdit) {
+      fetchCoffeeDetails();
+    }
+    
+    // Reset form on open
+    if (!isEdit) {
+      resetForm();
+    }
+  }, [coffeeId, isEdit, isOpen]);
+
+  const fetchCoffeeDetails = async () => {
+    try {
+      const { data: coffeeData, error: coffeeError } = await supabase
+        .from('coffees')
+        .select(`
+          *,
+          roasters(name)
+        `)
+        .eq('id', coffeeId)
+        .single();
+      
+      if (coffeeError) throw coffeeError;
+      
+      if (coffeeData) {
+        setCoffeeName(coffeeData.name || "");
+        setRoaster(coffeeData.roasters?.name || "");
+        setOrigin(coffeeData.origin as CoffeeOrigin || "Ethiopia");
+        setRoastLevel(coffeeData.roast_level as RoastLevel || "Light");
+        setProcessMethod(coffeeData.process_method as ProcessMethod || "Washed");
+        setImageUrl(coffeeData.image_url);
+        setPrice(coffeeData.price || 0);
+        setFlavor(coffeeData.flavor_notes || "");
+        
+        // Try to parse size and type from description
+        if (coffeeData.description) {
+          const match = coffeeData.description.match(/(\w+) coffee, (\d+) (\w+)/);
+          if (match) {
+            setCoffeeType(match[1] as CoffeeType);
+            setSize(parseInt(match[2]));
+            setSizeUnit(match[3] as SizeUnit);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching coffee details:", error);
+      toast({
+        title: "Error",
+        description: "Could not load coffee details.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +141,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
       return;
     }
     
-    if (!coffeeName) {
+    if (!isEdit && !coffeeName) {
       toast({
         title: "Coffee name required",
         description: "Please enter a name for the coffee.",
@@ -88,7 +150,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
       return;
     }
     
-    if (!roaster) {
+    if (!isEdit && !roaster) {
       toast({
         title: "Roaster required",
         description: "Please enter a roaster name.",
@@ -158,22 +220,40 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
         coffeeRecord = newCoffee;
       }
       
-      const { data, error } = await supabase
-        .from('reviews')
-        .insert({
-          coffee_id: coffeeRecord.id,
-          user_id: user.id,
-          rating,
-          review_text: reviewText,
-          brewing_method: brewingMethod || null
-        });
+      const reviewData = {
+        coffee_id: coffeeRecord.id,
+        user_id: user.id,
+        rating,
+        review_text: reviewText,
+        brewing_method: brewingMethod || null
+      };
+
+      if (reviewId) {
+        // Update existing review
+        const { error } = await supabase
+          .from('reviews')
+          .update(reviewData)
+          .eq('id', reviewId);
+          
+        if (error) throw error;
         
-      if (error) throw error;
-      
-      toast({
-        title: "Review submitted",
-        description: "Thank you for sharing your experience!",
-      });
+        toast({
+          title: "Review updated",
+          description: "Your review has been successfully updated!",
+        });
+      } else {
+        // Create new review
+        const { error } = await supabase
+          .from('reviews')
+          .insert(reviewData);
+          
+        if (error) throw error;
+        
+        toast({
+          title: "Review submitted",
+          description: "Thank you for sharing your experience!",
+        });
+      }
       
       resetForm();
       onClose();
@@ -192,9 +272,9 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   };
 
   const resetForm = () => {
-    setRating(0);
-    setReviewText("");
-    setBrewingMethod("");
+    setRating(initialData?.rating || 0);
+    setReviewText(initialData?.reviewText || "");
+    setBrewingMethod(initialData?.brewingMethod || "");
     setCoffeeName("");
     setRoaster("");
     setOrigin("Ethiopia");
@@ -206,6 +286,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
     setSize(0);
     setSizeUnit("g");
     setImageUrl(null);
+    setIsEdit(!!reviewId);
   };
 
   return (
@@ -214,46 +295,58 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Coffee className="h-5 w-5 text-roast-500" />
-            Share Your Coffee Experience
+            {isEdit ? "Edit Your Review" : "Share Your Coffee Experience"}
           </DialogTitle>
           <DialogDescription>
-            Let the community know what you think about this coffee.
+            {isEdit 
+              ? "Update your thoughts about this coffee."
+              : "Let the community know what you think about this coffee."
+            }
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
-          <ImageUpload 
-            imageUrl={imageUrl}
-            setImageUrl={setImageUrl}
-          />
+          {!isEdit && (
+            <ImageUpload 
+              imageUrl={imageUrl}
+              setImageUrl={setImageUrl}
+            />
+          )}
           
-          <CoffeeDetailsSection 
-            coffeeName={coffeeName}
-            setCoffeeName={setCoffeeName}
-            roaster={roaster}
-            setRoaster={setRoaster}
-            origin={origin}
-            setOrigin={setOrigin}
-            coffeeType={coffeeType}
-            setCoffeeType={setCoffeeType}
-            price={price}
-            setPrice={setPrice}
-            size={size}
-            setSize={setSize}
-            sizeUnit={sizeUnit}
-            setSizeUnit={setSizeUnit}
-            roastLevel={roastLevel}
-            setRoastLevel={setRoastLevel}
-            processMethod={processMethod}
-            setProcessMethod={setProcessMethod}
-            flavor={flavor}
-            setFlavor={setFlavor}
-            origins={origins}
-            roastLevels={roastLevels}
-            processMethods={processMethods}
-            coffeeTypes={coffeeTypes}
-            sizeUnits={sizeUnits}
-          />
+          {!isEdit ? (
+            <CoffeeDetailsSection 
+              coffeeName={coffeeName}
+              setCoffeeName={setCoffeeName}
+              roaster={roaster}
+              setRoaster={setRoaster}
+              origin={origin}
+              setOrigin={setOrigin}
+              coffeeType={coffeeType}
+              setCoffeeType={setCoffeeType}
+              price={price}
+              setPrice={setPrice}
+              size={size}
+              setSize={setSize}
+              sizeUnit={sizeUnit}
+              setSizeUnit={setSizeUnit}
+              roastLevel={roastLevel}
+              setRoastLevel={setRoastLevel}
+              processMethod={processMethod}
+              setProcessMethod={setProcessMethod}
+              flavor={flavor}
+              setFlavor={setFlavor}
+              origins={origins}
+              roastLevels={roastLevels}
+              processMethods={processMethods}
+              coffeeTypes={coffeeTypes}
+              sizeUnits={sizeUnits}
+            />
+          ) : (
+            <div className="mb-4">
+              <h3 className="font-medium">{coffeeName}</h3>
+              <p className="text-sm text-gray-500">{roaster}</p>
+            </div>
+          )}
           
           <ReviewSection
             rating={rating}
@@ -278,7 +371,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
               className="bg-roast-500 hover:bg-roast-600"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Submit Review"}
+              {isSubmitting ? "Submitting..." : isEdit ? "Update Review" : "Submit Review"}
             </Button>
           </DialogFooter>
         </form>

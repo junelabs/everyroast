@@ -53,7 +53,6 @@ const ReviewDetails = ({
             <SelectValue placeholder="Select brewing method" />
           </SelectTrigger>
           <SelectContent>
-            {/* Removed the empty value SelectItem causing the error */}
             {brewingMethods.map((method) => (
               <SelectItem key={method} value={method}>{method}</SelectItem>
             ))}
