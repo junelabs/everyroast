@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from './CoffeeDetailModal';
+import ReviewForm from './reviews/ReviewForm';
 
 interface CoffeeCardProps {
   coffee: Coffee;
@@ -11,6 +12,7 @@ interface CoffeeCardProps {
 
 const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
 
   return (
     <>
@@ -82,6 +84,16 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
         coffee={coffee} 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+        onReview={() => {
+          setIsModalOpen(false);
+          setIsReviewFormOpen(true);
+        }}
+      />
+      
+      <ReviewForm 
+        isOpen={isReviewFormOpen}
+        onClose={() => setIsReviewFormOpen(false)}
+        coffeeId={String(coffee.id)}
       />
     </>
   );
