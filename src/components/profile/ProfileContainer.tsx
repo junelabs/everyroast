@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +14,7 @@ const ProfileContainer = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [manualFetchAttempted, setManualFetchAttempted] = useState(false);
   const { toast } = useToast();
   
   console.log("ProfileContainer: Auth loading state:", authLoading);
@@ -28,12 +28,13 @@ const ProfileContainer = () => {
       setBio(profile.bio || "");
       setProfileImage(profile.avatar_url || null);
       setProfileLoading(false);
-    } else if (!authLoading && user) {
+    } else if (!authLoading && user && !manualFetchAttempted) {
       fetchProfileManually(user.id);
+      setManualFetchAttempted(true);
     } else if (!authLoading && !user) {
       setProfileLoading(false);
     }
-  }, [profile, authLoading, user]);
+  }, [profile, authLoading, user, manualFetchAttempted]);
 
   const fetchProfileManually = async (userId: string) => {
     try {
@@ -82,14 +83,14 @@ const ProfileContainer = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (profileLoading || authLoading) {
+      if (profileLoading) {
         console.log("ProfileContainer: Forcing exit from loading state after timeout");
         setProfileLoading(false);
       }
-    }, 5000); // 5 second fallback timeout
+    }, 3000); // Reduce timeout to 3 seconds for faster fallback
 
     return () => clearTimeout(timeoutId);
-  }, [profileLoading, authLoading]);
+  }, [profileLoading]);
 
   const handleSaveProfile = async () => {
     try {
@@ -165,7 +166,7 @@ const ProfileContainer = () => {
     }
   };
 
-  const isPageLoading = authLoading || profileLoading;
+  const isPageLoading = authLoading && profileLoading;
 
   return (
     <div className="min-h-screen bg-gray-50">

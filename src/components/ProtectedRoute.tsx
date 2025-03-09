@@ -29,9 +29,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
 
-  // Don't make any decisions until auth is initialized
-  if (!authInitialized || isLoading) {
-    const longLoadingMessage = timeElapsed > 10 
+  // Add a timeout fallback to prevent infinite loading
+  if ((isLoading || !authInitialized) && timeElapsed < 15) {
+    const longLoadingMessage = timeElapsed > 5 
       ? "Loading is taking longer than expected. You may need to refresh the page."
       : "Loading your profile...";
 
@@ -51,7 +51,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  // Now that auth is initialized, check if user exists
+  // Force continue after timeout even if auth isn't fully initialized
+  if (timeElapsed >= 15 && user) {
+    console.log("ProtectedRoute: Forcing continuation after timeout with existing user");
+    return <>{children}</>;
+  }
+
+  // Now check if user exists
   if (!user) {
     console.log("User not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
