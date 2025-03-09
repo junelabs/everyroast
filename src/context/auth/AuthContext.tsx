@@ -1,9 +1,10 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { AuthContextProps } from './types';
+import { AuthContextProps, Profile } from './types';
 import { fetchProfile, signUpUser, signInUser, signOutUser, updateUserProfile } from './authUtils';
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -11,7 +12,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
   const navigate = useNavigate();
@@ -47,6 +48,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!isMounted) return;
         
         console.log('[AuthProvider] Auth state changed:', event, session ? 'Session exists' : 'No session');
+        
+        if (event === 'SIGNED_OUT') {
+          console.log('[AuthProvider] User signed out, clearing state');
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setIsLoading(false);
+          setAuthInitialized(true);
+          navigate('/login');
+          return;
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -58,10 +71,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
           setIsLoading(false);
           setAuthInitialized(true);
-        }
-
-        if (event === 'SIGNED_OUT') {
-          navigate('/login');
         }
       }
     );
@@ -135,28 +144,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      console.log('[AuthProvider] Signing out user');
       setIsLoading(true);
       await signOutUser();
       
-      // Clear the local state
-      setUser(null);
-      setProfile(null);
-      setSession(null);
+      // Note: We don't need to clear state or navigate here as the onAuthStateChange 
+      // event will handle that when it receives the SIGNED_OUT event
       
-      // No need to navigate here as we'll do it in the component
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out from your account.",
+      });
     } catch (error: any) {
-      console.error("Error during sign out:", error);
+      console.error("[AuthProvider] Error during sign out:", error);
       toast({
         title: "Error",
         description: error.message || "An error occurred during sign out.",
         variant: "destructive"
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const updateProfile = async (updates: any) => {
+  const updateProfile = async (updates: Partial<Profile>) => {
     try {
       setIsLoading(true);
       if (!user) throw new Error('User not authenticated');

@@ -1,8 +1,10 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { Profile } from './types';
 
-export const fetchProfile = async (userId: string) => {
+export const fetchProfile = async (userId: string): Promise<Profile | null> => {
   try {
+    console.log('[authUtils] Fetching profile for user:', userId);
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -10,13 +12,13 @@ export const fetchProfile = async (userId: string) => {
       .single();
 
     if (error) {
-      console.error('Error fetching profile:', error);
+      console.error('[authUtils] Error fetching profile:', error);
       return null;
     }
     
-    return data;
+    return data as Profile;
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.error('[authUtils] Error fetching profile:', error);
     return null;
   }
 };
@@ -49,11 +51,16 @@ export const signInUser = async (email: string, password: string) => {
 };
 
 export const signOutUser = async () => {
+  console.log('[authUtils] Signing out user');
   const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  if (error) {
+    console.error('[authUtils] Error during sign out:', error);
+    throw error;
+  }
+  console.log('[authUtils] Sign out successful');
 };
 
-export const updateUserProfile = async (userId: string, updates: any) => {
+export const updateUserProfile = async (userId: string, updates: Partial<Profile>) => {
   const { error } = await supabase
     .from('profiles')
     .update(updates)

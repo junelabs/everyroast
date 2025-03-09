@@ -21,6 +21,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return () => clearInterval(timer);
   }, [isLoading]);
 
+  console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
+
   const longLoadingMessage = timeElapsed > 10 
     ? "Loading is taking longer than expected. You may need to refresh the page."
     : "Loading your profile...";

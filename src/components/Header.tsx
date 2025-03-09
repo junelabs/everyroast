@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Coffee, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const Header = () => {
@@ -13,12 +13,9 @@ const Header = () => {
 
   const handleSignOut = async () => {
     try {
+      console.log("Header: Signing out");
       await signOut();
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out from your account.",
-      });
-      navigate('/');
+      // Navigation will be handled by the auth state change listener
     } catch (error) {
       console.error("Error signing out:", error);
       toast({

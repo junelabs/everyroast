@@ -7,17 +7,13 @@ import { useToast } from "@/components/ui/use-toast";
 
 const ProfileHeader = () => {
   const { signOut } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
     try {
+      console.log("ProfileHeader: Signing out");
       await signOut();
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out from your account.",
-      });
-      navigate('/');
+      // Navigation is handled by auth state change listener
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
