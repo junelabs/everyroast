@@ -27,6 +27,7 @@ const ProfileTabs = () => {
       setTimeout(() => {
         setSelectedReview(null);
         setIsAddingNew(false);
+        fetchUserReviews();
       }, 200);
     }
   }, [isReviewFormOpen]);
@@ -34,6 +35,7 @@ const ProfileTabs = () => {
   const fetchUserReviews = async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching reviews for user ID:", user?.id);
       const { data, error } = await supabase
         .from('reviews')
         .select(`
@@ -48,6 +50,11 @@ const ProfileTabs = () => {
             name,
             image_url,
             roaster_id,
+            origin,
+            roast_level,
+            process_method,
+            price,
+            flavor_notes,
             roasters (
               name
             )
@@ -59,6 +66,7 @@ const ProfileTabs = () => {
       if (error) {
         console.error("Error fetching reviews:", error);
       } else {
+        console.log("Reviews fetched successfully:", data);
         setReviews(data || []);
       }
     } catch (error) {

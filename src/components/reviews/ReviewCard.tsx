@@ -24,6 +24,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     });
   };
 
+  console.log("Rendering review card with data:", review);
+
   // Convert review to coffee format for modal
   const coffee = {
     id: review.coffee_id,
@@ -101,7 +103,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
                 </div>
               )}
               
-              {review.coffees?.price && (
+              {review.coffees?.price !== null && review.coffees?.price !== undefined && (
                 <div className="flex items-center justify-end">
                   <span className="text-base mr-1">💰</span>
                   <div className="text-xs">${Number(review.coffees.price).toFixed(2)}</div>
@@ -118,7 +120,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         onClose={() => setIsModalOpen(false)} 
         onReview={() => {
           setIsModalOpen(false);
-          setIsReviewFormOpen(true);
+          onEdit(review);
         }}
       />
       

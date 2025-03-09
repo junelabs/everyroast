@@ -179,7 +179,7 @@ export const useReviewForm = ({
     try {
       let coffeeRecord;
       
-      if (coffeeId) {
+      if (coffeeId && isEdit) {
         // Update existing coffee record if we're editing
         const { data, error } = await supabase
           .from('coffees')
@@ -190,24 +190,26 @@ export const useReviewForm = ({
         if (error) throw error;
         coffeeRecord = data;
         
+        console.log("Updating existing coffee:", coffeeRecord);
+        
         // Update coffee details if we're editing
-        if (isEdit) {
-          const { error: updateError } = await supabase
-            .from('coffees')
-            .update({
-              origin: origin,
-              roast_level: roastLevel,
-              process_method: processMethod,
-              price: price,
-              flavor_notes: flavor,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', coffeeId);
+        const { error: updateError } = await supabase
+          .from('coffees')
+          .update({
+            origin: origin,
+            roast_level: roastLevel,
+            process_method: processMethod,
+            price: price,
+            flavor_notes: flavor,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', coffeeId);
             
-          if (updateError) throw updateError;
-        }
-      } else {
+        if (updateError) throw updateError;
+      } else if (!isEdit) {
         // Create a new coffee record
+        console.log("Creating new coffee with roaster:", roaster);
+        
         const { data: roasterData, error: roasterError } = await supabase
           .from('roasters')
           .select('id')
@@ -217,6 +219,7 @@ export const useReviewForm = ({
         let roasterId;
         
         if (!roasterData) {
+          console.log("Roaster not found, creating new roaster:", roaster);
           const { data: newRoaster, error: newRoasterError } = await supabase
             .from('roasters')
             .insert({
@@ -228,8 +231,10 @@ export const useReviewForm = ({
           
           if (newRoasterError) throw newRoasterError;
           roasterId = newRoaster.id;
+          console.log("Created new roaster with ID:", roasterId);
         } else {
           roasterId = roasterData.id;
+          console.log("Found existing roaster with ID:", roasterId);
         }
         
         const coffeeData = {
@@ -241,7 +246,7 @@ export const useReviewForm = ({
           price: price,
           flavor_notes: flavor,
           created_by: user.id,
-          image_url: imageUrl,
+          image_url: imageUrl || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
           description: `${coffeeType} coffee, ${size} ${sizeUnit}`
         };
         
@@ -255,6 +260,17 @@ export const useReviewForm = ({
         
         if (newCoffeeError) throw newCoffeeError;
         coffeeRecord = newCoffee;
+        console.log("Created new coffee with ID:", coffeeRecord.id);
+      } else {
+        // Just get the existing coffee record for the review
+        const { data, error } = await supabase
+          .from('coffees')
+          .select('*')
+          .eq('id', coffeeId)
+          .single();
+        
+        if (error) throw error;
+        coffeeRecord = data;
       }
       
       // Now handle the review data
@@ -297,6 +313,7 @@ export const useReviewForm = ({
       
       resetForm();
       onClose();
+      // Refresh the profile page to show the new review
       navigate("/profile");
       
     } catch (error) {
