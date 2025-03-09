@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -138,7 +139,7 @@ const ProfileTabs = () => {
             <p>Loading reviews...</p>
           </div>
         ) : reviews.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {reviews.map((review) => (
               <ReviewCard 
                 key={review.id} 
