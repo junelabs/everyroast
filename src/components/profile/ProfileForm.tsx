@@ -14,6 +14,7 @@ interface ProfileFormProps {
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   handleSaveProfile: () => void;
+  isLoading?: boolean; // Added optional isLoading prop
 }
 
 const ProfileForm = ({
@@ -27,7 +28,8 @@ const ProfileForm = ({
   setBio,
   isEditing,
   setIsEditing,
-  handleSaveProfile
+  handleSaveProfile,
+  isLoading = false // Added with default value
 }: ProfileFormProps) => {
   return (
     <div className="flex-1">
@@ -75,10 +77,19 @@ const ProfileForm = ({
             />
           </div>
           <div className="space-x-2 pt-2">
-            <Button onClick={handleSaveProfile} className="bg-roast-500 hover:bg-roast-600">
-              Save Profile
+            <Button 
+              onClick={handleSaveProfile} 
+              className="bg-roast-500 hover:bg-roast-600"
+              disabled={isLoading} // Disable button when loading
+            >
+              {isLoading ? (
+                <span className="flex items-center">
+                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
+                  Saving...
+                </span>
+              ) : "Save Profile"}
             </Button>
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isLoading}>
               Cancel
             </Button>
           </div>
