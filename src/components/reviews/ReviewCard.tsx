@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
+import { CoffeeOrigin, RoastLevel, ProcessMethod } from '@/types/coffee';
 
 interface ReviewCardProps {
   review: any;
@@ -24,16 +25,17 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
   };
 
   // Convert review to coffee format for modal
+  // Use type assertion to ensure origin is treated as a valid CoffeeOrigin
   const coffee = {
     id: review.coffee_id,
     name: review.coffees?.name || "Unnamed Coffee",
-    origin: "Unknown Origin", // This might not be in review data
+    origin: (review.coffees?.origin || "Ethiopia") as CoffeeOrigin, // Default to Ethiopia if origin is missing
     roaster: review.coffees?.roasters?.name || "Unknown Roaster",
     image: review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
     rating: review.rating,
     price: 0, // This might not be in review data
-    roastLevel: "Medium", // This might not be in review data
-    processMethod: "Washed", // This might not be in review data
+    roastLevel: (review.coffees?.roast_level || "Medium") as RoastLevel, // Type assertion for RoastLevel
+    processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod, // Type assertion for ProcessMethod
     flavor: review.review_text || "No flavor notes provided",
   };
 
