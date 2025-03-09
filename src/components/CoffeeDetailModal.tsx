@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Calendar } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -50,7 +50,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
                 <span className="font-medium">{coffee.rating}</span>
               </div>
-              <span className="ml-2 text-sm text-gray-500">#{coffee.id}</span>
             </div>
             
             <h2 className="text-2xl font-bold text-gray-900 mb-2">{coffee.name}</h2>
