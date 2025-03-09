@@ -74,7 +74,7 @@ const CoffeeBasicDetails = ({
             <SelectTrigger>
               <SelectValue placeholder="Select origin" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[300px]">
               {origins.map((o) => (
                 <SelectItem key={o} value={o}>{o}</SelectItem>
               ))}

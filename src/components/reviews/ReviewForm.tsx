@@ -17,6 +17,7 @@ import {
 import { CoffeeOrigin, RoastLevel, ProcessMethod, CoffeeType, SizeUnit } from "@/types/coffee";
 import CoffeeDetailsSection from "./form/CoffeeDetailsSection";
 import ReviewSection from "./form/ReviewSection";
+import ImageUpload from "./form/ImageUpload";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   const [reviewText, setReviewText] = useState("");
   const [brewingMethod, setBrewingMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   
   const [coffeeName, setCoffeeName] = useState("");
   const [roaster, setRoaster] = useState("");
@@ -142,6 +144,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
           price: price,
           flavor_notes: flavor,
           created_by: user.id,
+          image_url: imageUrl,
           description: `${coffeeType} coffee, ${size} ${sizeUnit}`
         };
         
@@ -202,6 +205,7 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
     setFlavor("");
     setSize(0);
     setSizeUnit("g");
+    setImageUrl(null);
   };
 
   return (
@@ -217,7 +221,12 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
+          <ImageUpload 
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+          />
+          
           <CoffeeDetailsSection 
             coffeeName={coffeeName}
             setCoffeeName={setCoffeeName}
