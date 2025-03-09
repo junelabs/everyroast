@@ -1,11 +1,32 @@
 
 import { Coffee, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const ProfileHeader = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out from your account.",
+      });
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Error signing out",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between bg-white border-b">
@@ -21,7 +42,7 @@ const ProfileHeader = () => {
           <Settings className="h-5 w-5 mr-2" />
           Settings
         </Button>
-        <Button variant="outline" onClick={signOut}>
+        <Button variant="outline" onClick={handleSignOut}>
           Sign Out
         </Button>
       </div>
