@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,57 +14,30 @@ const ProfileContainer = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [manualFetchAttempted, setManualFetchAttempted] = useState(false);
   const { toast } = useToast();
   
   console.log("ProfileContainer: Auth loading state:", authLoading);
-  console.log("ProfileContainer: User state:", user);
-  console.log("ProfileContainer: Profile state:", profile);
+  console.log("ProfileContainer: User state:", user?.id);
+  console.log("ProfileContainer: Profile state:", profile?.id);
 
   useEffect(() => {
     if (profile) {
+      console.log("ProfileContainer: Setting form data from profile", profile.id);
       setName(profile.full_name || "");
       setUsername(profile.username || "");
       setBio(profile.bio || "");
       setProfileImage(profile.avatar_url || null);
       setProfileLoading(false);
-    } else if (!authLoading && user && !manualFetchAttempted) {
-      fetchProfileManually(user.id);
-      setManualFetchAttempted(true);
+    } else if (!authLoading && user) {
+      setProfileLoading(true);
     } else if (!authLoading && !user) {
       setProfileLoading(false);
     }
-  }, [profile, authLoading, user, manualFetchAttempted]);
-
-  const fetchProfileManually = async (userId: string) => {
-    try {
-      console.log("ProfileContainer: Manually fetching profile for user:", userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error("ProfileContainer: Error fetching profile manually:", error);
-        setProfileLoading(false);
-        return;
-      }
-      
-      if (data) {
-        setName(data.full_name || "");
-        setUsername(data.username || "");
-        setBio(data.bio || "");
-        setProfileImage(data.avatar_url || null);
-      }
-    } catch (error) {
-      console.error("ProfileContainer: Error in manual profile fetch:", error);
-    } finally {
-      setProfileLoading(false);
-    }
-  };
+  }, [profile, authLoading, user]);
 
   useEffect(() => {
+    if (!user) return;
+    
     const getSession = async () => {
       try {
         const { data, error } = await supabase.auth.getSession();
@@ -80,7 +52,7 @@ const ProfileContainer = () => {
     };
     
     getSession();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -88,7 +60,7 @@ const ProfileContainer = () => {
         console.log("ProfileContainer: Forcing exit from loading state after timeout");
         setProfileLoading(false);
       }
-    }, 3000); // Reduce timeout to 3 seconds for faster fallback
+    }, 5000); // 5-second timeout
 
     return () => clearTimeout(timeoutId);
   }, [profileLoading]);
@@ -167,7 +139,7 @@ const ProfileContainer = () => {
     }
   };
 
-  const isPageLoading = authLoading && profileLoading;
+  const isPageLoading = authLoading || (profileLoading && !!user);
 
   return (
     <div className="min-h-screen bg-gray-50">

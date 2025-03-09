@@ -1,23 +1,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signIn, user, isLoading } = useAuth();
+  const { signIn, user, isLoading, authInitialized } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await signIn(email, password);
   };
 
-  // Redirect if already logged in
-  if (user && !isLoading) {
+  // Effect to handle redirection after successful login
+  useEffect(() => {
+    if (user && !isLoading && authInitialized) {
+      navigate('/profile', { replace: true });
+    }
+  }, [user, isLoading, authInitialized, navigate]);
+
+  // Immediate redirect if already logged in
+  if (user && !isLoading && authInitialized) {
     return <Navigate to="/profile" replace />;
   }
 

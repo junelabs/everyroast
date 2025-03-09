@@ -14,13 +14,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
+  const [profileFetchAttempted, setProfileFetchAttempted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   console.log('[AuthProvider] Initializing');
 
+  // Reset profile fetch flag when user changes
+  useEffect(() => {
+    if (user) {
+      console.log('[AuthProvider] User changed, resetting profile fetch flag');
+      setProfileFetchAttempted(false);
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     let isMounted = true;
+    let authStateSubscription: { data: { subscription: { unsubscribe: () => void } } } | null = null;
+    
     console.log('[AuthProvider] Setting up auth state listener');
     
     const initializeAuth = async () => {
@@ -49,6 +60,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsLoading(false);
           setAuthInitialized(true);
         }
+
+        // Listen for auth changes
+        authStateSubscription = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            if (!isMounted) return;
+            
+            console.log('[AuthProvider] Auth state changed:', event, session ? 'Session exists' : 'No session');
+            
+            if (event === 'SIGNED_OUT') {
+              console.log('[AuthProvider] User signed out, clearing state');
+              setSession(null);
+              setUser(null);
+              setProfile(null);
+              setProfileFetchAttempted(false);
+              setIsLoading(false);
+              setAuthInitialized(true);
+              navigate('/login');
+              return;
+            }
+            
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+              console.log('[AuthProvider] User signed in or token refreshed:', event);
+              setSession(session);
+              setUser(session?.user ?? null);
+              
+              if (session?.user) {
+                console.log('[AuthProvider] User exists after state change, fetching profile');
+                setProfileFetchAttempted(false);
+                await fetchUserProfile(session.user.id);
+              } else {
+                console.log('[AuthProvider] No user after state change, clearing profile');
+                setProfile(null);
+                setIsLoading(false);
+                setAuthInitialized(true);
+              }
+            }
+          }
+        );
+
       } catch (error) {
         console.error('[AuthProvider] Error initializing auth:', error);
         setIsLoading(false);
@@ -58,46 +108,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     initializeAuth();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!isMounted) return;
-        
-        console.log('[AuthProvider] Auth state changed:', event, session ? 'Session exists' : 'No session');
-        
-        if (event === 'SIGNED_OUT') {
-          console.log('[AuthProvider] User signed out, clearing state');
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          setIsLoading(false);
-          setAuthInitialized(true);
-          navigate('/login');
-          return;
-        }
-        
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          console.log('[AuthProvider] User signed in or token refreshed:', event);
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (session?.user) {
-            console.log('[AuthProvider] User exists after state change, fetching profile');
-            await fetchUserProfile(session.user.id);
-          } else {
-            console.log('[AuthProvider] No user after state change, clearing profile');
-            setProfile(null);
-            setIsLoading(false);
-            setAuthInitialized(true);
-          }
-        }
+    // Force auth state to be initialized after timeout
+    const timeoutId = setTimeout(() => {
+      if (isLoading && !authInitialized) {
+        console.log('[AuthProvider] Forcing auth state initialization after timeout');
+        setIsLoading(false);
+        setAuthInitialized(true);
       }
-    );
+    }, 5000); // 5-second timeout
 
     return () => {
       console.log('[AuthProvider] Cleaning up auth state listener');
       isMounted = false;
-      subscription.unsubscribe();
+      if (authStateSubscription) {
+        authStateSubscription.data.subscription.unsubscribe();
+      }
+      clearTimeout(timeoutId);
     };
   }, [navigate]);
 
@@ -105,6 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('[AuthProvider] Starting profile fetch for user:', userId);
       setIsLoading(true);
+      setProfileFetchAttempted(true);
       const data = await fetchProfile(userId);
       console.log('[AuthProvider] Profile fetch result:', data);
       setProfile(data);
@@ -205,10 +232,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: error.message || "An error occurred while updating your profile.",
         variant: "destructive"
       });
-    } finally {
       setIsLoading(false);
     }
   };
+
+  // If we have a user but haven't attempted to fetch their profile yet, do it
+  useEffect(() => {
+    if (user && !profile && !isLoading && !profileFetchAttempted) {
+      console.log('[AuthProvider] User exists but no profile and no ongoing fetch, fetching profile');
+      fetchUserProfile(user.id);
+    }
+  }, [user, profile, isLoading, profileFetchAttempted]);
 
   const value = {
     session,
@@ -227,7 +261,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     hasUser: !!user,
     hasProfile: !!profile,
     isLoading,
-    authInitialized
+    authInitialized,
+    profileFetchAttempted
   });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
