@@ -33,7 +33,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     roaster: review.coffees?.roasters?.name || "Unknown Roaster",
     image: review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
     rating: review.rating,
-    price: 0, // This might not be in review data
+    price: review.coffees?.price || 0, // This might not be in review data
     roastLevel: (review.coffees?.roast_level || "Medium") as RoastLevel, // Type assertion for RoastLevel
     processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod, // Type assertion for ProcessMethod
     flavor: review.review_text || "No flavor notes provided",
@@ -55,16 +55,20 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           {/* Consistent overlay over the whole card */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
           
-          {/* Top indicators */}
-          <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
-            <span className="text-lg">{review.id}</span>
-          </div>
+          {/* Top indicators - ID (optional, could be removed) */}
+          {review.id && (
+            <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
+              <span className="text-lg">{review.id}</span>
+            </div>
+          )}
           
-          {/* Rating */}
-          <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-lg font-medium">{review.rating}</span>
-          </div>
+          {/* Rating - top right as requested */}
+          {review.rating && (
+            <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-lg font-medium">{review.rating}</span>
+            </div>
+          )}
           
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
@@ -77,33 +81,37 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
             <div className="flex justify-between mb-2">
               <div className="flex items-center text-gray-100">
                 <span className="mr-1">☕️</span>
-                <span>{review.coffees?.roasters?.name || "Unknown Roaster"}</span>
+                <span>{review.coffees?.roasters?.name || ""}</span>
               </div>
-              <div className="flex items-center text-gray-200">
-                <span className="mr-1">📍</span>
-                <span>Created: {formatDate(review.created_at)}</span>
-              </div>
+              {review.coffees?.origin && (
+                <div className="flex items-center text-gray-200">
+                  <span className="mr-1">📍</span>
+                  <span>{review.coffees.origin}</span>
+                </div>
+              )}
             </div>
             
             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
-              {review.brewing_method && (
-                <div className="flex items-center col-span-2">
-                  <span className="text-lg mr-1">⚗️</span>
-                  <div className="text-sm truncate">{review.brewing_method}</div>
+              {review.coffees?.roast_level && (
+                <div className="flex items-center">
+                  <span className="text-lg mr-1">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
+                  <div className="text-sm">{review.coffees.roast_level}</div>
                 </div>
               )}
               
-              <div className="flex items-center justify-end col-span-1">
-                <div 
-                  className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white text-xs cursor-pointer hover:bg-white/30"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(review);
-                  }}
-                >
-                  Edit
+              {review.coffees?.process_method && (
+                <div className="flex items-center">
+                  <span className="text-lg mr-1">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
+                  <div className="text-sm">{review.coffees.process_method}</div>
                 </div>
-              </div>
+              )}
+              
+              {review.coffees?.price && (
+                <div className="flex items-center justify-end">
+                  <span className="text-lg mr-1">💰</span>
+                  <div className="text-sm">${Number(review.coffees.price).toFixed(2)}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
