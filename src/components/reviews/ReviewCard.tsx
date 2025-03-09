@@ -20,8 +20,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden h-full border border-gray-100 flex flex-col">
-      {/* Image section with overlay */}
-      <div className="relative h-36">
+      {/* Image section with overlay and review text */}
+      <div className="relative h-48">
         <img 
           src={review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
           alt={review.coffees?.name || "Coffee"} 
@@ -41,39 +41,39 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           <h3 className="font-bold truncate text-sm">
             {review.coffees?.name || "Unnamed Coffee"}
           </h3>
-          <p className="text-xs truncate">
+          <p className="text-xs truncate mb-1">
             {review.coffees?.roasters?.name || "Unknown Roaster"}
           </p>
+          
+          {/* Brewing method on image */}
+          {review.brewing_method && (
+            <div className="text-xs mb-1 text-white/90">
+              <span className="font-medium">Brewed with:</span> {review.brewing_method}
+            </div>
+          )}
+          
+          {/* Review text on image */}
+          {review.review_text ? (
+            <p className="text-white/80 text-xs line-clamp-3 mb-1">{review.review_text}</p>
+          ) : (
+            <p className="text-white/70 italic text-xs mb-1">No review text provided</p>
+          )}
         </div>
       </div>
       
-      {/* Review content */}
-      <div className="p-2 flex-grow flex flex-col">
-        {review.brewing_method && (
-          <div className="text-xs mb-1">
-            <span className="font-medium text-gray-700">Brewed with:</span> {review.brewing_method}
-          </div>
-        )}
-        
-        {review.review_text ? (
-          <p className="text-gray-700 text-xs line-clamp-3 mb-2 flex-grow">{review.review_text}</p>
-        ) : (
-          <p className="text-gray-500 italic text-xs mb-2 flex-grow">No review text provided</p>
-        )}
-        
-        <div className="flex justify-between items-center mt-auto pt-1 border-t border-gray-100">
-          <div className="text-xs text-gray-500">
-            {formatDate(review.created_at)}
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="p-0.5 h-6"
-            onClick={() => onEdit(review)}
-          >
-            <Edit className="h-3.5 w-3.5 text-gray-500" />
-          </Button>
+      {/* Footer with date and edit button */}
+      <div className="px-2 py-1.5 flex justify-between items-center">
+        <div className="text-xs text-gray-500">
+          {formatDate(review.created_at)}
         </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="p-0.5 h-6"
+          onClick={() => onEdit(review)}
+        >
+          <Edit className="h-3.5 w-3.5 text-gray-500" />
+        </Button>
       </div>
     </div>
   );
