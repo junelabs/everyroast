@@ -1,12 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Star, Coffee } from "lucide-react";
+import { Coffee } from "lucide-react";
 import { 
   Dialog,
   DialogContent,
@@ -16,13 +15,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CoffeeOrigin, RoastLevel, ProcessMethod, CoffeeType, SizeUnit } from "@/types/coffee";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import CoffeeDetailsSection from "./form/CoffeeDetailsSection";
+import ReviewSection from "./form/ReviewSection";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -36,7 +30,6 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
   const navigate = useNavigate();
   
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [brewingMethod, setBrewingMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -179,21 +172,8 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
         description: "Thank you for sharing your experience!",
       });
       
-      setRating(0);
-      setReviewText("");
-      setBrewingMethod("");
-      setCoffeeName("");
-      setRoaster("");
-      setOrigin("Ethiopia");
-      setRoastLevel("Light");
-      setProcessMethod("Washed");
-      setCoffeeType("Single Origin");
-      setPrice(0);
-      setFlavor("");
-      setSize(0);
-      setSizeUnit("g");
+      resetForm();
       onClose();
-      
       navigate("/profile");
       
     } catch (error) {
@@ -206,6 +186,22 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setRating(0);
+    setReviewText("");
+    setBrewingMethod("");
+    setCoffeeName("");
+    setRoaster("");
+    setOrigin("Ethiopia");
+    setRoastLevel("Light");
+    setProcessMethod("Washed");
+    setCoffeeType("Single Origin");
+    setPrice(0);
+    setFlavor("");
+    setSize(0);
+    setSizeUnit("g");
   };
 
   return (
@@ -222,237 +218,42 @@ const ReviewForm = ({ isOpen, onClose, coffeeId }: ReviewFormProps) => {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
-          <div className="space-y-4 border-b pb-4">
-            <h3 className="font-medium">Coffee Details</h3>
-            
-            <div className="space-y-2">
-              <label htmlFor="coffeeName" className="block text-sm font-medium">
-                Coffee Name *
-              </label>
-              <Input
-                id="coffeeName"
-                placeholder="e.g., Ethiopian Yirgacheffe"
-                value={coffeeName}
-                onChange={(e) => setCoffeeName(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="roaster" className="block text-sm font-medium">
-                Roaster *
-              </label>
-              <Input
-                id="roaster"
-                placeholder="e.g., Stumptown Coffee"
-                value={roaster}
-                onChange={(e) => setRoaster(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="origin" className="block text-sm font-medium">
-                  Origin
-                </label>
-                <Select 
-                  value={origin} 
-                  onValueChange={(value: CoffeeOrigin) => setOrigin(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select origin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {origins.map((o) => (
-                      <SelectItem key={o} value={o}>{o}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="coffeeType" className="block text-sm font-medium">
-                  Type
-                </label>
-                <Select 
-                  value={coffeeType} 
-                  onValueChange={(value: CoffeeType) => setCoffeeType(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select coffee type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {coffeeTypes.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2 col-span-1">
-                <label htmlFor="price" className="block text-sm font-medium">
-                  Price (USD)
-                </label>
-                <Input
-                  id="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={price || ''}
-                  onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
-                />
-              </div>
-              
-              <div className="space-y-2 col-span-1">
-                <label htmlFor="size" className="block text-sm font-medium">
-                  Size
-                </label>
-                <Input
-                  id="size"
-                  type="number"
-                  min="0"
-                  step="1"
-                  placeholder="0"
-                  value={size || ''}
-                  onChange={(e) => setSize(parseInt(e.target.value) || 0)}
-                />
-              </div>
-              
-              <div className="space-y-2 col-span-1">
-                <label htmlFor="sizeUnit" className="block text-sm font-medium">
-                  Unit
-                </label>
-                <Select 
-                  value={sizeUnit} 
-                  onValueChange={(value: SizeUnit) => setSizeUnit(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Unit" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sizeUnits.map((unit) => (
-                      <SelectItem key={unit} value={unit}>{unit}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="roastLevel" className="block text-sm font-medium">
-                  Roast Level
-                </label>
-                <Select 
-                  value={roastLevel} 
-                  onValueChange={(value: RoastLevel) => setRoastLevel(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select roast level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {roastLevels.map((level) => (
-                      <SelectItem key={level} value={level}>{level}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="processMethod" className="block text-sm font-medium">
-                  Process Method
-                </label>
-                <Select 
-                  value={processMethod} 
-                  onValueChange={(value: ProcessMethod) => setProcessMethod(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select process method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {processMethods.map((method) => (
-                      <SelectItem key={method} value={method}>{method}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="flavor" className="block text-sm font-medium">
-                Flavor Notes
-              </label>
-              <Input
-                id="flavor"
-                placeholder="e.g., Floral, Citrus, Chocolate"
-                value={flavor}
-                onChange={(e) => setFlavor(e.target.value)}
-              />
-            </div>
-          </div>
+          <CoffeeDetailsSection 
+            coffeeName={coffeeName}
+            setCoffeeName={setCoffeeName}
+            roaster={roaster}
+            setRoaster={setRoaster}
+            origin={origin}
+            setOrigin={setOrigin}
+            coffeeType={coffeeType}
+            setCoffeeType={setCoffeeType}
+            price={price}
+            setPrice={setPrice}
+            size={size}
+            setSize={setSize}
+            sizeUnit={sizeUnit}
+            setSizeUnit={setSizeUnit}
+            roastLevel={roastLevel}
+            setRoastLevel={setRoastLevel}
+            processMethod={processMethod}
+            setProcessMethod={setProcessMethod}
+            flavor={flavor}
+            setFlavor={setFlavor}
+            origins={origins}
+            roastLevels={roastLevels}
+            processMethods={processMethods}
+            coffeeTypes={coffeeTypes}
+            sizeUnits={sizeUnits}
+          />
           
-          <div className="space-y-4">
-            <h3 className="font-medium">Your Review</h3>
-            
-            <div className="space-y-2">
-              <label htmlFor="rating" className="block text-sm font-medium">
-                Rating *
-              </label>
-              <div className="flex items-center space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    className="focus:outline-none"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                  >
-                    <Star 
-                      className={`h-6 w-6 ${
-                        (hoverRating || rating) >= star 
-                          ? "text-yellow-400 fill-yellow-400" 
-                          : "text-gray-300"
-                      }`} 
-                    />
-                  </button>
-                ))}
-                <span className="ml-2 text-sm text-gray-500">
-                  {rating > 0 ? `${rating} star${rating !== 1 ? 's' : ''}` : 'Select a rating'}
-                </span>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="brewingMethod" className="block text-sm font-medium">
-                Brewing Method (optional)
-              </label>
-              <Input
-                id="brewingMethod"
-                placeholder="e.g., Pour Over, French Press, Espresso"
-                value={brewingMethod}
-                onChange={(e) => setBrewingMethod(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="reviewText" className="block text-sm font-medium">
-                Your Review
-              </label>
-              <textarea
-                id="reviewText"
-                rows={4}
-                placeholder="Share your thoughts about this coffee..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-roast-500"
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-              />
-            </div>
-          </div>
+          <ReviewSection
+            rating={rating}
+            setRating={setRating}
+            brewingMethod={brewingMethod}
+            setBrewingMethod={setBrewingMethod}
+            reviewText={reviewText}
+            setReviewText={setReviewText}
+          />
           
           <DialogFooter>
             <Button
