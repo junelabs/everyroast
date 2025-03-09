@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X, Star, Calendar } from 'lucide-react';
+import { Star, Calendar } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -93,8 +93,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 )}
                 
                 {coffee.reviewDate && (
-                  <div className="flex items-center">
-                    <Calendar className="h-3 w-3 mr-1" />
+                  <div>
                     <span>Reviewed on {formatDate(coffee.reviewDate)}</span>
                   </div>
                 )}

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Star, Calendar } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
@@ -68,9 +68,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           
           {/* Date - top left */}
           {review.created_at && (
-            <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs">
-              <Calendar className="h-3 w-3" />
-              <span>{formatDate(review.created_at)}</span>
+            <div className="absolute top-4 left-4 z-10 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs">
+              {formatDate(review.created_at)}
             </div>
           )}
           
