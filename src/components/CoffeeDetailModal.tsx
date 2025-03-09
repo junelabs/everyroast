@@ -2,7 +2,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
-import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
+        <DialogTitle className="sr-only">Coffee Details</DialogTitle>
         <div className="grid md:grid-cols-2">
           {/* Coffee Image Section */}
           <div className="relative h-64 md:h-full">
