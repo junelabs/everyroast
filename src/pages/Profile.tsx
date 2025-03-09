@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileImage from "@/components/profile/ProfileImage";
@@ -32,10 +31,8 @@ const Profile = () => {
       setProfileImage(profile.avatar_url || null);
       setProfileLoading(false);
     } else if (!authLoading && user) {
-      // If auth is not loading and we have a user but no profile, try to fetch it
       fetchProfileManually(user.id);
     } else if (!authLoading && !user) {
-      // If auth is not loading and we don't have a user, exit loading state
       setProfileLoading(false);
     }
   }, [profile, authLoading, user]);
@@ -85,7 +82,6 @@ const Profile = () => {
     getSession();
   }, []);
 
-  // Ensure we exit loading state after a maximum time
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (profileLoading || authLoading) {
@@ -126,16 +122,13 @@ const Profile = () => {
     try {
       setIsUploading(true);
       
-      // Get user id from profile
       const userId = user?.id;
       if (!userId) throw new Error('No user ID found');
 
-      // Upload the file to Supabase Storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Math.random()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
-      // First, read as data URL for immediate preview
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -144,20 +137,17 @@ const Profile = () => {
       };
       reader.readAsDataURL(file);
 
-      // Then, upload to Supabase Storage
       const { data, error } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
 
       if (error) throw error;
 
-      // Get the public URL
       const { data: publicURL } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
       if (publicURL) {
-        // Update the user's profile with the new avatar URL
         await updateProfile({
           avatar_url: publicURL.publicUrl
         });
@@ -178,7 +168,6 @@ const Profile = () => {
     }
   };
 
-  // Use a combined loading state
   const isPageLoading = authLoading || profileLoading;
 
   if (isPageLoading) {
@@ -196,7 +185,6 @@ const Profile = () => {
       <ProfileHeader />
       
       <div className="container max-w-5xl mx-auto py-8 px-4">
-        {/* Profile header */}
         <div className="flex flex-col md:flex-row gap-6 items-start mb-8">
           <ProfileImage 
             profileImage={profileImage}
