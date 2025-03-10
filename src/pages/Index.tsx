@@ -18,10 +18,10 @@ const Index = () => {
   }, [user, isLoading]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
       {!user && <HeroSection />}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 flex-grow">
         <CoffeeExplorerSection />
       </div>
       <Footer />

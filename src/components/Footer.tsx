@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between mb-12">
           {/* Logo and description */}
-          <div className="mb-8 md:mb-0 md:w-1/3">
+          <div className="mb-8 md:mb-0 md:w-1/4">
             <div className="flex items-center gap-2 mb-4">
               <Coffee className="h-6 w-6 text-roast-400" />
               <span className="text-xl font-bold text-white">Every Roast</span>
@@ -17,26 +17,25 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Links - rearranged with more even spacing */}
-          <div className="grid grid-cols-2 gap-8 md:w-2/3 md:grid-cols-2 md:gap-16">
-            <div>
-              <h3 className="text-white font-medium mb-4">Platform</h3>
-              <ul className="space-y-2">
-                <li><a href="/roasters" className="text-roast-300 hover:text-white transition-colors">Roasters</a></li>
-                <li><a href="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</a></li>
-                <li><a href="/brew-guides" className="text-roast-300 hover:text-white transition-colors">Brew Guides</a></li>
-                <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
-              </ul>
-            </div>
-            <div className="md:justify-self-end">
-              <h3 className="text-white font-medium mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><a href="/about" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
-                <li><a href="/advertise" className="text-roast-300 hover:text-white transition-colors">Advertise</a></li>
-                <li><a href="/privacy-policy" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms-of-service" className="text-roast-300 hover:text-white transition-colors">Terms of Service</a></li>
-              </ul>
-            </div>
+          {/* Links - evenly spaced with Platform in middle */}
+          <div className="md:w-1/4 mb-8 md:mb-0">
+            <h3 className="text-white font-medium mb-4">Platform</h3>
+            <ul className="space-y-2">
+              <li><a href="/roasters" className="text-roast-300 hover:text-white transition-colors">Roasters</a></li>
+              <li><a href="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</a></li>
+              <li><a href="/brew-guides" className="text-roast-300 hover:text-white transition-colors">Brew Guides</a></li>
+              <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
+            </ul>
+          </div>
+
+          <div className="md:w-1/4 md:text-right">
+            <h3 className="text-white font-medium mb-4">Company</h3>
+            <ul className="space-y-2">
+              <li><a href="/about" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
+              <li><a href="/advertise" className="text-roast-300 hover:text-white transition-colors">Advertise</a></li>
+              <li><a href="/privacy-policy" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms-of-service" className="text-roast-300 hover:text-white transition-colors">Terms of Service</a></li>
+            </ul>
           </div>
         </div>
         
