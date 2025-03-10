@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -57,12 +56,10 @@ export const useReviewForm = ({
   const coffeeTypes: CoffeeType[] = ['Single Origin', 'Blend', 'Espresso'];
   const sizeUnits: SizeUnit[] = ['g', 'oz'];
 
-  // Effect to fetch coffee details when editing a review
   useEffect(() => {
     if (isEdit && coffeeId) {
       fetchCoffeeDetails();
     } else if (!isEdit) {
-      // Reset form for new reviews
       resetForm();
     }
   }, [coffeeId, isEdit]);
@@ -71,7 +68,6 @@ export const useReviewForm = ({
     try {
       console.log("Fetching coffee details for ID:", coffeeId);
       
-      // First fetch the coffee details
       const { data: coffeeData, error: coffeeError } = await supabase
         .from('coffees')
         .select(`
@@ -83,7 +79,6 @@ export const useReviewForm = ({
       
       if (coffeeError) throw coffeeError;
       
-      // Log what we got back
       console.log("Coffee data retrieved:", coffeeData);
       
       if (coffeeData) {
@@ -96,7 +91,9 @@ export const useReviewForm = ({
         setPrice(coffeeData.price || 0);
         setFlavor(coffeeData.flavor_notes || "");
         
-        // Parse size and type from description
+        setCoffeeType(coffeeData.type as CoffeeType || "Single Origin");
+        console.log("Setting coffee type to:", coffeeData.type);
+        
         if (coffeeData.description) {
           const match = coffeeData.description.match(/(\w+) coffee, (\d+) (\w+)/);
           if (match) {
@@ -107,7 +104,6 @@ export const useReviewForm = ({
         }
       }
       
-      // If we have a reviewId, fetch the review details also
       if (reviewId) {
         const { data: reviewData, error: reviewError } = await supabase
           .from('reviews')
@@ -180,7 +176,6 @@ export const useReviewForm = ({
       let coffeeRecord;
       
       if (coffeeId && isEdit) {
-        // Update existing coffee record if we're editing
         const { data, error } = await supabase
           .from('coffees')
           .select('*')
@@ -192,7 +187,6 @@ export const useReviewForm = ({
         
         console.log("Updating existing coffee:", coffeeRecord);
         
-        // Update coffee details if we're editing
         const { error: updateError } = await supabase
           .from('coffees')
           .update({
@@ -201,15 +195,13 @@ export const useReviewForm = ({
             process_method: processMethod,
             price: price,
             flavor_notes: flavor,
+            type: coffeeType,
             updated_at: new Date().toISOString()
           })
           .eq('id', coffeeId);
             
         if (updateError) throw updateError;
       } else if (!isEdit) {
-        // Create a new coffee record
-        console.log("Creating new coffee with roaster:", roaster);
-        
         const { data: roasterData, error: roasterError } = await supabase
           .from('roasters')
           .select('id')
@@ -247,7 +239,8 @@ export const useReviewForm = ({
           flavor_notes: flavor,
           created_by: user.id,
           image_url: imageUrl || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-          description: `${coffeeType} coffee, ${size} ${sizeUnit}`
+          description: `${coffeeType} coffee, ${size} ${sizeUnit}`,
+          type: coffeeType
         };
         
         console.log("Creating new coffee with data:", coffeeData);
@@ -262,7 +255,6 @@ export const useReviewForm = ({
         coffeeRecord = newCoffee;
         console.log("Created new coffee with ID:", coffeeRecord.id);
       } else {
-        // Just get the existing coffee record for the review
         const { data, error } = await supabase
           .from('coffees')
           .select('*')
@@ -273,7 +265,6 @@ export const useReviewForm = ({
         coffeeRecord = data;
       }
       
-      // Now handle the review data
       const reviewData = {
         coffee_id: coffeeRecord.id,
         user_id: user.id,
@@ -285,7 +276,6 @@ export const useReviewForm = ({
       console.log("Review data being saved:", reviewData);
 
       if (reviewId) {
-        // Update existing review
         const { error } = await supabase
           .from('reviews')
           .update(reviewData)
@@ -298,7 +288,6 @@ export const useReviewForm = ({
           description: "Your review has been successfully updated!",
         });
       } else {
-        // Create new review
         const { error } = await supabase
           .from('reviews')
           .insert(reviewData);
@@ -313,9 +302,7 @@ export const useReviewForm = ({
       
       resetForm();
       onClose();
-      // Refresh the profile page to show the new review
       navigate("/profile");
-      
     } catch (error) {
       console.error("Error submitting review:", error);
       toast({
