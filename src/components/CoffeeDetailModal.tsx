@@ -87,13 +87,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             
             {/* Coffee Details Section */}
             <div className="p-6 bg-white">
-              {/* Type badge on detail page (if available) */}
-              {coffee.type && (
-                <div className="inline-block bg-roast-100 text-roast-800 px-3 py-1 rounded-full text-sm font-medium mb-2">
-                  {coffee.type}
-                </div>
-              )}
-              
               <div className="flex items-center mb-2">
                 <RatingBadge rating={coffee.rating} />
               </div>
