@@ -41,6 +41,7 @@ export function useCoffeeExplorer() {
         },
         (payload) => {
           console.log('Coffee deletion detected:', payload);
+          // Remove deleted coffee from the state
           setCoffeeData(prevCoffees => 
             prevCoffees.filter(coffee => coffee.id !== payload.old.id)
           );
@@ -53,10 +54,9 @@ export function useCoffeeExplorer() {
           schema: 'public',
           table: 'coffees'
         },
-        async (payload) => {
-          console.log('New coffee detected:', payload);
-          
-          // Fetch comprehensive coffee data including related data
+        async () => {
+          console.log('New coffee detected, fetching fresh data');
+          // Fetch full data again to ensure we have all relationships
           await fetchCommunityCoffees();
         }
       )
@@ -70,13 +70,14 @@ export function useCoffeeExplorer() {
         async (payload) => {
           console.log('Coffee update detected:', payload);
           
+          // If a coffee was soft-deleted (deleted_at field is set), remove it from the list
           if (payload.new.deleted_at) {
-            // If coffee was soft-deleted, remove it from the list
+            console.log('Coffee was soft-deleted, removing from list:', payload.new.id);
             setCoffeeData(prevCoffees => 
               prevCoffees.filter(coffee => coffee.id !== payload.new.id)
             );
           } else {
-            // If coffee was updated, refresh all data to ensure consistency
+            // For other updates, fetch all data to ensure consistency
             await fetchCommunityCoffees();
           }
         }
@@ -126,8 +127,12 @@ export function useCoffeeExplorer() {
 
       console.log("Raw coffee data from DB:", data);
 
+      // Filter out any coffees that have deleted_at set
+      const filteredData = data.filter(coffee => coffee.deleted_at === null);
+      console.log("Filtered coffee data (removed deleted):", filteredData.length);
+
       const coffeeWithProfiles = await Promise.all(
-        data.map(async (coffee) => {
+        filteredData.map(async (coffee) => {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')

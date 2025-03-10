@@ -15,7 +15,7 @@ const CoffeeExplorerSection = () => {
   useEffect(() => {
     console.log("CoffeeExplorerSection mounted, fetching coffees...");
     fetchCommunityCoffees();
-  }, []);
+  }, [fetchCommunityCoffees]);
   
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 4);
