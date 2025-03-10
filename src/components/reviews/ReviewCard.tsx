@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -137,6 +138,13 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
                 </div>
               )}
             </div>
+            
+            {/* Add coffee type display here */}
+            {review.coffees?.type && (
+              <div className="bg-black/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs inline-block mb-2">
+                {review.coffees.type}
+              </div>
+            )}
             
             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
               {review.coffees?.roast_level && (
