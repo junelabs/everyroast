@@ -24,13 +24,17 @@ interface CoffeeDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onReview?: () => void;
+  showActionButtons?: boolean;
+  customActions?: React.ReactNode;
 }
 
 const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({ 
   coffee, 
   isOpen, 
   onClose,
-  onReview 
+  onReview,
+  showActionButtons = false,
+  customActions 
 }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -155,37 +159,42 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 </div>
               </div>
               
-              <div className="flex flex-col space-y-3">
-                <Button 
-                  className="w-full bg-roast-500 hover:bg-roast-600 text-white"
-                >
-                  Add to Favorites
-                </Button>
-                
-                <div className="flex space-x-2">
-                  {onReview && (
-                    <Button 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={onReview}
-                    >
-                      Edit Review
-                    </Button>
-                  )}
+              {/* Display custom actions if provided */}
+              {customActions ? (
+                customActions
+              ) : showActionButtons ? (
+                <div className="flex flex-col space-y-3">
+                  <Button 
+                    className="w-full bg-roast-500 hover:bg-roast-600 text-white"
+                  >
+                    Add to Favorites
+                  </Button>
                   
-                  {coffee.reviewId && (
-                    <Button 
-                      variant="ghost"
-                      className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      disabled={isDeleting}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      {isDeleting ? "Deleting..." : "Delete"}
-                    </Button>
-                  )}
+                  <div className="flex space-x-2">
+                    {onReview && (
+                      <Button 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={onReview}
+                      >
+                        Edit Review
+                      </Button>
+                    )}
+                    
+                    {coffee.reviewId && (
+                      <Button 
+                        variant="ghost"
+                        className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        disabled={isDeleting}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           </div>
         </DialogContent>
