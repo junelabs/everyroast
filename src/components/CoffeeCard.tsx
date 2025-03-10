@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import { Star, Heart, ThumbsUp, MessageSquare } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from './CoffeeDetailModal';
 import ReviewForm from './reviews/ReviewForm';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 interface CoffeeCardProps {
   coffee: Coffee;
@@ -13,6 +15,30 @@ interface CoffeeCardProps {
 const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal from opening
+    toast({
+      title: "Liked!",
+      description: `You liked ${coffee.name}`,
+      duration: 3000,
+    });
+  };
+
+  const handleAddToWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal from opening
+    toast({
+      title: "Added to Wishlist",
+      description: `${coffee.name} has been added to your wishlist`,
+      duration: 3000,
+    });
+  };
+
+  const handleReviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal from opening
+    setIsReviewFormOpen(true);
+  };
 
   return (
     <>
@@ -83,11 +109,44 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
       <CoffeeDetailModal 
         coffee={coffee} 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => setIsModalOpen(false)}
         onReview={() => {
           setIsModalOpen(false);
           setIsReviewFormOpen(true);
         }}
+        showActionButtons={true}
+        customActions={
+          <div className="space-y-3 mt-4">
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-center gap-2"
+              onClick={handleAddToWishlist}
+            >
+              <Heart className="h-4 w-4" />
+              Add to Wishlist
+            </Button>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="flex-1 flex items-center justify-center"
+                onClick={handleLike}
+              >
+                <ThumbsUp className="h-4 w-4 mr-2" />
+                Like
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex-1 flex items-center justify-center"
+                onClick={handleReviewClick}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Review
+              </Button>
+            </div>
+          </div>
+        }
       />
       
       <ReviewForm 
