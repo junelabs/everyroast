@@ -42,21 +42,40 @@ const CoffeeExplorerSection = () => {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'DELETE',
           schema: 'public',
           table: 'coffees'
         },
         (payload) => {
-          console.log('Coffee change detected:', payload);
-          if (payload.eventType === 'DELETE') {
-            // If a coffee was deleted, immediately remove it from the state
-            setCoffeeData(prevCoffees => 
-              prevCoffees.filter(coffee => coffee.id !== payload.old.id)
-            );
-          } else if (payload.eventType === 'INSERT') {
-            // If a new coffee was added, refresh the list
-            fetchCommunityCoffees();
-          }
+          console.log('Coffee deletion detected:', payload);
+          // Immediately remove the deleted coffee from the state
+          setCoffeeData(prevCoffees => 
+            prevCoffees.filter(coffee => coffee.id !== payload.old.id)
+          );
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('New coffee detected:', payload);
+          fetchCommunityCoffees();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee update detected:', payload);
+          fetchCommunityCoffees();
         }
       )
       .subscribe();
