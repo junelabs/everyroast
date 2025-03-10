@@ -28,13 +28,8 @@ export const getPriceIcon = (): string => {
 
 // Add these emoji functions for backwards compatibility
 export const getRoastLevelEmoji = (level: RoastLevel): string => {
-  switch (level) {
-    case 'Light': return '🔥';
-    case 'Medium': return '🔥🔥';
-    case 'Medium-Dark': return '🔥🔥🔥';
-    case 'Dark': return '🔥🔥🔥🔥';
-    default: return '🔥';
-  }
+  // Return a single fire emoji regardless of roast level
+  return '🔥';
 };
 
 export const getProcessMethodEmoji = (method: ProcessMethod): string => {

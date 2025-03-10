@@ -140,6 +140,16 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 </div>
               </div>
               
+              {/* Add Type display */}
+              {coffee.type && (
+                <div className="mb-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm text-gray-500">Type</div>
+                    <div className="font-medium">{coffee.type}</div>
+                  </div>
+                </div>
+              )}
+              
               <div className="mb-6">
                 <h3 className="text-lg font-medium mb-2">Your Review</h3>
                 <p className="text-gray-700 mb-2">{coffee.flavor || "No review provided yet"}</p>
