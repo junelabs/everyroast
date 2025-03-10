@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -43,14 +44,11 @@ export function useCoffeeExplorer() {
       }
 
       console.log("Raw coffee data:", data);
+      console.log("Number of coffees fetched:", data?.length || 0);
       
+      // Transform the data to our Coffee type
       const coffeeWithProfiles = await Promise.all(
-        (data || []).map(async (coffee) => {
-          if (coffee.deleted_at) {
-            console.log("Skipping deleted coffee:", coffee.id);
-            return null;
-          }
-
+        (data || []).filter(coffee => !coffee.deleted_at).map(async (coffee) => {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -65,7 +63,7 @@ export function useCoffeeExplorer() {
           const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
           const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
           
-          return {
+          const coffeeItem: Coffee = {
             id: coffee.id,
             name: coffee.name,
             origin: coffee.origin || 'Unknown',
@@ -85,13 +83,15 @@ export function useCoffeeExplorer() {
             },
             upvotes: Math.floor(Math.random() * 100)
           };
+          
+          return coffeeItem;
         })
       );
       
-      const filteredCoffees = coffeeWithProfiles.filter((coffee): coffee is Coffee => coffee !== null);
-      console.log("Filtered coffee data:", filteredCoffees);
+      console.log("Processed coffee data:", coffeeWithProfiles);
+      console.log("Number of processed coffees:", coffeeWithProfiles.length);
       
-      setCoffeeData(filteredCoffees);
+      setCoffeeData(coffeeWithProfiles);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
@@ -134,9 +134,12 @@ export function useCoffeeExplorer() {
         },
         (payload) => {
           console.log('Coffee HARD deletion detected:', payload);
+          // Immediately update the local state when we get a delete notification
           setCoffeeData(prevCoffees => 
             prevCoffees.filter(coffee => coffee.id !== payload.old.id)
           );
+          // Also refresh the data from the server
+          fetchCommunityCoffees();
         }
       )
       .on(

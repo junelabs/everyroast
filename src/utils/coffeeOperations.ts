@@ -39,7 +39,7 @@ export const hardDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
       return false;
     }
     
-    // Then delete the coffee itself
+    // Then delete the coffee itself - make sure this is a HARD delete
     const { error } = await supabase
       .from('coffees')
       .delete()
