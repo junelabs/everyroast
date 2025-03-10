@@ -81,7 +81,7 @@ const CoffeeExplorerSection = () => {
             roastLevel: coffee.roast_level || 'Medium',
             processMethod: coffee.process_method || 'Washed',
             flavor: coffee.flavor_notes || 'No flavor notes provided',
-            type: coffee.type || undefined, // Explicitly include type field
+            type: coffee.type || 'Single Origin', // Make sure we set a default value
             reviewCount: reviews.length,
             poster: {
               username: profileData?.username || 'anonymous',

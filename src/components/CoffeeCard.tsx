@@ -18,6 +18,9 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const { toast } = useToast();
 
+  // Debug to make sure type is passed to the coffee object
+  console.log('Coffee in CoffeeCard:', coffee);
+
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent modal from opening
     toast({
@@ -56,6 +59,13 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
           
           {/* Consistent overlay over the whole card */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
+          
+          {/* Type badge - at the top center */}
+          {coffee.type && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+              {coffee.type}
+            </div>
+          )}
           
           {/* Posted by - in top left */}
           <div className="absolute top-4 left-4 z-10 flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">

@@ -23,6 +23,7 @@ export type Database = {
           process_method: string | null
           roast_level: string | null
           roaster_id: string
+          type: string | null
           updated_at: string
         }
         Insert: {
@@ -38,6 +39,7 @@ export type Database = {
           process_method?: string | null
           roast_level?: string | null
           roaster_id: string
+          type?: string | null
           updated_at?: string
         }
         Update: {
@@ -53,6 +55,7 @@ export type Database = {
           process_method?: string | null
           roast_level?: string | null
           roaster_id?: string
+          type?: string | null
           updated_at?: string
         }
         Relationships: [
