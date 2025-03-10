@@ -18,11 +18,12 @@ const CoffeeExplorerSection = () => {
   const { toast } = useToast();
   
   useEffect(() => {
+    // Initial fetch
     fetchCommunityCoffees();
 
     // Set up real-time subscription for review deletions
     const channel = supabase
-      .channel('reviews-deleted')
+      .channel('reviews-changes')
       .on(
         'postgres_changes',
         {
@@ -36,9 +37,36 @@ const CoffeeExplorerSection = () => {
           fetchCommunityCoffees();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'reviews'
+        },
+        (payload) => {
+          console.log('Review added:', payload);
+          // When a review is added, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'reviews'
+        },
+        (payload) => {
+          console.log('Review updated:', payload);
+          // When a review is updated, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
       .subscribe();
       
     return () => {
+      // Clean up subscription on component unmount
       supabase.removeChannel(channel);
     };
   }, []);
@@ -46,6 +74,8 @@ const CoffeeExplorerSection = () => {
   const fetchCommunityCoffees = async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching community coffees...");
+      
       const { data, error } = await supabase
         .from('coffees')
         .select(`
@@ -73,6 +103,9 @@ const CoffeeExplorerSection = () => {
         console.error("Error fetching coffees:", error);
         throw error;
       }
+
+      // Log the raw data to see what we're working with
+      console.log("Raw coffee data:", data);
 
       // Fetch profile information for each coffee's creator
       const coffeeWithProfiles = await Promise.all(
@@ -114,6 +147,7 @@ const CoffeeExplorerSection = () => {
         })
       );
       
+      console.log("Processed coffee data:", coffeeWithProfiles);
       setCoffeeData(coffeeWithProfiles);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
