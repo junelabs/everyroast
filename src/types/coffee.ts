@@ -17,6 +17,7 @@ export interface Coffee {
   };
   upvotes?: number;
   brewingMethod?: string;
+  type?: string; // Added type property
 }
 
 // Add additional type definitions needed by the form components
