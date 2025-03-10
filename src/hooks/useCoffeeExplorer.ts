@@ -117,9 +117,10 @@ export function useCoffeeExplorer() {
         (payload) => {
           console.log('Coffee deletion detected:', payload);
           // Immediately remove the deleted coffee from the state
-          setCoffeeData(prevCoffees => 
-            prevCoffees.filter(coffee => coffee.id !== payload.old.id)
-          );
+          setCoffeeData(prevCoffees => {
+            console.log(`Removing coffee with ID ${payload.old.id} from state`);
+            return prevCoffees.filter(coffee => coffee.id !== payload.old.id);
+          });
         }
       )
       .on(
@@ -134,7 +135,9 @@ export function useCoffeeExplorer() {
           fetchCommunityCoffees();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`Realtime subscription status: ${status}`);
+      });
 
     return () => {
       console.log("Cleaning up realtime subscription");

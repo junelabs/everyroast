@@ -40,17 +40,18 @@ export const hardDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
     }
     
     // Then delete the coffee itself - make sure this is a HARD delete
-    const { error } = await supabase
+    const { error, count } = await supabase
       .from('coffees')
       .delete()
-      .eq('id', coffeeId);
+      .eq('id', coffeeId)
+      .select('count');
 
     if (error) {
       console.error("Error hard deleting coffee:", error);
       return false;
     }
     
-    console.log(`Successfully hard deleted coffee with ID: ${coffeeId}`);
+    console.log(`Successfully hard deleted coffee with ID: ${coffeeId}, count: ${count}`);
     return true;
   } catch (error) {
     console.error("Exception in hardDeleteCoffee:", error);
