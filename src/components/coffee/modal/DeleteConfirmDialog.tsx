@@ -17,6 +17,7 @@ interface DeleteConfirmDialogProps {
   coffeeName: string;
   onDelete: () => void;
   isDeleting: boolean;
+  deleteType?: 'review' | 'coffee';
 }
 
 const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
@@ -24,15 +25,28 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
   onOpenChange,
   coffeeName,
   onDelete,
-  isDeleting
+  isDeleting,
+  deleteType = 'review'
 }) => {
+  const title = deleteType === 'coffee' ? 
+    "Delete this coffee?" : 
+    "Delete this review?";
+    
+  const description = deleteType === 'coffee' ?
+    `This will remove "${coffeeName}" from the community. This action cannot be undone.` :
+    `This will permanently delete your review of "${coffeeName}". This action cannot be undone.`;
+    
+  const buttonText = deleteType === 'coffee' ?
+    (isDeleting ? "Deleting..." : "Delete Coffee") :
+    (isDeleting ? "Deleting..." : "Delete Review");
+
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete your review of "{coffeeName}". This action cannot be undone.
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -41,7 +55,7 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
             onClick={onDelete}
             className="bg-rose-500 hover:bg-rose-600 text-white"
           >
-            {isDeleting ? "Deleting..." : "Delete Review"}
+            {buttonText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

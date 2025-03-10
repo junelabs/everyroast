@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -5,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { softDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
+import { useAuth } from '@/context/auth';
 
 // Import our component modules
 import ImageSection from './coffee/modal/ImageSection';
@@ -33,10 +36,12 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
 }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteType, setDeleteType] = useState<'review' | 'coffee'>('review');
 
-  const handleDelete = async () => {
+  const handleDeleteReview = async () => {
     if (!coffee.reviewId) {
       toast({
         title: "Error",
@@ -72,6 +77,53 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
       setIsDeleting(false);
     }
   };
+  
+  const handleDeleteCoffee = async () => {
+    if (!coffee.id) {
+      toast({
+        title: "Error",
+        description: "Cannot delete coffee: coffee ID not found.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const deleted = await softDeleteCoffee(coffee.id);
+      
+      if (!deleted) throw new Error("Failed to delete coffee");
+
+      toast({
+        title: "Success",
+        description: "Coffee has been deleted successfully."
+      });
+      onClose();
+      navigate('/profile', { replace: true });
+    } catch (error) {
+      console.error("Error deleting coffee:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the coffee. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+  
+  const openDeleteDialog = (type: 'review' | 'coffee') => {
+    setDeleteType(type);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (deleteType === 'review') {
+      handleDeleteReview();
+    } else {
+      handleDeleteCoffee();
+    }
+  };
 
   const handleUpvote = () => {
     toast({
@@ -80,9 +132,14 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
       duration: 3000,
     });
   };
+  
+  // Check if the current user is the owner of this coffee
+  const canDelete = coffee.poster && user ? canDeleteCoffee(coffee.poster.userId, user.id) : false;
 
   // Debug logging
   console.log('Coffee data in modal:', coffee);
+  console.log('Current user:', user);
+  console.log('Can delete coffee:', canDelete);
 
   return (
     <>
@@ -132,10 +189,11 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 showActionButtons={showActionButtons}
                 customActions={customActions}
                 onReview={onReview}
-                onDelete={() => setIsDeleteDialogOpen(true)}
+                onDelete={coffee.reviewId ? () => openDeleteDialog('review') : canDelete ? () => openDeleteDialog('coffee') : undefined}
                 onUpvote={handleUpvote}
                 isDeleting={isDeleting}
                 hasReviewId={!!coffee.reviewId}
+                hasCoffeeId={canDelete}
                 upvotes={coffee.upvotes}
               />
             </div>
@@ -149,6 +207,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         coffeeName={coffee.name}
         onDelete={handleDelete}
         isDeleting={isDeleting}
+        deleteType={deleteType}
       />
     </>
   );

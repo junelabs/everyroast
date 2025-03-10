@@ -11,6 +11,7 @@ interface ActionButtonsProps {
   onUpvote?: () => void;
   isDeleting?: boolean;
   hasReviewId?: boolean;
+  hasCoffeeId?: boolean;
   upvotes?: number;
 }
 
@@ -22,6 +23,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onUpvote,
   isDeleting = false,
   hasReviewId = false,
+  hasCoffeeId = false,
   upvotes = 0
 }) => {
   if (customActions) {
@@ -65,7 +67,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           </Button>
         )}
         
-        {hasReviewId && onDelete && (
+        {(hasReviewId || hasCoffeeId) && onDelete && (
           <Button 
             variant="ghost"
             className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"

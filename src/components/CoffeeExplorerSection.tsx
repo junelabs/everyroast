@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -171,7 +170,8 @@ const CoffeeExplorerSection = () => {
             reviewCount: reviews.length,
             poster: {
               username: profileData?.username || 'anonymous',
-              avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+              avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+              userId: coffee.created_by
             },
             upvotes: Math.floor(Math.random() * 100)
           };

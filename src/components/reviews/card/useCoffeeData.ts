@@ -22,7 +22,12 @@ export const useCoffeeData = (review: any) => {
     reviewDate: review.created_at,
     reviewId: review.id,
     // Get the actual type from the database, with fallback only if not present
-    type: review.coffees?.type || "Single Origin"
+    type: review.coffees?.type || "Single Origin",
+    poster: {
+      username: review.profiles?.username || "anonymous",
+      avatarUrl: review.profiles?.avatar_url || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+      userId: review.coffees?.created_by
+    }
   };
 
   return { coffee };

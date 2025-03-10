@@ -17,6 +17,7 @@ interface ReviewDeleteDialogProps {
   coffeeName: string;
   isDeleting: boolean;
   onDelete: () => Promise<void>;
+  deleteType?: 'review' | 'coffee';
 }
 
 const ReviewDeleteDialog: React.FC<ReviewDeleteDialogProps> = ({
@@ -25,14 +26,27 @@ const ReviewDeleteDialog: React.FC<ReviewDeleteDialogProps> = ({
   coffeeName,
   isDeleting,
   onDelete,
+  deleteType = 'review'
 }) => {
+  const title = deleteType === 'coffee' ? 
+    "Delete this coffee?" : 
+    "Delete this review?";
+    
+  const description = deleteType === 'coffee' ?
+    `This will remove "${coffeeName}" from the community. This action cannot be undone.` :
+    `This will permanently delete your review of "${coffeeName}". This action cannot be undone.`;
+    
+  const buttonText = deleteType === 'coffee' ?
+    (isDeleting ? "Deleting..." : "Delete Coffee") :
+    (isDeleting ? "Deleting..." : "Delete Review");
+
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete your review of "{coffeeName}". This action cannot be undone.
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -41,7 +55,7 @@ const ReviewDeleteDialog: React.FC<ReviewDeleteDialogProps> = ({
             onClick={onDelete}
             className="bg-rose-500 hover:bg-rose-600 text-white"
           >
-            {isDeleting ? "Deleting..." : "Delete Review"}
+            {buttonText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

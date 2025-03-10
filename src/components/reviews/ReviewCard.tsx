@@ -5,6 +5,8 @@ import ReviewForm from '@/components/reviews/ReviewForm';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { softDeleteCoffee } from '@/utils/coffeeOperations';
+import { useAuth } from '@/context/auth';
 
 // Import refactored components
 import ReviewCardImage from './card/ReviewCardImage';
@@ -21,20 +23,25 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteType, setDeleteType] = useState<'review' | 'coffee'>('review');
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  // Debug logging to check the type value
+  // Debug logging to check the review data
   console.log("Review in ReviewCard:", review);
   console.log("Coffee type in ReviewCard:", review.coffees?.type);
 
   // Get coffee data from the review
   const { coffee } = useCoffeeData(review);
+  
+  // Check if the current user is the owner of this coffee
+  const isOwner = user && review.coffees?.created_by === user.id;
 
   const handleEdit = () => {
     onEdit(review);
   };
 
-  const handleDelete = async () => {
+  const handleDeleteReview = async () => {
     setIsDeleting(true);
     try {
       const { error } = await supabase
@@ -59,6 +66,47 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     } finally {
       setIsDeleting(false);
       setIsDeleteDialogOpen(false);
+    }
+  };
+  
+  const handleDeleteCoffee = async () => {
+    setIsDeleting(true);
+    try {
+      // Get the coffee ID from the review
+      const coffeeId = review.coffee_id;
+      if (!coffeeId) throw new Error("Coffee ID not found");
+      
+      const success = await softDeleteCoffee(coffeeId);
+      if (!success) throw new Error("Failed to delete coffee");
+
+      toast({
+        title: "Success",
+        description: "Coffee has been deleted successfully."
+      });
+      onEdit(null);
+    } catch (error) {
+      console.error("Error deleting coffee:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the coffee. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+  
+  const openDeleteDialog = (type: 'review' | 'coffee') => {
+    setDeleteType(type);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  const handleDelete = () => {
+    if (deleteType === 'review') {
+      handleDeleteReview();
+    } else {
+      handleDeleteCoffee();
     }
   };
 
@@ -97,12 +145,23 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
               <Button 
                 variant="ghost"
                 className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"
-                onClick={() => setIsDeleteDialogOpen(true)}
+                onClick={() => openDeleteDialog('review')}
                 disabled={isDeleting}
               >
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? "Deleting..." : "Delete Review"}
               </Button>
             </div>
+            
+            {isOwner && (
+              <Button 
+                variant="destructive"
+                className="w-full"
+                onClick={() => openDeleteDialog('coffee')}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting Coffee..." : "Delete Coffee Post"}
+              </Button>
+            )}
           </div>
         }
       />
@@ -126,6 +185,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         coffeeName={review.coffees?.name || "this coffee"}
         isDeleting={isDeleting}
         onDelete={handleDelete}
+        deleteType={deleteType}
       />
     </>
   );
