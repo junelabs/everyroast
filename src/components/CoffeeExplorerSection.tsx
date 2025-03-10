@@ -15,6 +15,14 @@ const CoffeeExplorerSection = () => {
   useEffect(() => {
     console.log("CoffeeExplorerSection mounted, fetching coffees...");
     fetchCommunityCoffees();
+    
+    // Set up an interval to re-fetch coffees every 30 seconds to ensure we don't miss any changes
+    const intervalId = setInterval(() => {
+      console.log("Scheduled refresh of community coffees");
+      fetchCommunityCoffees();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
   }, [fetchCommunityCoffees]);
   
   // Set up realtime subscription separately to avoid re-subscribing on every render
@@ -23,6 +31,11 @@ const CoffeeExplorerSection = () => {
     const cleanup = setupRealtimeSubscription();
     return cleanup;
   }, [setupRealtimeSubscription]);
+  
+  // Log when coffee data changes
+  useEffect(() => {
+    console.log("Coffee data updated, count:", coffeeData.length);
+  }, [coffeeData]);
   
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 4);

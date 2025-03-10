@@ -35,7 +35,7 @@ export function useCoffeeExplorer() {
             rating
           )
         `)
-        .is('deleted_at', null)
+        .is('deleted_at', null)  // This is critical - only get non-deleted coffees
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -48,6 +48,11 @@ export function useCoffeeExplorer() {
       
       const coffeeWithProfiles = await Promise.all(
         (data || []).map(async (coffee) => {
+          if (coffee.deleted_at) {
+            console.log(`Skipping deleted coffee: ${coffee.id}`);
+            return null; // Skip deleted coffees
+          }
+          
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -87,8 +92,13 @@ export function useCoffeeExplorer() {
         })
       );
       
-      console.log("Processed coffee data:", coffeeWithProfiles);
-      setCoffeeData(coffeeWithProfiles);
+      // Filter out any null values from the array (deleted coffees)
+      const filteredCoffees = coffeeWithProfiles.filter(coffee => coffee !== null) as Coffee[];
+      
+      console.log("Filtered coffee data:", filteredCoffees);
+      console.log("Number of coffees after filtering:", filteredCoffees.length);
+      
+      setCoffeeData(filteredCoffees);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({

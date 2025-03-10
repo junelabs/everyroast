@@ -14,6 +14,13 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCoun
   // Log when coffees change for debugging
   useEffect(() => {
     console.log("CoffeeGrid received coffees:", coffees.length);
+    
+    // Check if any coffees have empty properties that might cause issues
+    coffees.forEach(coffee => {
+      if (!coffee.id || !coffee.name) {
+        console.warn("Coffee with missing critical data:", coffee);
+      }
+    });
   }, [coffees]);
 
   if (isLoading) {
