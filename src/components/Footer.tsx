@@ -1,5 +1,6 @@
 
 import { Coffee } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -8,10 +9,10 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between mb-12">
           {/* Logo and description */}
           <div className="mb-8 md:mb-0 md:w-1/4">
-            <div className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4">
               <Coffee className="h-6 w-6 text-roast-400" />
               <span className="text-xl font-bold text-white">Every Roast</span>
-            </div>
+            </Link>
             <p className="text-roast-300 max-w-md">
               The community platform for coffee enthusiasts to discover, record, and share their coffee experiences.
             </p>

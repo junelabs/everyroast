@@ -29,10 +29,10 @@ const Header = () => {
   return (
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between z-10 relative">
       {/* Logo */}
-      <div className="flex items-center gap-2">
+      <Link to="/" className="flex items-center gap-2">
         <Coffee className="h-8 w-8 text-roast-500" />
-        <span className="text-xl font-bold text-roast-700">EveryRoast</span>
-      </div>
+        <span className="text-xl font-bold text-roast-700">Every Roast</span>
+      </Link>
       
       {/* Navigation */}
       <div className="hidden md:flex items-center gap-6">
