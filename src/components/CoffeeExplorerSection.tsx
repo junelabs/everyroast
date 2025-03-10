@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -47,11 +48,14 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Coffee change detected:', payload);
-          if (payload.eventType === 'UPDATE' && payload.new.deleted_at) {
-            // If a coffee was marked as deleted, immediately remove it from the state
+          if (payload.eventType === 'DELETE') {
+            // If a coffee was deleted, immediately remove it from the state
             setCoffeeData(prevCoffees => 
-              prevCoffees.filter(coffee => coffee.id !== payload.new.id)
+              prevCoffees.filter(coffee => coffee.id !== payload.old.id)
             );
+          } else if (payload.eventType === 'INSERT') {
+            // If a new coffee was added, refresh the list
+            fetchCommunityCoffees();
           }
         }
       )

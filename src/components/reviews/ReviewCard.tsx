@@ -5,7 +5,7 @@ import ReviewForm from '@/components/reviews/ReviewForm';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { softDeleteCoffee } from '@/utils/coffeeOperations';
+import { hardDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
 
 // Import refactored components
@@ -76,12 +76,12 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
       const coffeeId = review.coffee_id;
       if (!coffeeId) throw new Error("Coffee ID not found");
       
-      const success = await softDeleteCoffee(coffeeId);
+      const success = await hardDeleteCoffee(coffeeId);
       if (!success) throw new Error("Failed to delete coffee");
 
       toast({
         title: "Success",
-        description: "Coffee has been deleted successfully."
+        description: "Coffee has been permanently deleted."
       });
       onEdit(null);
     } catch (error) {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -5,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { softDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
+import { hardDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
 
 // Import our component modules
@@ -90,13 +91,13 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     setIsDeleting(true);
     try {
       const coffeeId = typeof coffee.id === 'number' ? coffee.id.toString() : coffee.id;
-      const deleted = await softDeleteCoffee(coffeeId);
+      const deleted = await hardDeleteCoffee(coffeeId);
       
       if (!deleted) throw new Error("Failed to delete coffee");
 
       toast({
         title: "Success",
-        description: "Coffee has been deleted successfully."
+        description: "Coffee has been permanently deleted."
       });
       onClose();
       navigate('/profile', { replace: true });
