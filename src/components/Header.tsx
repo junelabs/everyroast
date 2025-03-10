@@ -36,14 +36,14 @@ const Header = () => {
       
       {/* Navigation */}
       <div className="hidden md:flex items-center gap-6">
-        <a href="#features" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Features
+        <a href="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Roasters
         </a>
-        <a href="#community" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Community
+        <a href="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Cafes
         </a>
-        <a href="#explore" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Explore
+        <a href="/brew-guides" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Brew Guides
         </a>
       </div>
       

@@ -22,28 +22,25 @@ const Footer = () => {
             <div>
               <h3 className="text-white font-medium mb-4">Platform</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Community</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Roasters</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
+                <li><a href="/roasters" className="text-roast-300 hover:text-white transition-colors">Roasters</a></li>
+                <li><a href="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</a></li>
+                <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-medium mb-4">Resources</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Brewing Guides</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Coffee Journal</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Flavor Wheel</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Coffee Origins</a></li>
+                <li><a href="/brew-guides" className="text-roast-300 hover:text-white transition-colors">Brew Guides</a></li>
+                <li><a href="/flavor-wheel" className="text-roast-300 hover:text-white transition-colors">Flavor Wheel</a></li>
+                <li><a href="/flavor-wheel" className="text-roast-300 hover:text-white transition-colors">Flavor Wheel</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-medium mb-4">Company</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-roast-300 hover:text-white transition-colors">Terms of Service</a></li>
+                <li><a href="/about" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
+                <li><a href="/privacy-policy" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms-of-service" className="text-roast-300 hover:text-white transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
