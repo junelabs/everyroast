@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -66,18 +65,6 @@ const CoffeeExplorerSection = () => {
           fetchCommunityCoffees();
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'coffees'
-        },
-        (payload) => {
-          console.log('Coffee update detected:', payload);
-          fetchCommunityCoffees();
-        }
-      )
       .subscribe();
       
     return () => {
@@ -112,7 +99,6 @@ const CoffeeExplorerSection = () => {
             rating
           )
         `)
-        .is('deleted_at', null)  // Only fetch non-deleted coffees
         .order('created_at', { ascending: false })
         .limit(12);
       
