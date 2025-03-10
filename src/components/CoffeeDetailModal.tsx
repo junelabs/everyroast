@@ -88,6 +88,18 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             
             {/* Coffee Details Section */}
             <div className="p-6 bg-white">
+              {/* Moved poster information to top */}
+              {coffee.poster && (
+                <div className="flex items-center space-x-2 mb-4">
+                  <span className="text-sm text-gray-500">Posted by:</span>
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={coffee.poster.avatarUrl} />
+                    <AvatarFallback>{coffee.poster.username.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">@{coffee.poster.username}</span>
+                </div>
+              )}
+              
               <div className="flex items-center justify-between mb-2">
                 <RatingBadge rating={coffee.rating} />
                 
@@ -104,18 +116,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{coffee.name}</h2>
               <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
-              
-              {/* Add poster information if available */}
-              {coffee.poster && (
-                <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-gray-500">Posted by:</span>
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={coffee.poster.avatarUrl} />
-                    <AvatarFallback>{coffee.poster.username.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">@{coffee.poster.username}</span>
-                </div>
-              )}
               
               <CoffeeAttributes
                 origin={coffee.origin}
