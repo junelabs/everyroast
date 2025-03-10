@@ -25,6 +25,18 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
   console.log("ProfileContainer: User state:", user?.id);
   console.log("ProfileContainer: Profile state:", profile?.id);
 
+  // Set a shorter timeout for profile loading to prevent infinite loading
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (profileLoading) {
+        console.log("ProfileContainer: Forcing exit from loading state after timeout");
+        setProfileLoading(false);
+      }
+    }, 3000); // 3-second timeout
+
+    return () => clearTimeout(timeoutId);
+  }, [profileLoading]);
+
   useEffect(() => {
     if (profile) {
       console.log("ProfileContainer: Setting form data from profile", profile.id);
@@ -35,6 +47,15 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
       setProfileLoading(false);
     } else if (!authLoading && user) {
       setProfileLoading(true);
+      // If we have user but no profile, create a default empty profile display
+      if (user.email) {
+        setEmail(user.email || "");
+      }
+      // Try to extract a username from the email if available
+      if (user.email && !username) {
+        const emailUsername = user.email.split('@')[0];
+        setUsername(emailUsername || "");
+      }
     } else if (!authLoading && !user) {
       setProfileLoading(false);
     }
@@ -58,17 +79,6 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
     
     getSession();
   }, [user]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (profileLoading) {
-        console.log("ProfileContainer: Forcing exit from loading state after timeout");
-        setProfileLoading(false);
-      }
-    }, 5000); // 5-second timeout
-
-    return () => clearTimeout(timeoutId);
-  }, [profileLoading]);
 
   const handleSaveProfile = async () => {
     try {
@@ -150,7 +160,8 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
     }
   };
 
-  const isPageLoading = authLoading || (profileLoading && !!user);
+  // Only show loading for a maximum of 3 seconds
+  const isPageLoading = (authLoading || (profileLoading && !!user)) && profileLoading;
 
   return (
     <div className="min-h-screen bg-gray-50">
