@@ -19,7 +19,7 @@ const CoffeeExplorerSection = () => {
   useEffect(() => {
     fetchCommunityCoffees();
 
-    // Subscribe to real-time changes
+    // Subscribe to real-time changes with explicit filtering of deleted coffees
     const reviewsChannel = supabase
       .channel('reviews-changes')
       .on(
@@ -47,7 +47,13 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Coffee change detected:', payload);
-          fetchCommunityCoffees(); // Refresh data when any coffee changes
+          if (payload.eventType === 'UPDATE' && payload.new && payload.new.deleted_at) {
+            // If a coffee was marked as deleted, immediately remove it from the state
+            setCoffeeData(prevCoffees => prevCoffees.filter(coffee => coffee.id !== payload.new.id));
+          } else {
+            // Otherwise fetch all coffees again
+            fetchCommunityCoffees();
+          }
         }
       )
       .subscribe();
@@ -96,9 +102,13 @@ const CoffeeExplorerSection = () => {
 
       console.log("Raw coffee data from DB:", data);
       
+      // Early check for deleted coffees before processing
+      const nonDeletedCoffees = data.filter(coffee => coffee.deleted_at === null);
+      console.log(`Filtered out ${data.length - nonDeletedCoffees.length} deleted coffees`);
+      
       const coffeeWithProfiles = await Promise.all(
-        data.map(async (coffee) => {
-          // Skip processing if coffee is deleted
+        nonDeletedCoffees.map(async (coffee) => {
+          // Double-check for deleted status
           if (coffee.deleted_at) {
             console.log(`Skipping deleted coffee ${coffee.id}`);
             return null;

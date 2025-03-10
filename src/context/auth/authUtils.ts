@@ -53,6 +53,13 @@ export const signInUser = async (email: string, password: string) => {
 export const signOutUser = async () => {
   console.log('[authUtils] Signing out user');
   try {
+    // Get current session to check if it exists before attempting to sign out
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      console.log('[authUtils] No active session found, sign out not needed');
+      return; // Return early if no session exists
+    }
+    
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('[authUtils] Error during sign out:', error);

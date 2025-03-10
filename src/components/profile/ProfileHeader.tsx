@@ -15,6 +15,10 @@ const ProfileHeader = () => {
       console.log("ProfileHeader: Signing out");
       if (!user) {
         console.log("No user session to sign out");
+        toast({
+          title: "Not signed in",
+          description: "You are already signed out.",
+        });
         navigate('/login');
         return;
       }

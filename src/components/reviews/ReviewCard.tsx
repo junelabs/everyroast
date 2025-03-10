@@ -102,7 +102,6 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     setIsDeleteDialogOpen(true);
   };
   
-  // Fix the Promise<void> issue by making this function async
   const handleDelete = async () => {
     if (deleteType === 'review') {
       await handleDeleteReview();

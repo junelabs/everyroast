@@ -26,7 +26,7 @@ export const useCoffeeData = (review: any) => {
     poster: {
       username: review.profiles?.username || "anonymous",
       avatarUrl: review.profiles?.avatar_url || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
-      userId: review.coffees?.created_by || null
+      userId: review.coffees?.created_by || review.user_id || null
     }
   };
 

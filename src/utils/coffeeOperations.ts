@@ -14,14 +14,23 @@ export const softDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
     // Check if the coffee exists
     const { data: coffee, error: checkError } = await supabase
       .from('coffees')
-      .select('id')
+      .select('id, deleted_at')
       .eq('id', coffeeId)
-      .is('deleted_at', null)
-      .single();
+      .maybeSingle();
       
-    if (checkError || !coffee) {
-      console.error("Error checking coffee existence:", checkError || "Coffee not found");
+    if (checkError) {
+      console.error("Error checking coffee existence:", checkError);
       return false;
+    }
+    
+    if (!coffee) {
+      console.error("Coffee not found:", coffeeId);
+      return false;
+    }
+    
+    if (coffee.deleted_at) {
+      console.log(`Coffee ${coffeeId} is already deleted`);
+      return true; // Already deleted
     }
     
     console.log("Found coffee to delete:", coffee);
