@@ -18,7 +18,7 @@ const Footer = () => {
           </div>
           
           {/* Links */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:w-2/3">
+          <div className="grid grid-cols-2 gap-8 md:w-2/3">
             <div>
               <h3 className="text-white font-medium mb-4">Platform</h3>
               <ul className="space-y-2">
@@ -26,14 +26,6 @@ const Footer = () => {
                 <li><a href="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</a></li>
                 <li><a href="/brew-guides" className="text-roast-300 hover:text-white transition-colors">Brew Guides</a></li>
                 <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-medium mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="/flavor-wheel" className="text-roast-300 hover:text-white transition-colors">Flavor Wheel</a></li>
-                <li><a href="/coffee-origins" className="text-roast-300 hover:text-white transition-colors">Coffee Origins</a></li>
-                <li><a href="/brewing-methods" className="text-roast-300 hover:text-white transition-colors">Brewing Methods</a></li>
               </ul>
             </div>
             <div>
