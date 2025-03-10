@@ -9,13 +9,20 @@ import LoadMoreButton from '@/components/coffee/LoadMoreButton';
 const CoffeeExplorerSection = () => {
   const [visibleCoffees, setVisibleCoffees] = useState(4);
   const { user } = useAuth();
-  const { coffeeData, isLoading, fetchCommunityCoffees } = useCoffeeExplorer();
+  const { coffeeData, isLoading, fetchCommunityCoffees, setupRealtimeSubscription } = useCoffeeExplorer();
   
-  // Ensure we fetch fresh data when component mounts
+  // Fetch fresh data when component mounts
   useEffect(() => {
     console.log("CoffeeExplorerSection mounted, fetching coffees...");
     fetchCommunityCoffees();
   }, [fetchCommunityCoffees]);
+  
+  // Set up realtime subscription separately to avoid re-subscribing on every render
+  useEffect(() => {
+    console.log("Setting up realtime subscriptions");
+    const cleanup = setupRealtimeSubscription();
+    return cleanup;
+  }, [setupRealtimeSubscription]);
   
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 4);

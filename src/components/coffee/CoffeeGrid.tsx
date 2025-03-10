@@ -11,7 +11,7 @@ interface CoffeeGridProps {
 }
 
 const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCount }) => {
-  // Log when coffees change
+  // Log when coffees change for debugging
   useEffect(() => {
     console.log("CoffeeGrid received coffees:", coffees.length);
   }, [coffees]);

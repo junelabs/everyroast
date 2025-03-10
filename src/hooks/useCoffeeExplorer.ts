@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Coffee } from '@/types/coffee';
@@ -9,88 +9,8 @@ export function useCoffeeExplorer() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchCommunityCoffees();
-
-    // Subscribe to real-time changes
-    const reviewsChannel = supabase
-      .channel('reviews-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'reviews'
-        },
-        (payload) => {
-          console.log('Review change detected:', payload);
-          // For reviews, we need to refetch to get the updated average
-          fetchCommunityCoffees();
-        }
-      )
-      .subscribe();
-    
-    const coffeesChannel = supabase
-      .channel('coffees-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'coffees'
-        },
-        (payload) => {
-          console.log('Coffee deletion detected:', payload);
-          // Remove deleted coffee from the state
-          setCoffeeData(prevCoffees => 
-            prevCoffees.filter(coffee => coffee.id !== payload.old.id)
-          );
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'coffees'
-        },
-        async () => {
-          console.log('New coffee detected, fetching fresh data');
-          // Fetch full data again to ensure we have all relationships
-          await fetchCommunityCoffees();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'coffees'
-        },
-        async (payload) => {
-          console.log('Coffee update detected:', payload);
-          
-          // If a coffee was soft-deleted (deleted_at field is set), remove it from the list
-          if (payload.new.deleted_at) {
-            console.log('Coffee was soft-deleted, removing from list:', payload.new.id);
-            setCoffeeData(prevCoffees => 
-              prevCoffees.filter(coffee => coffee.id !== payload.new.id)
-            );
-          } else {
-            // For other updates, fetch all data to ensure consistency
-            await fetchCommunityCoffees();
-          }
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(reviewsChannel);
-      supabase.removeChannel(coffeesChannel);
-    };
-  }, []);
-
-  const fetchCommunityCoffees = async () => {
+  // Make fetchCommunityCoffees a useCallback to prevent infinite loops
+  const fetchCommunityCoffees = useCallback(async () => {
     setIsLoading(true);
     try {
       console.log("Fetching community coffees...");
@@ -127,9 +47,9 @@ export function useCoffeeExplorer() {
 
       console.log("Raw coffee data from DB:", data);
 
-      // Filter out any coffees that have deleted_at set
+      // Safety check to ensure we're only processing non-deleted coffees
       const filteredData = data.filter(coffee => coffee.deleted_at === null);
-      console.log("Filtered coffee data (removed deleted):", filteredData.length);
+      console.log(`Filtered coffee data: ${filteredData.length} of ${data.length} coffees`);
 
       const coffeeWithProfiles = await Promise.all(
         filteredData.map(async (coffee) => {
@@ -182,11 +102,102 @@ export function useCoffeeExplorer() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  // Set up real-time listeners in a useEffect
+  const setupRealtimeSubscription = useCallback(() => {
+    console.log("Setting up realtime subscription for coffees");
+    
+    // Subscribe to real-time changes for reviews
+    const reviewsChannel = supabase
+      .channel('reviews-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reviews'
+        },
+        (payload) => {
+          console.log('Review change detected:', payload);
+          // For reviews, we need to refetch to get the updated average
+          fetchCommunityCoffees();
+        }
+      )
+      .subscribe();
+    
+    // Subscribe to real-time changes for coffees
+    const coffeesChannel = supabase
+      .channel('coffees-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee HARD deletion detected:', payload);
+          // Remove deleted coffee from the state
+          setCoffeeData(prevCoffees => 
+            prevCoffees.filter(coffee => coffee.id !== payload.old.id)
+          );
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('New coffee detected:', payload);
+          // Only add the coffee if it's not deleted
+          if (!payload.new.deleted_at) {
+            // Fetch fresh data to ensure we have all relationships
+            fetchCommunityCoffees();
+          } else {
+            console.log('New coffee is already marked as deleted, ignoring:', payload.new.id);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee update detected:', payload);
+          
+          // If the coffee was soft-deleted (deleted_at field is set), remove it from the list
+          if (payload.new.deleted_at) {
+            console.log('Coffee was soft-deleted, removing from list:', payload.new.id);
+            setCoffeeData(prevCoffees => 
+              prevCoffees.filter(coffee => coffee.id !== payload.new.id)
+            );
+          } else {
+            // For non-delete updates, fetch all data to ensure consistency
+            fetchCommunityCoffees();
+          }
+        }
+      )
+      .subscribe();
+      
+    // Return cleanup function to unsubscribe from channels
+    return () => {
+      console.log("Cleaning up realtime subscriptions");
+      supabase.removeChannel(reviewsChannel);
+      supabase.removeChannel(coffeesChannel);
+    };
+  }, [fetchCommunityCoffees]);
 
   return {
     coffeeData,
     isLoading,
-    fetchCommunityCoffees
+    fetchCommunityCoffees,
+    setupRealtimeSubscription
   };
 }
