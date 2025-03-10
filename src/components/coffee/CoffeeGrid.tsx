@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import CoffeeCard from '@/components/CoffeeCard';
 import { Coffee } from '@/types/coffee';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,6 +11,11 @@ interface CoffeeGridProps {
 }
 
 const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCount }) => {
+  // Log when coffees change
+  useEffect(() => {
+    console.log("CoffeeGrid received coffees:", coffees.length);
+  }, [coffees]);
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

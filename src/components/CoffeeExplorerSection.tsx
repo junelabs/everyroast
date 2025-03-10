@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FilterTabs from '@/components/FilterTabs';
 import { useAuth } from '@/context/auth';
 import { useCoffeeExplorer } from '@/hooks/useCoffeeExplorer';
@@ -9,7 +9,12 @@ import LoadMoreButton from '@/components/coffee/LoadMoreButton';
 const CoffeeExplorerSection = () => {
   const [visibleCoffees, setVisibleCoffees] = useState(4);
   const { user } = useAuth();
-  const { coffeeData, isLoading } = useCoffeeExplorer();
+  const { coffeeData, isLoading, fetchCommunityCoffees } = useCoffeeExplorer();
+  
+  // Re-fetch coffees when the component mounts
+  useEffect(() => {
+    fetchCommunityCoffees();
+  }, [fetchCommunityCoffees]);
   
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 4);
