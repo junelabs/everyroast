@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -18,10 +17,8 @@ const CoffeeExplorerSection = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    // Initial fetch
     fetchCommunityCoffees();
 
-    // Set up real-time subscription for reviews changes
     const reviewsChannel = supabase
       .channel('reviews-changes')
       .on(
@@ -33,7 +30,6 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Review deleted:', payload);
-          // When a review is deleted, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
@@ -46,7 +42,6 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Review added:', payload);
-          // When a review is added, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
@@ -59,13 +54,11 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Review updated:', payload);
-          // When a review is updated, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
       .subscribe();
     
-    // Set up real-time subscription for coffee deletions
     const coffeesChannel = supabase
       .channel('coffees-changes')
       .on(
@@ -77,7 +70,6 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Coffee deleted:', payload);
-          // When a coffee is deleted, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
@@ -90,7 +82,6 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Coffee added:', payload);
-          // When a coffee is added, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
@@ -103,14 +94,12 @@ const CoffeeExplorerSection = () => {
         },
         (payload) => {
           console.log('Coffee updated:', payload);
-          // When a coffee is updated, refresh the coffee list
           fetchCommunityCoffees();
         }
       )
       .subscribe();
       
     return () => {
-      // Clean up subscriptions on component unmount
       supabase.removeChannel(reviewsChannel);
       supabase.removeChannel(coffeesChannel);
     };
@@ -142,20 +131,16 @@ const CoffeeExplorerSection = () => {
           )
         `)
         .order('created_at', { ascending: false })
-        .limit(12);
+        .limit(12)
+        .not('deleted_at', 'is', 'not null');
       
       if (error) {
         console.error("Error fetching coffees:", error);
         throw error;
       }
 
-      // Log the raw data to see what we're working with
-      console.log("Raw coffee data:", data);
-
-      // Fetch profile information for each coffee's creator
       const coffeeWithProfiles = await Promise.all(
         data.map(async (coffee) => {
-          // Get profile data for the creator
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -187,7 +172,7 @@ const CoffeeExplorerSection = () => {
               username: profileData?.username || 'anonymous',
               avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
             },
-            upvotes: Math.floor(Math.random() * 100) // Temporary random number for demonstration
+            upvotes: Math.floor(Math.random() * 100)
           };
         })
       );
