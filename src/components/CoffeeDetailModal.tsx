@@ -140,7 +140,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 </div>
               </div>
               
-              {/* Add Type display */}
+              {/* Type display - always show this section if type exists */}
               {coffee.type && (
                 <div className="mb-4">
                   <div className="bg-gray-50 p-3 rounded-lg">
