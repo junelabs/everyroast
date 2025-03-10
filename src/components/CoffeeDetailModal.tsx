@@ -73,6 +73,9 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     }
   };
 
+  // Make sure we're extracting the type from the coffee object
+  console.log('Coffee data in modal:', coffee);
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>

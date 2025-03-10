@@ -54,14 +54,12 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
             </div>
           }
         />
-      </div>
-      
-      {/* Type display - always show this section if type exists */}
-      {type && (
-        <div className="mb-4">
+        
+        {/* Always show Type as part of the main grid if it exists */}
+        {type && (
           <Attribute label="Type" value={type} />
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };

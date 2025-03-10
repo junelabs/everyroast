@@ -12,7 +12,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
       <img 
         src={imageSrc} 
         alt={altText} 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
       />
     </div>
   );
