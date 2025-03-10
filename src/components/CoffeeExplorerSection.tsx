@@ -19,19 +19,19 @@ const CoffeeExplorerSection = () => {
   useEffect(() => {
     fetchCommunityCoffees();
 
-    // Subscribe to real-time changes with explicit filtering of deleted coffees
+    // Subscribe to real-time changes
     const reviewsChannel = supabase
       .channel('reviews-changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'reviews'
         },
         (payload) => {
           console.log('Review change detected:', payload);
-          fetchCommunityCoffees(); // Refresh data when any review changes
+          fetchCommunityCoffees();
         }
       )
       .subscribe();
@@ -41,18 +41,17 @@ const CoffeeExplorerSection = () => {
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'coffees'
         },
         (payload) => {
           console.log('Coffee change detected:', payload);
-          if (payload.eventType === 'UPDATE' && payload.new && payload.new.deleted_at) {
+          if (payload.eventType === 'UPDATE' && payload.new.deleted_at) {
             // If a coffee was marked as deleted, immediately remove it from the state
-            setCoffeeData(prevCoffees => prevCoffees.filter(coffee => coffee.id !== payload.new.id));
-          } else {
-            // Otherwise fetch all coffees again
-            fetchCommunityCoffees();
+            setCoffeeData(prevCoffees => 
+              prevCoffees.filter(coffee => coffee.id !== payload.new.id)
+            );
           }
         }
       )
@@ -69,7 +68,6 @@ const CoffeeExplorerSection = () => {
     try {
       console.log("Fetching community coffees...");
       
-      // Explicitly filter out coffees with a deleted_at timestamp
       const { data, error } = await supabase
         .from('coffees')
         .select(`
@@ -91,8 +89,8 @@ const CoffeeExplorerSection = () => {
             rating
           )
         `)
+        .is('deleted_at', null)  // Only fetch non-deleted coffees
         .order('created_at', { ascending: false })
-        .is('deleted_at', null)  // Only fetch coffees where deleted_at is null
         .limit(12);
       
       if (error) {
@@ -101,19 +99,9 @@ const CoffeeExplorerSection = () => {
       }
 
       console.log("Raw coffee data from DB:", data);
-      
-      // Early check for deleted coffees before processing
-      const nonDeletedCoffees = data.filter(coffee => coffee.deleted_at === null);
-      console.log(`Filtered out ${data.length - nonDeletedCoffees.length} deleted coffees`);
-      
+
       const coffeeWithProfiles = await Promise.all(
-        nonDeletedCoffees.map(async (coffee) => {
-          // Double-check for deleted status
-          if (coffee.deleted_at) {
-            console.log(`Skipping deleted coffee ${coffee.id}`);
-            return null;
-          }
-          
+        data.map(async (coffee) => {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -151,11 +139,8 @@ const CoffeeExplorerSection = () => {
         })
       );
       
-      // Filter out any null items (deleted coffees)
-      const filteredCoffees = coffeeWithProfiles.filter(coffee => coffee !== null);
-      
-      console.log("Processed coffee data:", filteredCoffees);
-      setCoffeeData(filteredCoffees);
+      console.log("Processed coffee data:", coffeeWithProfiles);
+      setCoffeeData(coffeeWithProfiles);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
