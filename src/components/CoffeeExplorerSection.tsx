@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
 import FilterTabs from '@/components/FilterTabs';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +19,28 @@ const CoffeeExplorerSection = () => {
   
   useEffect(() => {
     fetchCommunityCoffees();
+
+    // Set up real-time subscription for review deletions
+    const channel = supabase
+      .channel('reviews-deleted')
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'reviews'
+        },
+        (payload) => {
+          console.log('Review deleted:', payload);
+          // When a review is deleted, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchCommunityCoffees = async () => {
