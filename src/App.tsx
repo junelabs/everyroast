@@ -12,6 +12,8 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CoffeeDetails from "./pages/CoffeeDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +30,13 @@ const App = () => (
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={
               <ProtectedRoute>
-                <Profile />
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <div className="flex-grow">
+                    <Profile />
+                  </div>
+                  <Footer />
+                </div>
               </ProtectedRoute>
             } />
             <Route path="/coffee/:id" element={<CoffeeDetails />} />

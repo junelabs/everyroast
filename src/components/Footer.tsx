@@ -17,8 +17,8 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Links */}
-          <div className="grid grid-cols-2 gap-8 md:w-2/3">
+          {/* Links - rearranged with more even spacing */}
+          <div className="grid grid-cols-2 gap-8 md:w-2/3 md:grid-cols-2 md:gap-16">
             <div>
               <h3 className="text-white font-medium mb-4">Platform</h3>
               <ul className="space-y-2">
@@ -28,7 +28,7 @@ const Footer = () => {
                 <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
               </ul>
             </div>
-            <div>
+            <div className="md:justify-self-end">
               <h3 className="text-white font-medium mb-4">Company</h3>
               <ul className="space-y-2">
                 <li><a href="/about" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
