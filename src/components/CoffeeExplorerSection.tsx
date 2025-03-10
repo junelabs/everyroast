@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -34,6 +35,7 @@ const CoffeeExplorerSection = () => {
           price,
           image_url,
           flavor_notes,
+          created_by,
           roasters (
             name
           ),
@@ -49,27 +51,46 @@ const CoffeeExplorerSection = () => {
         throw error;
       }
 
-      const processedData = data.map(coffee => {
-        const reviews = coffee.reviews || [];
-        const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-        const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-        
-        return {
-          id: coffee.id,
-          name: coffee.name,
-          origin: coffee.origin || 'Unknown',
-          roaster: coffee.roasters?.name || 'Unknown Roaster',
-          image: coffee.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-          rating: parseFloat(averageRating.toFixed(1)),
-          price: coffee.price || 0,
-          roastLevel: coffee.roast_level || 'Medium',
-          processMethod: coffee.process_method || 'Washed',
-          flavor: coffee.flavor_notes || 'No flavor notes provided',
-          reviewCount: reviews.length
-        };
-      });
+      // Fetch profile information for each coffee's creator
+      const coffeeWithProfiles = await Promise.all(
+        data.map(async (coffee) => {
+          // Get profile data for the creator
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', coffee.created_by)
+            .single();
+          
+          if (profileError) {
+            console.error("Error fetching profile:", profileError);
+          }
+
+          const reviews = coffee.reviews || [];
+          const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
+          const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+          
+          return {
+            id: coffee.id,
+            name: coffee.name,
+            origin: coffee.origin || 'Unknown',
+            roaster: coffee.roasters?.name || 'Unknown Roaster',
+            image: coffee.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            rating: parseFloat(averageRating.toFixed(1)),
+            price: coffee.price || 0,
+            roastLevel: coffee.roast_level || 'Medium',
+            processMethod: coffee.process_method || 'Washed',
+            flavor: coffee.flavor_notes || 'No flavor notes provided',
+            reviewCount: reviews.length,
+            poster: {
+              username: profileData?.username || 'anonymous',
+              avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+            },
+            upvotes: Math.floor(Math.random() * 100) // Temporary random number for demonstration
+          };
+        })
+      );
       
-      setCoffeeData(processedData);
+      setCoffeeData(coffeeWithProfiles);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
