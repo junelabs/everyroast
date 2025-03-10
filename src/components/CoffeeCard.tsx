@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Star, Heart, ThumbsUp, MessageSquare } from 'lucide-react';
+import { Star, Heart, ThumbsUp, MessageSquare, ChevronUp } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from './CoffeeDetailModal';
@@ -17,11 +17,11 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent modal from opening
     toast({
-      title: "Liked!",
-      description: `You liked ${coffee.name}`,
+      title: "Upvoted!",
+      description: `You upvoted ${coffee.name}`,
       duration: 3000,
     });
   };
@@ -55,11 +55,6 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
           
           {/* Consistent overlay over the whole card */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-          
-          {/* Top indicators */}
-          <div className="absolute top-4 left-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white font-medium">
-            <span className="text-lg">{coffee.id}</span>
-          </div>
           
           {/* Rating */}
           <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
@@ -119,7 +114,7 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
           <div className="space-y-3 mt-4">
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 bg-[#ea384c] hover:bg-[#d92d41] text-white border-[#ea384c] hover:border-[#d92d41]"
               onClick={handleAddToWishlist}
             >
               <Heart className="h-4 w-4" />
@@ -130,10 +125,10 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
               <Button 
                 variant="outline" 
                 className="flex-1 flex items-center justify-center"
-                onClick={handleLike}
+                onClick={handleUpvote}
               >
-                <ThumbsUp className="h-4 w-4 mr-2" />
-                Like
+                <ChevronUp className="h-4 w-4 mr-2" />
+                Upvote
               </Button>
               
               <Button 

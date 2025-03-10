@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -17,7 +16,6 @@ const CoffeeExplorerSection = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Fetch community coffee reviews
   useEffect(() => {
     fetchCommunityCoffees();
   }, []);
@@ -51,9 +49,7 @@ const CoffeeExplorerSection = () => {
         throw error;
       }
 
-      // Process data to match coffee card format
       const processedData = data.map(coffee => {
-        // Calculate average rating if there are reviews
         const reviews = coffee.reviews || [];
         const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
         const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
@@ -97,7 +93,6 @@ const CoffeeExplorerSection = () => {
       return;
     }
     
-    // If authenticated, show more coffees
     setVisibleCoffees(prev => prev + 4);
   };
   
@@ -106,10 +101,8 @@ const CoffeeExplorerSection = () => {
       <div className="container mx-auto px-6">
         <h2 className="text-3xl font-bold text-roast-800 mb-6 pl-0">Community Coffee Reviews</h2>
         
-        {/* Horizontal tabs/filter */}
         <FilterTabs />
         
-        {/* Coffee cards grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, index) => (
@@ -128,7 +121,6 @@ const CoffeeExplorerSection = () => {
           </div>
         )}
         
-        {/* Load more button */}
         {coffeeData.length > visibleCoffees && (
           <div className="mt-12 text-center">
             <Button 
