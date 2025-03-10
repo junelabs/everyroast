@@ -31,6 +31,9 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
   processMethod,
   type
 }) => {
+  // Debug the type value
+  console.log('Type value in CoffeeAttributes:', type);
+  
   return (
     <>
       <div className="grid grid-cols-2 gap-4 mb-6">

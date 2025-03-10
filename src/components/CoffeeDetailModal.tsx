@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -73,7 +72,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     }
   };
 
-  // Make sure we're extracting the type from the coffee object
+  // Debug logging
   console.log('Coffee data in modal:', coffee);
 
   return (

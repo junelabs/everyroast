@@ -36,6 +36,7 @@ const CoffeeExplorerSection = () => {
           image_url,
           flavor_notes,
           created_by,
+          type,
           roasters (
             name
           ),
@@ -80,6 +81,7 @@ const CoffeeExplorerSection = () => {
             roastLevel: coffee.roast_level || 'Medium',
             processMethod: coffee.process_method || 'Washed',
             flavor: coffee.flavor_notes || 'No flavor notes provided',
+            type: coffee.type || undefined, // Explicitly include type field
             reviewCount: reviews.length,
             poster: {
               username: profileData?.username || 'anonymous',
