@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CoffeeCard from '@/components/CoffeeCard';
@@ -132,7 +133,7 @@ const CoffeeExplorerSection = () => {
         `)
         .order('created_at', { ascending: false })
         .limit(12)
-        .not('deleted_at', 'is', 'not null');
+        .is('deleted_at', null);  // Only fetch coffees where deleted_at is null
       
       if (error) {
         console.error("Error fetching coffees:", error);
