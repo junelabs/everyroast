@@ -41,9 +41,11 @@ export function useCoffeeExplorer() {
         (payload) => {
           console.log('Coffee deletion detected:', payload);
           // Immediately remove the deleted coffee from the state
-          setCoffeeData(prevCoffees => 
-            prevCoffees.filter(coffee => coffee.id !== payload.old.id)
-          );
+          setCoffeeData(prevCoffees => {
+            const updatedCoffees = prevCoffees.filter(coffee => coffee.id !== payload.old.id);
+            console.log('Filtered coffees after deletion:', updatedCoffees);
+            return updatedCoffees;
+          });
         }
       )
       .on(
@@ -92,6 +94,7 @@ export function useCoffeeExplorer() {
             rating
           )
         `)
+        .is('deleted_at', null) // Only fetch non-deleted coffees
         .order('created_at', { ascending: false })
         .limit(12);
       
