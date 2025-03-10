@@ -6,7 +6,11 @@ import { useToast } from "@/components/ui/use-toast";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileContent from "@/components/profile/ProfileContent";
 
-const ProfileContainer = () => {
+interface ProfileContainerProps {
+  showHeader?: boolean;
+}
+
+const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
   const { profile, updateProfile, isLoading: authLoading, user } = useAuth();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -150,7 +154,7 @@ const ProfileContainer = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ProfileHeader />
+      {showHeader && <ProfileHeader />}
       
       {isPageLoading ? (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
