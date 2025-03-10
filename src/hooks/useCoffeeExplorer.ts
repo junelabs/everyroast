@@ -14,60 +14,38 @@ export function useCoffeeExplorer() {
     try {
       console.log("Fetching community coffees...");
       
+      // Explicitly check for non-deleted coffees in the query
       const { data, error } = await supabase
         .from('coffees')
         .select(`
-          id,
-          name,
-          origin,
-          roast_level,
-          process_method,
-          price,
-          image_url,
-          flavor_notes,
-          created_by,
-          type,
-          deleted_at,
-          roasters (
-            name
-          ),
-          reviews (
-            rating
-          )
+          *,
+          roasters (name),
+          reviews (rating)
         `)
-        .is('deleted_at', null)  // This is critical - only get non-deleted coffees
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error("Error fetching coffees:", error);
-        throw error;
-      }
+
+      if (error) throw error;
 
       console.log("Raw coffee data:", data);
-      console.log("Number of coffees fetched:", data?.length || 0);
       
+      // Filter out any null or undefined data
+      const validCoffees = data?.filter(coffee => coffee && !coffee.deleted_at) || [];
+      console.log("Valid coffees after filter:", validCoffees.length);
+
       const coffeeWithProfiles = await Promise.all(
-        (data || []).map(async (coffee) => {
-          if (coffee.deleted_at) {
-            console.log(`Skipping deleted coffee: ${coffee.id}`);
-            return null; // Skip deleted coffees
-          }
-          
-          const { data: profileData, error: profileError } = await supabase
+        validCoffees.map(async (coffee) => {
+          const { data: profileData } = await supabase
             .from('profiles')
             .select('username, avatar_url')
             .eq('id', coffee.created_by)
             .single();
-          
-          if (profileError) {
-            console.error("Error fetching profile:", profileError);
-          }
 
           const reviews = coffee.reviews || [];
           const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
           const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
           
-          const coffeeItem: Coffee = {
+          return {
             id: coffee.id,
             name: coffee.name,
             origin: coffee.origin || 'Unknown',
@@ -87,18 +65,11 @@ export function useCoffeeExplorer() {
             },
             upvotes: Math.floor(Math.random() * 100)
           };
-          
-          return coffeeItem;
         })
       );
       
-      // Filter out any null values from the array (deleted coffees)
-      const filteredCoffees = coffeeWithProfiles.filter(coffee => coffee !== null) as Coffee[];
-      
-      console.log("Filtered coffee data:", filteredCoffees);
-      console.log("Number of coffees after filtering:", filteredCoffees.length);
-      
-      setCoffeeData(filteredCoffees);
+      console.log("Final processed coffees:", coffeeWithProfiles.length);
+      setCoffeeData(coffeeWithProfiles);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
@@ -119,45 +90,14 @@ export function useCoffeeExplorer() {
       .on(
         'postgres_changes',
         {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'coffees'
-        },
-        (payload) => {
-          console.log('Coffee hard deletion detected:', payload);
-          setCoffeeData(prevCoffees => {
-            console.log(`Removing coffee with ID ${payload.old.id} from state`);
-            return prevCoffees.filter(coffee => coffee.id !== payload.old.id);
-          });
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
           event: 'UPDATE',
           schema: 'public',
-          table: 'coffees'
+          table: 'coffees',
+          filter: 'deleted_at=is.null'
         },
         (payload) => {
-          // Check if this is a soft delete update (deleted_at is being set)
-          if (payload.new.deleted_at && !payload.old.deleted_at) {
-            console.log('Coffee soft deletion detected:', payload);
-            setCoffeeData(prevCoffees => {
-              console.log(`Removing soft-deleted coffee with ID ${payload.new.id} from state`);
-              return prevCoffees.filter(coffee => coffee.id !== payload.new.id);
-            });
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'reviews'
-        },
-        () => {
-          console.log('Review change detected, refreshing coffees');
+          console.log('Coffee update detected:', payload);
+          // Refresh the entire list when a coffee is updated
           fetchCommunityCoffees();
         }
       )
