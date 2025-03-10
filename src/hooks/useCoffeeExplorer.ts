@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -42,8 +41,10 @@ export function useCoffeeExplorer() {
           console.log('Coffee deletion detected:', payload);
           // Immediately remove the deleted coffee from the state
           setCoffeeData(prevCoffees => {
+            console.log('Previous coffees:', prevCoffees.length);
+            console.log('Deleted coffee ID:', payload.old.id);
             const updatedCoffees = prevCoffees.filter(coffee => coffee.id !== payload.old.id);
-            console.log('Filtered coffees after deletion:', updatedCoffees);
+            console.log('Updated coffees count:', updatedCoffees.length);
             return updatedCoffees;
           });
         }
@@ -58,6 +59,25 @@ export function useCoffeeExplorer() {
         (payload) => {
           console.log('New coffee detected:', payload);
           fetchCommunityCoffees();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee update detected:', payload);
+          // If deleted_at is set in the update, remove it from our list
+          if (payload.new.deleted_at) {
+            console.log('Coffee marked as deleted:', payload.new.id);
+            setCoffeeData(prevCoffees => prevCoffees.filter(coffee => coffee.id !== payload.new.id));
+          } else {
+            // Otherwise refresh the list
+            fetchCommunityCoffees();
+          }
         }
       )
       .subscribe();
