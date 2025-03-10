@@ -5,8 +5,9 @@ import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-// Import our new component modules
+// Import our component modules
 import ImageSection from './coffee/modal/ImageSection';
 import RatingBadge from './coffee/modal/RatingBadge';
 import CoffeeAttributes from './coffee/modal/CoffeeAttributes';
@@ -87,12 +88,34 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             
             {/* Coffee Details Section */}
             <div className="p-6 bg-white">
-              <div className="flex items-center mb-2">
+              <div className="flex items-center justify-between mb-2">
                 <RatingBadge rating={coffee.rating} />
+                
+                {/* Add the upvotes display */}
+                {coffee.upvotes !== undefined && (
+                  <div className="flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                    <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
+                    <span className="font-medium">{coffee.upvotes}</span>
+                  </div>
+                )}
               </div>
               
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{coffee.name}</h2>
               <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
+              
+              {/* Add poster information if available */}
+              {coffee.poster && (
+                <div className="flex items-center space-x-2 mb-4 p-2 bg-gray-50 rounded-lg">
+                  <span className="text-sm text-gray-500">Posted by:</span>
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={coffee.poster.avatarUrl} />
+                    <AvatarFallback>{coffee.poster.username.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">@{coffee.poster.username}</span>
+                </div>
+              )}
               
               <CoffeeAttributes
                 origin={coffee.origin}
