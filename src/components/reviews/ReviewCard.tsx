@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -40,7 +39,6 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     });
   };
 
-  // Convert review to coffee format for modal
   const coffee = {
     id: review.coffee_id,
     name: review.coffees?.name || "Unnamed Coffee",
@@ -54,7 +52,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     flavor: review.review_text || "No flavor notes provided",
     brewingMethod: review.brewing_method || "",
     reviewDate: review.created_at,
-    reviewId: review.id // Pass the review ID to the modal
+    reviewId: review.id,
+    type: review.coffees?.type || ""
   };
 
   const handleEdit = () => {
@@ -75,7 +74,6 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         title: "Success",
         description: "Review has been deleted successfully."
       });
-      // This will cause the parent component to refresh the reviews list
       onEdit(null);
     } catch (error) {
       console.error("Error deleting review:", error);
@@ -103,10 +101,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
             className="w-full h-full object-cover"
           />
           
-          {/* Overlay */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
           
-          {/* Rating - top right */}
           {review.rating && (
             <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -114,14 +110,12 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
             </div>
           )}
           
-          {/* Date - top left */}
           {review.created_at && (
             <div className="absolute top-4 left-4 z-10 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs">
               {formatDate(review.created_at)}
             </div>
           )}
           
-          {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
             <div className="flex justify-between mb-2">
               <div>

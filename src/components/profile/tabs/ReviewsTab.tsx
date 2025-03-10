@@ -59,6 +59,7 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
             process_method,
             price,
             flavor_notes,
+            type,
             roasters (
               name
             )
