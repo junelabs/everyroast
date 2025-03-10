@@ -70,15 +70,10 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
             <span className="text-sm">@{coffee.poster?.username}</span>
           </div>
           
-          {/* Upvotes (replacing Rating) */}
+          {/* Upvotes */}
           <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
             <ChevronUp className="h-4 w-4 text-green-400" />
             <span className="text-lg font-medium">{coffee.upvotes || 0}</span>
-          </div>
-          
-          {/* Rating (moved to bottom right) */}
-          <div className="absolute bottom-24 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <span className="text-sm font-medium">★ {coffee.rating}</span>
           </div>
           
           {/* Bottom info */}
