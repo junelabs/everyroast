@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -46,7 +45,6 @@ export function useCoffeeExplorer() {
       console.log("Raw coffee data:", data);
       console.log("Number of coffees fetched:", data?.length || 0);
       
-      // Transform the data to our Coffee type
       const coffeeWithProfiles = await Promise.all(
         (data || []).map(async (coffee) => {
           const { data: profileData, error: profileError } = await supabase
@@ -116,7 +114,6 @@ export function useCoffeeExplorer() {
         },
         (payload) => {
           console.log('Coffee deletion detected:', payload);
-          // Immediately remove the deleted coffee from the state
           setCoffeeData(prevCoffees => {
             console.log(`Removing coffee with ID ${payload.old.id} from state`);
             return prevCoffees.filter(coffee => coffee.id !== payload.old.id);
