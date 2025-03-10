@@ -42,11 +42,15 @@ export function useCoffeeExplorer() {
         throw error;
       }
 
-      const filteredData = data?.filter(coffee => !coffee.deleted_at) || [];
-      console.log(`Filtered coffee data: ${filteredData.length} coffees after removing deleted`);
-
+      console.log("Raw coffee data:", data);
+      
       const coffeeWithProfiles = await Promise.all(
-        filteredData.map(async (coffee) => {
+        (data || []).map(async (coffee) => {
+          if (coffee.deleted_at) {
+            console.log("Skipping deleted coffee:", coffee.id);
+            return null;
+          }
+
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -84,8 +88,10 @@ export function useCoffeeExplorer() {
         })
       );
       
-      console.log("Final processed coffee data:", coffeeWithProfiles);
-      setCoffeeData(coffeeWithProfiles);
+      const filteredCoffees = coffeeWithProfiles.filter((coffee): coffee is Coffee => coffee !== null);
+      console.log("Filtered coffee data:", filteredCoffees);
+      
+      setCoffeeData(filteredCoffees);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
