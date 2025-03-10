@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Star, Edit, Trash2 } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
@@ -57,8 +57,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     reviewId: review.id // Pass the review ID to the modal
   };
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent modal from opening
+  const handleEdit = () => {
     onEdit(review);
   };
 
@@ -122,29 +121,6 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
             </div>
           )}
           
-          {/* Action buttons - bottom right */}
-          <div className="absolute bottom-4 right-4 z-10 flex space-x-2">
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-transparent text-white h-8 px-2"
-              onClick={handleEdit}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-transparent text-white h-8 px-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDeleteDialogOpen(true);
-              }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-          
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
             <div className="flex justify-between mb-2">
@@ -203,6 +179,28 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           onEdit(review);
         }}
         showActionButtons={true}
+        customActions={
+          <div className="space-y-3 mt-4">
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline"
+                className="flex-1"
+                onClick={handleEdit}
+              >
+                Edit Review
+              </Button>
+              
+              <Button 
+                variant="ghost"
+                className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        }
       />
       
       <ReviewForm 
