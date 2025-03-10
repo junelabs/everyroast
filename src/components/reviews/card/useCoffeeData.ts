@@ -21,7 +21,7 @@ export const useCoffeeData = (review: any) => {
     brewingMethod: review.brewing_method || "",
     reviewDate: review.created_at,
     reviewId: review.id,
-    // Ensure type is properly extracted and has a fallback
+    // Get the actual type from the database, with fallback only if not present
     type: review.coffees?.type || "Single Origin"
   };
 

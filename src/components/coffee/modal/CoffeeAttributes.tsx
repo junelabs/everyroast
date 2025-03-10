@@ -33,8 +33,7 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
 }) => {
   // Enhanced debug logging for the type value
   console.log('Type value in CoffeeAttributes:', type);
-  console.log('Type value length:', type ? type.length : 0);
-  console.log('Type value is empty string?', type === '');
+  console.log('Type value type:', typeof type);
   
   return (
     <>
@@ -60,8 +59,8 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
           }
         />
         
-        {/* Only show Type if it has a valid value */}
-        {type && type.trim() !== "" && (
+        {/* Always display the Type attribute when it exists */}
+        {type && (
           <Attribute label="Type" value={type} />
         )}
       </div>

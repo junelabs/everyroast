@@ -58,11 +58,6 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
           )}
         </div>
         
-        {/* Always display coffee type with a fallback */}
-        <div className="bg-black/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs inline-block mb-2">
-          {review.coffees?.type || "Single Origin"}
-        </div>
-        
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
           {review.coffees?.roast_level && (
             <div className="flex items-center">
