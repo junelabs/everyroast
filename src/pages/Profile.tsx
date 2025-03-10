@@ -1,10 +1,12 @@
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
+import Footer from "@/components/Footer";
 
 const Profile = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col">
       <ProfileContainer />
+      <Footer />
     </div>
   );
 };
