@@ -31,8 +31,10 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
   processMethod,
   type
 }) => {
-  // Debug the type value
+  // Enhanced debug logging for the type value
   console.log('Type value in CoffeeAttributes:', type);
+  console.log('Type value length:', type ? type.length : 0);
+  console.log('Type value is empty string?', type === '');
   
   return (
     <>
@@ -58,8 +60,8 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
           }
         />
         
-        {/* Always show Type as part of the main grid if it exists */}
-        {type && (
+        {/* Only show Type if it has a valid value */}
+        {type && type.trim() !== "" && (
           <Attribute label="Type" value={type} />
         )}
       </div>

@@ -72,6 +72,10 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
         console.error("Error fetching reviews:", error);
       } else {
         console.log("Reviews fetched successfully:", data);
+        // Add debug logging to check the type field
+        if (data && data.length > 0) {
+          console.log("Sample coffee type:", data[0].coffees?.type);
+        }
         setReviews(data || []);
       }
     } catch (error) {

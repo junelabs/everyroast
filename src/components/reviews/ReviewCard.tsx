@@ -31,6 +31,10 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
+  // Add debug logging to check the type value
+  console.log("Review in ReviewCard:", review);
+  console.log("Coffee type in ReviewCard:", review.coffees?.type);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -139,8 +143,8 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
               )}
             </div>
             
-            {/* Add coffee type display here */}
-            {review.coffees?.type && (
+            {/* Display coffee type if it exists */}
+            {review.coffees?.type && review.coffees.type.trim() !== "" && (
               <div className="bg-black/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs inline-block mb-2">
                 {review.coffees.type}
               </div>
