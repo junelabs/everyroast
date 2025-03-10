@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 
 interface ProtectedRouteProps {
@@ -10,6 +10,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading, authInitialized } = useAuth();
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const navigate = useNavigate();
   
   useEffect(() => {
     let timer: number | undefined;
@@ -27,13 +28,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     };
   }, [isLoading, authInitialized]);
 
-  console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
+  // Check auth state once it's initialized
+  useEffect(() => {
+    if (authInitialized && !isLoading && !user) {
+      console.log("User not authenticated, redirecting to login");
+      navigate('/login', { replace: true });
+    }
+  }, [authInitialized, isLoading, user, navigate]);
 
-  // If the auth state is initialized and we have no user, redirect to login
-  if (authInitialized && !isLoading && !user) {
-    console.log("User not authenticated, redirecting to login");
-    return <Navigate to="/login" replace />;
-  }
+  console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
 
   // Show loading state with timeout
   if ((isLoading || !authInitialized) && timeElapsed < 10) {
@@ -61,6 +64,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (timeElapsed >= 10 && user) {
     console.log("ProtectedRoute: Forcing continuation after timeout with existing user");
     return <>{children}</>;
+  }
+
+  // If no user and we're not loading, Navigate component will handle redirect
+  if (!user && !isLoading && authInitialized) {
+    return <Navigate to="/login" replace />;
   }
 
   // User is authenticated, render the protected content

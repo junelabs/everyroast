@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
 import Footer from "@/components/Footer";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 
 const Index = () => {
   const { user, isLoading } = useAuth();

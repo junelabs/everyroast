@@ -5,27 +5,39 @@ import { useState, useEffect } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signIn, user, isLoading, authInitialized } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  console.log("Login page - auth state:", { user, isLoading, authInitialized });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn(email, password);
+    try {
+      await signIn(email, password);
+      // The navigation will happen in the useEffect below once user is set
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Error handling is done in the auth provider
+    }
   };
 
   // Effect to handle redirection after successful login
   useEffect(() => {
     if (user && !isLoading && authInitialized) {
+      console.log("Login successful, redirecting to profile");
       navigate('/profile', { replace: true });
     }
   }, [user, isLoading, authInitialized, navigate]);
 
   // Immediate redirect if already logged in
   if (user && !isLoading && authInitialized) {
+    console.log("Already logged in, redirecting to profile");
     return <Navigate to="/profile" replace />;
   }
 
