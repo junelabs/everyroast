@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Star, Heart, ThumbsUp, MessageSquare, ChevronUp } from 'lucide-react';
+import { Heart, ThumbsUp, MessageSquare, ChevronUp } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from './CoffeeDetailModal';
@@ -70,16 +70,15 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
             <span className="text-sm">@{coffee.poster?.username}</span>
           </div>
           
-          {/* Rating */}
+          {/* Upvotes (replacing Rating) */}
           <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-lg font-medium">{coffee.rating}</span>
+            <ChevronUp className="h-4 w-4 text-green-400" />
+            <span className="text-lg font-medium">{coffee.upvotes || 0}</span>
           </div>
           
-          {/* Upvote count */}
+          {/* Rating (moved to bottom right) */}
           <div className="absolute bottom-24 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <ChevronUp className="h-4 w-4 text-green-400" />
-            <span className="text-sm font-medium">{coffee.upvotes || 0}</span>
+            <span className="text-sm font-medium">★ {coffee.rating}</span>
           </div>
           
           {/* Bottom info */}
