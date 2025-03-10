@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -74,6 +73,14 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     }
   };
 
+  const handleUpvote = () => {
+    toast({
+      title: "Upvoted!",
+      description: `You upvoted ${coffee.name}`,
+      duration: 3000,
+    });
+  };
+
   // Debug logging
   console.log('Coffee data in modal:', coffee);
 
@@ -102,16 +109,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               
               <div className="flex items-center space-x-3 mb-2">
                 <RatingBadge rating={coffee.rating} />
-                
-                {/* Add the upvotes display next to rating */}
-                {coffee.upvotes !== undefined && (
-                  <div className="flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
-                    <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="18 15 12 9 6 15" />
-                    </svg>
-                    <span className="font-medium">{coffee.upvotes}</span>
-                  </div>
-                )}
               </div>
               
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{coffee.name}</h2>
@@ -136,8 +133,10 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 customActions={customActions}
                 onReview={onReview}
                 onDelete={() => setIsDeleteDialogOpen(true)}
+                onUpvote={handleUpvote}
                 isDeleting={isDeleting}
                 hasReviewId={!!coffee.reviewId}
+                upvotes={coffee.upvotes}
               />
             </div>
           </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Heart, ThumbsUp, MessageSquare, ChevronUp } from 'lucide-react';
+import { Heart, MessageSquare, ChevronUp } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from './CoffeeDetailModal';
@@ -141,8 +141,11 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
                 className="flex-1 flex items-center justify-center"
                 onClick={handleUpvote}
               >
-                <ChevronUp className="h-4 w-4 mr-2" />
-                Upvote
+                <div className="flex items-center gap-1">
+                  <ChevronUp className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium text-emerald-600">{coffee.upvotes || 0}</span>
+                </div>
+                <span className="ml-1">Upvote</span>
               </Button>
               
               <Button 
