@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -90,7 +89,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
 
     setIsDeleting(true);
     try {
-      const deleted = await softDeleteCoffee(coffee.id);
+      const coffeeId = typeof coffee.id === 'number' ? coffee.id.toString() : coffee.id;
+      const deleted = await softDeleteCoffee(coffeeId);
       
       if (!deleted) throw new Error("Failed to delete coffee");
 
@@ -134,7 +134,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   };
   
   // Check if the current user is the owner of this coffee
-  const canDelete = coffee.poster && user ? canDeleteCoffee(coffee.poster.userId, user.id) : false;
+  const canDelete = coffee.poster && user && coffee.poster.userId ? 
+    canDeleteCoffee(coffee.poster.userId, user.id) : false;
 
   // Debug logging
   console.log('Coffee data in modal:', coffee);

@@ -14,10 +14,11 @@ export interface Coffee {
   poster?: {
     username: string;
     avatarUrl: string;
+    userId?: string;  // Make sure userId is included in the type definition
   };
   upvotes?: number;
   brewingMethod?: string;
-  type?: string; // Added type property
+  type?: string;
 }
 
 // Add additional type definitions needed by the form components
