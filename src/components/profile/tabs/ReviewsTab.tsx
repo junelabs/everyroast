@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -25,8 +26,9 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
     }
   }, [user]);
 
+  // Modified: Only fetch reviews when the form closes after editing, not after deleting
   useEffect(() => {
-    if (!isReviewFormOpen) {
+    if (!isReviewFormOpen && selectedReview) {
       if (!isAddingNew) {
         setSelectedReview(null);
       }
@@ -104,6 +106,12 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
     }, 100);
   };
 
+  // Added: Function to handle review deletion
+  const handleReviewDeleted = () => {
+    setSelectedReview(null);
+    fetchUserReviews();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
@@ -127,7 +135,8 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
             <ReviewCard 
               key={review.id} 
               review={review} 
-              onEdit={handleEditReview} 
+              onEdit={handleEditReview}
+              onDelete={handleReviewDeleted}
             />
           ))}
         </div>

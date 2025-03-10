@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { hardDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
@@ -16,9 +16,10 @@ import { useCoffeeData, formatReviewDate } from './card/useCoffeeData';
 interface ReviewCardProps {
   review: any;
   onEdit: (review: any) => void;
+  onDelete?: () => void; // Added onDelete prop
 }
 
-const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
+const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -55,7 +56,14 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         title: "Success",
         description: "Review has been deleted successfully."
       });
-      onEdit(null);
+      
+      // Call the onDelete callback if provided
+      if (onDelete) {
+        onDelete();
+      }
+      
+      setIsReviewFormOpen(false); // Ensure the form is closed
+      setIsModalOpen(false); // Close the modal
     } catch (error) {
       console.error("Error deleting review:", error);
       toast({
@@ -83,7 +91,14 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         title: "Success",
         description: "Coffee has been permanently deleted."
       });
-      onEdit(null);
+      
+      // Call the onDelete callback if provided
+      if (onDelete) {
+        onDelete();
+      }
+      
+      setIsReviewFormOpen(false); // Ensure the form is closed
+      setIsModalOpen(false); // Close the modal
     } catch (error) {
       console.error("Error deleting coffee:", error);
       toast({

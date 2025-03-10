@@ -7,6 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { hardDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
+import ImageSection from '@/components/coffee/modal/ImageSection';
+import RatingBadge from '@/components/coffee/modal/RatingBadge';
+import CoffeeAttributes from '@/components/coffee/modal/CoffeeAttributes';
+import ReviewSection from '@/components/coffee/modal/ReviewSection';
+import ActionButtons from '@/components/coffee/modal/ActionButtons';
+import DeleteConfirmDialog from '@/components/coffee/modal/DeleteConfirmDialog';
 
 interface CoffeeDetailModalProps {
   coffee: Coffee & { reviewDate?: string; reviewId?: string };
