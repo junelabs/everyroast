@@ -18,6 +18,7 @@ interface DeleteConfirmDialogProps {
   onDelete: () => void;
   isDeleting: boolean;
   deleteType?: 'review' | 'coffee';
+  isHardDelete?: boolean;
 }
 
 const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
@@ -26,18 +27,19 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
   coffeeName,
   onDelete,
   isDeleting,
-  deleteType = 'review'
+  deleteType = 'review',
+  isHardDelete = false
 }) => {
   const title = deleteType === 'coffee' ? 
-    "Delete this coffee?" : 
+    "Remove this coffee?" : 
     "Delete this review?";
     
   const description = deleteType === 'coffee' ?
-    `This will remove "${coffeeName}" from the community. This action cannot be undone.` :
+    `This will remove "${coffeeName}" from the community listings. This action cannot be undone.` :
     `This will permanently delete your review of "${coffeeName}". This action cannot be undone.`;
     
   const buttonText = deleteType === 'coffee' ?
-    (isDeleting ? "Deleting..." : "Delete Coffee") :
+    (isDeleting ? "Removing..." : "Remove Coffee") :
     (isDeleting ? "Deleting..." : "Delete Review");
 
   return (

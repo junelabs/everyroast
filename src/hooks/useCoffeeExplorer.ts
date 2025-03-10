@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -113,11 +114,29 @@ export function useCoffeeExplorer() {
           table: 'coffees'
         },
         (payload) => {
-          console.log('Coffee deletion detected:', payload);
+          console.log('Coffee hard deletion detected:', payload);
           setCoffeeData(prevCoffees => {
             console.log(`Removing coffee with ID ${payload.old.id} from state`);
             return prevCoffees.filter(coffee => coffee.id !== payload.old.id);
           });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          // Check if this is a soft delete update (deleted_at is being set)
+          if (payload.new.deleted_at && !payload.old.deleted_at) {
+            console.log('Coffee soft deletion detected:', payload);
+            setCoffeeData(prevCoffees => {
+              console.log(`Removing soft-deleted coffee with ID ${payload.new.id} from state`);
+              return prevCoffees.filter(coffee => coffee.id !== payload.new.id);
+            });
+          }
         }
       )
       .on(
