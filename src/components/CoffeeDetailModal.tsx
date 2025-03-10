@@ -100,10 +100,10 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 </div>
               )}
               
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-3 mb-2">
                 <RatingBadge rating={coffee.rating} />
                 
-                {/* Add the upvotes display */}
+                {/* Add the upvotes display next to rating */}
                 {coffee.upvotes !== undefined && (
                   <div className="flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
                     <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
