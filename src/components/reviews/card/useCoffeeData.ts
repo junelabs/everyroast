@@ -2,6 +2,10 @@
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
 export const useCoffeeData = (review: any) => {
+  // Add more extensive debug logging to track the type field
+  console.log("Full review object:", review);
+  console.log("Coffee type field:", review.coffees?.type);
+  
   // Prepares structured coffee data from a review object
   const coffee = {
     id: review.coffee_id,
@@ -17,7 +21,8 @@ export const useCoffeeData = (review: any) => {
     brewingMethod: review.brewing_method || "",
     reviewDate: review.created_at,
     reviewId: review.id,
-    type: review.coffees?.type || ""
+    // Ensure type is properly extracted and has a fallback
+    type: review.coffees?.type || "Single Origin"
   };
 
   return { coffee };

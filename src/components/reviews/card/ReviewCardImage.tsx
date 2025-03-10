@@ -10,6 +10,9 @@ interface ReviewCardImageProps {
 }
 
 const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate }) => {
+  // Add debug logging to verify the type value
+  console.log("Type in ReviewCardImage:", review.coffees?.type);
+  
   return (
     <div className="w-full h-full relative">
       <img 
@@ -55,12 +58,10 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
           )}
         </div>
         
-        {/* Display coffee type if it exists */}
-        {review.coffees?.type && review.coffees.type.trim() !== "" && (
-          <div className="bg-black/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs inline-block mb-2">
-            {review.coffees.type}
-          </div>
-        )}
+        {/* Always display coffee type with a fallback */}
+        <div className="bg-black/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs inline-block mb-2">
+          {review.coffees?.type || "Single Origin"}
+        </div>
         
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
           {review.coffees?.roast_level && (
