@@ -21,8 +21,8 @@ const CoffeeExplorerSection = () => {
     // Initial fetch
     fetchCommunityCoffees();
 
-    // Set up real-time subscription for review deletions
-    const channel = supabase
+    // Set up real-time subscription for reviews changes
+    const reviewsChannel = supabase
       .channel('reviews-changes')
       .on(
         'postgres_changes',
@@ -64,10 +64,55 @@ const CoffeeExplorerSection = () => {
         }
       )
       .subscribe();
+    
+    // Set up real-time subscription for coffee deletions
+    const coffeesChannel = supabase
+      .channel('coffees-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee deleted:', payload);
+          // When a coffee is deleted, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee added:', payload);
+          // When a coffee is added, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'coffees'
+        },
+        (payload) => {
+          console.log('Coffee updated:', payload);
+          // When a coffee is updated, refresh the coffee list
+          fetchCommunityCoffees();
+        }
+      )
+      .subscribe();
       
     return () => {
-      // Clean up subscription on component unmount
-      supabase.removeChannel(channel);
+      // Clean up subscriptions on component unmount
+      supabase.removeChannel(reviewsChannel);
+      supabase.removeChannel(coffeesChannel);
     };
   }, []);
 
