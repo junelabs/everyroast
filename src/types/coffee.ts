@@ -16,4 +16,12 @@ export interface Coffee {
     avatarUrl: string;
   };
   upvotes?: number;
+  brewingMethod?: string;
 }
+
+// Add additional type definitions needed by the form components
+export type CoffeeOrigin = string;
+export type RoastLevel = string;
+export type ProcessMethod = string;
+export type CoffeeType = string;
+export type SizeUnit = string;

@@ -1,9 +1,23 @@
+
 import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import { Star, Edit, Trash2 } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
+import { Button } from '@/components/ui/button';
 import { CoffeeOrigin, RoastLevel, ProcessMethod } from '@/types/coffee';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ReviewCardProps {
   review: any;
@@ -13,6 +27,9 @@ interface ReviewCardProps {
 const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -22,8 +39,6 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
       day: 'numeric'
     });
   };
-
-  console.log("Rendering review card with data:", review);
 
   // Convert review to coffee format for modal
   const coffee = {
@@ -40,6 +55,40 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
     brewingMethod: review.brewing_method || "",
     reviewDate: review.created_at,
     reviewId: review.id // Pass the review ID to the modal
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent modal from opening
+    onEdit(review);
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', review.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Review has been deleted successfully."
+      });
+      // This will cause the parent component to refresh the reviews list
+      onEdit(null);
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the review. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   return (
@@ -72,6 +121,29 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
               {formatDate(review.created_at)}
             </div>
           )}
+          
+          {/* Action buttons - bottom right */}
+          <div className="absolute bottom-4 right-4 z-10 flex space-x-2">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-transparent text-white h-8 px-2"
+              onClick={handleEdit}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 border-transparent text-white h-8 px-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDeleteDialogOpen(true);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
           
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
@@ -130,6 +202,7 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
           setIsModalOpen(false);
           onEdit(review);
         }}
+        showActionButtons={true}
       />
       
       <ReviewForm 
@@ -144,6 +217,26 @@ const ReviewCard = ({ review, onEdit }: ReviewCardProps) => {
         }}
         isEdit={true}
       />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete your review of "{review.coffees?.name}". This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              className="bg-rose-500 hover:bg-rose-600 text-white"
+            >
+              {isDeleting ? "Deleting..." : "Delete Review"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
