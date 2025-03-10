@@ -192,6 +192,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('[AuthProvider] Signing out user');
       setIsLoading(true);
+      
+      // Check if user exists first
+      if (!user) {
+        console.log('[AuthProvider] No user to sign out, redirecting to login');
+        setIsLoading(false);
+        navigate('/login');
+        return;
+      }
+      
       await signOutUser();
       
       // Note: The onAuthStateChange event will handle state clearing and navigation
@@ -209,6 +218,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         variant: "destructive"
       });
       setIsLoading(false);
+      // Redirect to login page even if there was an error
+      navigate('/login');
     }
   };
 

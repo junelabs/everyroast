@@ -1,17 +1,24 @@
 
 import { Coffee, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfileHeader = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       console.log("ProfileHeader: Signing out");
+      if (!user) {
+        console.log("No user session to sign out");
+        navigate('/login');
+        return;
+      }
+      
       await signOut();
       // Navigation is handled by auth state change listener in AuthContext
     } catch (error) {
@@ -21,6 +28,8 @@ const ProfileHeader = () => {
         description: "There was a problem signing you out. Please try again.",
         variant: "destructive"
       });
+      // Redirect to login page anyway on error
+      navigate('/login');
     }
   };
 

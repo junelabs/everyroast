@@ -11,10 +11,27 @@ export const softDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
   try {
     console.log(`Soft deleting coffee with ID: ${coffeeId}`);
     
+    // Check if the coffee exists
+    const { data: coffee, error: checkError } = await supabase
+      .from('coffees')
+      .select('id')
+      .eq('id', coffeeId)
+      .is('deleted_at', null)
+      .single();
+      
+    if (checkError || !coffee) {
+      console.error("Error checking coffee existence:", checkError || "Coffee not found");
+      return false;
+    }
+    
+    console.log("Found coffee to delete:", coffee);
+    
+    const deleteTimestamp = new Date().toISOString();
+    
     const { error } = await supabase
       .from('coffees')
       .update({ 
-        deleted_at: new Date().toISOString()
+        deleted_at: deleteTimestamp
       })
       .eq('id', coffeeId);
 
@@ -23,7 +40,7 @@ export const softDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
       return false;
     }
     
-    console.log(`Successfully soft deleted coffee with ID: ${coffeeId}`);
+    console.log(`Successfully soft deleted coffee with ID: ${coffeeId} at ${deleteTimestamp}`);
     return true;
   } catch (error) {
     console.error("Exception in softDeleteCoffee:", error);
@@ -40,7 +57,9 @@ export const softDeleteCoffee = async (coffeeId: string): Promise<boolean> => {
  */
 export const canDeleteCoffee = (coffeeCreatedBy: string, currentUserId?: string): boolean => {
   if (!currentUserId) return false;
-  return coffeeCreatedBy === currentUserId;
+  const canDelete = coffeeCreatedBy === currentUserId;
+  console.log(`Can delete check: coffee created by ${coffeeCreatedBy}, current user ${currentUserId}, result: ${canDelete}`);
+  return canDelete;
 };
 
 /**

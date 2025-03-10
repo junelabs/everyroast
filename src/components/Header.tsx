@@ -14,6 +14,12 @@ const Header = () => {
   const handleSignOut = async () => {
     try {
       console.log("Header: Signing out");
+      if (!user) {
+        console.log("No user session to sign out");
+        navigate('/login');
+        return;
+      }
+      
       await signOut();
       // Navigation will be handled by the auth state change listener
     } catch (error) {
@@ -23,6 +29,8 @@ const Header = () => {
         description: "There was a problem signing you out. Please try again.",
         variant: "destructive"
       });
+      // Redirect to login page anyway on error
+      navigate('/login');
     }
   };
 

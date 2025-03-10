@@ -52,12 +52,17 @@ export const signInUser = async (email: string, password: string) => {
 
 export const signOutUser = async () => {
   console.log('[authUtils] Signing out user');
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error('[authUtils] Error during sign out:', error);
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('[authUtils] Error during sign out:', error);
+      throw error;
+    }
+    console.log('[authUtils] Sign out successful');
+  } catch (error) {
+    console.error('[authUtils] Caught exception during sign out:', error);
     throw error;
   }
-  console.log('[authUtils] Sign out successful');
 };
 
 export const updateUserProfile = async (userId: string, updates: Partial<Profile>) => {

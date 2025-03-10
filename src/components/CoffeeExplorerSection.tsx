@@ -19,42 +19,19 @@ const CoffeeExplorerSection = () => {
   useEffect(() => {
     fetchCommunityCoffees();
 
+    // Subscribe to real-time changes
     const reviewsChannel = supabase
       .channel('reviews-changes')
       .on(
         'postgres_changes',
         {
-          event: 'DELETE',
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
           schema: 'public',
           table: 'reviews'
         },
         (payload) => {
-          console.log('Review deleted:', payload);
-          fetchCommunityCoffees();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'reviews'
-        },
-        (payload) => {
-          console.log('Review added:', payload);
-          fetchCommunityCoffees();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'reviews'
-        },
-        (payload) => {
-          console.log('Review updated:', payload);
-          fetchCommunityCoffees();
+          console.log('Review change detected:', payload);
+          fetchCommunityCoffees(); // Refresh data when any review changes
         }
       )
       .subscribe();
@@ -64,37 +41,13 @@ const CoffeeExplorerSection = () => {
       .on(
         'postgres_changes',
         {
-          event: 'DELETE',
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
           schema: 'public',
           table: 'coffees'
         },
         (payload) => {
-          console.log('Coffee deleted:', payload);
-          fetchCommunityCoffees();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'coffees'
-        },
-        (payload) => {
-          console.log('Coffee added:', payload);
-          fetchCommunityCoffees();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'coffees'
-        },
-        (payload) => {
-          console.log('Coffee updated:', payload);
-          fetchCommunityCoffees();
+          console.log('Coffee change detected:', payload);
+          fetchCommunityCoffees(); // Refresh data when any coffee changes
         }
       )
       .subscribe();
@@ -110,6 +63,7 @@ const CoffeeExplorerSection = () => {
     try {
       console.log("Fetching community coffees...");
       
+      // Explicitly filter out coffees with a deleted_at timestamp
       const { data, error } = await supabase
         .from('coffees')
         .select(`
@@ -123,6 +77,7 @@ const CoffeeExplorerSection = () => {
           flavor_notes,
           created_by,
           type,
+          deleted_at,
           roasters (
             name
           ),
@@ -131,16 +86,24 @@ const CoffeeExplorerSection = () => {
           )
         `)
         .order('created_at', { ascending: false })
-        .limit(12)
-        .is('deleted_at', null);  // Only fetch coffees where deleted_at is null
+        .is('deleted_at', null)  // Only fetch coffees where deleted_at is null
+        .limit(12);
       
       if (error) {
         console.error("Error fetching coffees:", error);
         throw error;
       }
 
+      console.log("Raw coffee data from DB:", data);
+      
       const coffeeWithProfiles = await Promise.all(
         data.map(async (coffee) => {
+          // Skip processing if coffee is deleted
+          if (coffee.deleted_at) {
+            console.log(`Skipping deleted coffee ${coffee.id}`);
+            return null;
+          }
+          
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('username, avatar_url')
@@ -178,8 +141,11 @@ const CoffeeExplorerSection = () => {
         })
       );
       
-      console.log("Processed coffee data:", coffeeWithProfiles);
-      setCoffeeData(coffeeWithProfiles);
+      // Filter out any null items (deleted coffees)
+      const filteredCoffees = coffeeWithProfiles.filter(coffee => coffee !== null);
+      
+      console.log("Processed coffee data:", filteredCoffees);
+      setCoffeeData(filteredCoffees);
     } catch (error) {
       console.error("Error in fetchCommunityCoffees:", error);
       toast({
