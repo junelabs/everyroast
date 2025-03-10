@@ -11,10 +11,11 @@ const CoffeeExplorerSection = () => {
   const { user } = useAuth();
   const { coffeeData, isLoading, fetchCommunityCoffees } = useCoffeeExplorer();
   
-  // Re-fetch coffees when the component mounts
+  // Ensure we fetch fresh data when component mounts
   useEffect(() => {
+    console.log("CoffeeExplorerSection mounted, fetching coffees...");
     fetchCommunityCoffees();
-  }, [fetchCommunityCoffees]);
+  }, []);
   
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 4);

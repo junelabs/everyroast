@@ -55,66 +55,9 @@ export function useCoffeeExplorer() {
         },
         async (payload) => {
           console.log('New coffee detected:', payload);
-          const newCoffee = payload.new;
           
-          // Fetch additional data for the new coffee
-          const { data: coffeeWithDetails } = await supabase
-            .from('coffees')
-            .select(`
-              id,
-              name,
-              origin,
-              roast_level,
-              process_method,
-              price,
-              image_url,
-              flavor_notes,
-              created_by,
-              type,
-              deleted_at,
-              roasters (name),
-              reviews (rating)
-            `)
-            .eq('id', newCoffee.id)
-            .is('deleted_at', null)
-            .single();
-            
-          if (coffeeWithDetails) {
-            // Get profile data for the coffee creator
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('username, avatar_url')
-              .eq('id', coffeeWithDetails.created_by)
-              .single();
-              
-            // Format the coffee data
-            const reviews = coffeeWithDetails.reviews || [];
-            const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-            const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-            
-            const formattedCoffee: Coffee = {
-              id: coffeeWithDetails.id,
-              name: coffeeWithDetails.name,
-              origin: coffeeWithDetails.origin || 'Unknown',
-              roaster: coffeeWithDetails.roasters?.name || 'Unknown Roaster',
-              image: coffeeWithDetails.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-              rating: parseFloat(averageRating.toFixed(1)),
-              price: coffeeWithDetails.price || 0,
-              roastLevel: coffeeWithDetails.roast_level || 'Medium',
-              processMethod: coffeeWithDetails.process_method || 'Washed',
-              flavor: coffeeWithDetails.flavor_notes || 'No flavor notes provided',
-              type: coffeeWithDetails.type || 'Single Origin',
-              reviewCount: reviews.length,
-              poster: {
-                username: profileData?.username || 'anonymous',
-                avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
-                userId: coffeeWithDetails.created_by
-              },
-              upvotes: Math.floor(Math.random() * 100)
-            };
-            
-            setCoffeeData(prevCoffees => [formattedCoffee, ...prevCoffees]);
-          }
+          // Fetch comprehensive coffee data including related data
+          await fetchCommunityCoffees();
         }
       )
       .on(
@@ -133,70 +76,8 @@ export function useCoffeeExplorer() {
               prevCoffees.filter(coffee => coffee.id !== payload.new.id)
             );
           } else {
-            // If coffee was updated, fetch the updated data
-            const { data: updatedCoffee } = await supabase
-              .from('coffees')
-              .select(`
-                id,
-                name,
-                origin,
-                roast_level,
-                process_method,
-                price,
-                image_url,
-                flavor_notes,
-                created_by,
-                type,
-                deleted_at,
-                roasters (name),
-                reviews (rating)
-              `)
-              .eq('id', payload.new.id)
-              .is('deleted_at', null)
-              .single();
-              
-            if (updatedCoffee) {
-              // Get profile data
-              const { data: profileData } = await supabase
-                .from('profiles')
-                .select('username, avatar_url')
-                .eq('id', updatedCoffee.created_by)
-                .single();
-                
-              // Format the coffee data
-              const reviews = updatedCoffee.reviews || [];
-              const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-              const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-              
-              const formattedCoffee: Coffee = {
-                id: updatedCoffee.id,
-                name: updatedCoffee.name,
-                origin: updatedCoffee.origin || 'Unknown',
-                roaster: updatedCoffee.roasters?.name || 'Unknown Roaster',
-                image: updatedCoffee.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                rating: parseFloat(averageRating.toFixed(1)),
-                price: updatedCoffee.price || 0,
-                roastLevel: updatedCoffee.roast_level || 'Medium',
-                processMethod: updatedCoffee.process_method || 'Washed',
-                flavor: updatedCoffee.flavor_notes || 'No flavor notes provided',
-                type: updatedCoffee.type || 'Single Origin',
-                reviewCount: reviews.length,
-                poster: {
-                  username: profileData?.username || 'anonymous',
-                  avatarUrl: profileData?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
-                  userId: updatedCoffee.created_by
-                },
-                upvotes: Math.floor(Math.random() * 100)
-              };
-              
-              setCoffeeData(prevCoffees => {
-                const index = prevCoffees.findIndex(c => c.id === formattedCoffee.id);
-                if (index === -1) return prevCoffees;
-                const newCoffees = [...prevCoffees];
-                newCoffees[index] = formattedCoffee;
-                return newCoffees;
-              });
-            }
+            // If coffee was updated, refresh all data to ensure consistency
+            await fetchCommunityCoffees();
           }
         }
       )
