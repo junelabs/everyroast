@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -28,11 +27,10 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
 
   useEffect(() => {
     if (!isReviewFormOpen) {
-      setTimeout(() => {
+      if (!isAddingNew) {
         setSelectedReview(null);
-        setIsAddingNew(false);
-        fetchUserReviews();
-      }, 200);
+      }
+      fetchUserReviews();
     }
   }, [isReviewFormOpen]);
 
@@ -93,6 +91,8 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
 
   const handleCloseReviewForm = () => {
     setIsReviewFormOpen(false);
+    setIsAddingNew(false);
+    setSelectedReview(null);
     fetchUserReviews();
   };
 

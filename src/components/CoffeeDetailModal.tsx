@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -8,14 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { hardDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
-
-// Import our component modules
-import ImageSection from './coffee/modal/ImageSection';
-import RatingBadge from './coffee/modal/RatingBadge';
-import CoffeeAttributes from './coffee/modal/CoffeeAttributes';
-import ReviewSection from './coffee/modal/ReviewSection';
-import ActionButtons from './coffee/modal/ActionButtons';
-import DeleteConfirmDialog from './coffee/modal/DeleteConfirmDialog';
 
 interface CoffeeDetailModalProps {
   coffee: Coffee & { reviewDate?: string; reviewId?: string };
@@ -64,8 +55,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         title: "Success",
         description: "Review has been deleted successfully."
       });
+      setIsDeleteDialogOpen(false);
       onClose();
-      navigate('/profile', { replace: true });
     } catch (error) {
       console.error("Error deleting review:", error);
       toast({
@@ -99,8 +90,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         title: "Success",
         description: "Coffee has been permanently deleted."
       });
+      setIsDeleteDialogOpen(false);
       onClose();
-      navigate('/profile', { replace: true });
     } catch (error) {
       console.error("Error deleting coffee:", error);
       toast({
@@ -134,11 +125,9 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     });
   };
   
-  // Check if the current user is the owner of this coffee
   const canDelete = coffee.poster && user && coffee.poster.userId ? 
     canDeleteCoffee(coffee.poster.userId, user.id) : false;
 
-  // Debug logging
   console.log('Coffee data in modal:', coffee);
   console.log('Current user:', user);
   console.log('Can delete coffee:', canDelete);
@@ -149,12 +138,9 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
           <DialogTitle className="sr-only">Coffee Details</DialogTitle>
           <div className="grid md:grid-cols-2">
-            {/* Coffee Image Section */}
             <ImageSection imageSrc={coffee.image} altText={coffee.name} />
             
-            {/* Coffee Details Section */}
             <div className="p-6 bg-white">
-              {/* Moved poster information to top */}
               {coffee.poster && (
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="text-sm text-gray-500">Posted by:</span>
