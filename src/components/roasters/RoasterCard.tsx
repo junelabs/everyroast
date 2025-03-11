@@ -22,6 +22,9 @@ interface RoasterCardProps {
 }
 
 const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
+  // Generate a random number between 20 and 99 for drinkers count
+  const randomDrinkers = Math.floor(Math.random() * (99 - 20 + 1)) + 20;
+  
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md hover:border-roast-200">
       <CardHeader className="flex flex-row items-center gap-4 pb-2">
@@ -91,8 +94,8 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
         
-        <div className="ml-auto flex items-center bg-roast-50 text-roast-700 px-3 py-1.5 rounded-md text-sm font-medium">
-          <span className="text-roast-900 font-bold mr-1">127</span> drinkers this week
+        <div className="ml-auto flex items-center bg-roast-50 text-roast-700 px-2 py-1 rounded-md text-xs font-medium">
+          <span className="text-roast-900 font-bold mr-1">{randomDrinkers}</span> drinkers
         </div>
       </CardFooter>
     </Card>
