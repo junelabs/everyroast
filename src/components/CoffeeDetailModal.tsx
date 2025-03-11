@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -156,17 +155,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             <ImageSection imageSrc={coffee.image} altText={coffee.name} />
             
             <div className="p-6 bg-white">
-              {coffee.poster && (
-                <div className="flex items-center space-x-2 mb-4">
-                  <span className="text-sm text-gray-500">Posted by:</span>
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={coffee.poster.avatarUrl} />
-                    <AvatarFallback>{coffee.poster.username.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">@{coffee.poster.username}</span>
-                </div>
-              )}
-              
               <div className="flex items-center space-x-3 mb-2">
                 <RatingBadge rating={coffee.rating} />
               </div>

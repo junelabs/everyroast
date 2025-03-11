@@ -54,21 +54,6 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
             </div>
           )}
         </div>
-
-        {review.coffees?.flavor_notes && (
-          <div className="flex flex-wrap gap-2 mb-2">
-            {review.coffees.flavor_notes.split(',').map((note: string, index: number) => (
-              note.trim() && (
-                <span 
-                  key={index}
-                  className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white"
-                >
-                  {note.trim()}
-                </span>
-              )
-            ))}
-          </div>
-        )}
         
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
           {review.coffees?.roast_level && (

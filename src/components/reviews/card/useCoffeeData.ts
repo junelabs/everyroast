@@ -2,10 +2,6 @@
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
 export const useCoffeeData = (review: any) => {
-  // Add more extensive debug logging to track the type field
-  console.log("Full review object:", review);
-  console.log("Coffee type field:", review.coffees?.type);
-  
   // Prepares structured coffee data from a review object
   const coffee = {
     id: review.coffee_id,
@@ -15,7 +11,7 @@ export const useCoffeeData = (review: any) => {
     image: review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
     rating: review.rating,
     price: review.coffees?.price || 0,
-    roastLevel: (review.coffees?.roast_level || "Medium") as RoastLevel,
+    roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,
     processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod,
     flavor: review.review_text || "No flavor notes provided",
     brewingMethod: review.brewing_method || "",
