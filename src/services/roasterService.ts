@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 
@@ -7,7 +8,8 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
     const { data, error } = await supabase
       .from('roasters')
       .select('*')
-      .not('location', 'is', null); // Only get roasters with a location
+      .not('location', 'is', null) // Only get roasters with a location
+      .is('created_by', null); // Only get roasters that weren't created by users during review submission
     
     if (error) {
       console.error('Error fetching roasters:', error);

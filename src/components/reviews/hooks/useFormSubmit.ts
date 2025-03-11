@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -143,25 +144,23 @@ export const useFormSubmit = ({
         let roasterId;
         
         if (!roasterData) {
-          console.log("Roaster not found, creating new roaster:", roaster);
+          console.log("Roaster not found, creating new user-submitted roaster:", roaster);
           
-          // When creating a new roaster, assign a default location for demonstration purposes
-          // This prevents the roaster from appearing in the Roasters page until properly set up
-          const defaultLocation = `Origin: ${origin}`; // Use coffee origin as default location
-          
+          // Create a temporary roaster entry that won't show in the Roasters page
+          // We explicitly set created_by to the user's ID to filter it out in the roasters page
           const { data: newRoaster, error: newRoasterError } = await supabase
             .from('roasters')
             .insert({
               name: roaster,
-              created_by: user.id,
-              location: defaultLocation // Set a default location based on coffee origin
+              created_by: user.id, // This is intentionally set to identify user-created roasters
+              location: null // Explicitly set to null to prevent it from showing up in the Roasters page
             })
             .select('id')
             .single();
           
           if (newRoasterError) throw newRoasterError;
           roasterId = newRoaster.id;
-          console.log("Created new roaster with ID:", roasterId);
+          console.log("Created new user-submitted roaster with ID:", roasterId);
         } else {
           roasterId = roasterData.id;
           console.log("Found existing roaster with ID:", roasterId);
