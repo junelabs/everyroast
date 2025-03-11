@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/auth";
 import { useAuth } from "./context/auth";
 import Index from "./pages/Index";
@@ -44,26 +44,24 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<IndexRouteWrapper />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/coffee/:id" element={<CoffeeDetails />} />
-            <Route path="/roasters" element={<Roasters />} />
-            <Route path="/roasters/:id" element={<RoasterDetails />} />
-            <Route path="/cafes" element={<Cafes />} />
-            <Route path="/recipes" element={<Recipes />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<IndexRouteWrapper />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/coffee/:id" element={<CoffeeDetails />} />
+          <Route path="/roasters" element={<Roasters />} />
+          <Route path="/roasters/:id" element={<RoasterDetails />} />
+          <Route path="/cafes" element={<Cafes />} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
