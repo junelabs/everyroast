@@ -9,9 +9,16 @@ import { X, UserPlus, LogIn } from 'lucide-react';
 interface LoginPromptProps {
   isOpen: boolean;
   onClose: () => void;
+  message?: string;
+  description?: string;
 }
 
-const LoginPrompt = ({ isOpen, onClose }: LoginPromptProps) => {
+const LoginPrompt = ({ 
+  isOpen, 
+  onClose, 
+  message = "Join our coffee community",
+  description = "Create an account to rate coffees, save your favorites, and connect with coffee enthusiasts."
+}: LoginPromptProps) => {
   const navigate = useNavigate();
   
   const handleSignUp = () => {
@@ -28,9 +35,9 @@ const LoginPrompt = ({ isOpen, onClose }: LoginPromptProps) => {
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl">Join our coffee community</DialogTitle>
+          <DialogTitle className="text-center text-xl">{message}</DialogTitle>
           <DialogDescription className="text-center">
-            Create an account to rate coffees, save your favorites, and connect with coffee enthusiasts.
+            {description}
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 gap-4 py-4">

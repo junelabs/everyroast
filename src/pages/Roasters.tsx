@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,11 +10,22 @@ import { Coffee, Search, MapPin, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import LoginPrompt from '@/components/LoginPrompt';
+import { useAuth } from '@/context/auth';
 
 const Roasters = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [hasScrolledPastThreshold, setHasScrolledPastThreshold] = useState(false);
+  const [promptMessage, setPromptMessage] = useState('Join our coffee community');
+  const [promptDescription, setPromptDescription] = useState(
+    'Create an account to access all roaster information and filtering features.'
+  );
+  const contentRef = useRef<HTMLDivElement>(null);
 
+  // Fetch roasters data
   const { data: roasters, isLoading, error } = useQuery({
     queryKey: ['roasters'],
     queryFn: fetchRoasters,
@@ -44,8 +55,20 @@ const Roasters = () => {
       })
     : [];
 
+  // Handle login prompt
+  const showPrompt = (message: string, description: string) => {
+    setPromptMessage(message);
+    setPromptDescription(description);
+    setShowLoginPrompt(true);
+  };
+
   // Toggle location filter
   const toggleLocation = (location: string) => {
+    if (!user) {
+      showPrompt('Access Needed', 'Please log in or sign up to use the location filters.');
+      return;
+    }
+    
     if (selectedLocations.includes(location)) {
       setSelectedLocations(selectedLocations.filter(loc => loc !== location));
     } else {
@@ -55,9 +78,59 @@ const Roasters = () => {
 
   // Clear all filters
   const clearFilters = () => {
+    if (!user && (searchTerm || selectedLocations.length > 0)) {
+      showPrompt('Access Needed', 'Please log in or sign up to clear filters.');
+      return;
+    }
+    
     setSearchTerm('');
     setSelectedLocations([]);
   };
+
+  // Handle search input
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      e.preventDefault();
+      showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
+      return;
+    }
+    setSearchTerm(e.target.value);
+  };
+
+  // Prevent search input focus for non-authenticated users
+  const handleSearchFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!user) {
+      e.target.blur();
+      showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
+    }
+  };
+
+  // Handle scroll to show login prompt at 25% scroll
+  const handleScroll = useCallback(() => {
+    if (!user && contentRef.current) {
+      const { top } = contentRef.current.getBoundingClientRect();
+      const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const scrollThreshold = windowHeight * 0.25; // 25% of the window height
+      
+      // Check if we've scrolled 25% of the page height
+      if (scrollPosition > scrollThreshold && !hasScrolledPastThreshold) {
+        setHasScrolledPastThreshold(true);
+        showPrompt(
+          'Unlock Full Access', 
+          'Sign up or log in to see all roasters, use filters, and explore our full catalog.'
+        );
+      }
+    }
+  }, [user, hasScrolledPastThreshold]);
+  
+  // Add scroll event listener
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
 
   // Create loading skeletons for the grid
   const renderSkeletons = () => {
@@ -82,6 +155,10 @@ const Roasters = () => {
     ));
   };
 
+  const closeLoginPrompt = () => {
+    setShowLoginPrompt(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
@@ -95,7 +172,7 @@ const Roasters = () => {
         </div>
       </div>
       
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main ref={contentRef} className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="relative w-full md:w-1/2">
@@ -104,7 +181,8 @@ const Roasters = () => {
                 className="pl-10 pr-4 py-2 w-full"
                 placeholder="Search roasters by name or description..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchInputChange}
+                onFocus={handleSearchFocus}
               />
             </div>
             
@@ -126,7 +204,7 @@ const Roasters = () => {
                 </Badge>
               ))}
               
-              {selectedLocations.length > 0 && (
+              {(searchTerm || selectedLocations.length > 0) && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -165,10 +243,35 @@ const Roasters = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRoasters.map(roaster => (
+              {filteredRoasters.slice(0, user ? undefined : 3).map(roaster => (
                 <RoasterCard key={roaster.id} roaster={roaster} />
               ))}
             </div>
+            
+            {!user && filteredRoasters.length > 3 && (
+              <div className="mt-8 p-6 bg-roast-50 rounded-lg text-center">
+                <h3 className="text-xl font-semibold text-roast-800 mb-2">
+                  Log in to see {filteredRoasters.length - 3} more roasters
+                </h3>
+                <p className="text-roast-600 mb-4">
+                  Join our coffee community to access our full catalog of roasters and more features.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <Button 
+                    variant="outline"
+                    onClick={() => showPrompt('Welcome Back', 'Log in to access all roaster information.')}
+                  >
+                    Log In
+                  </Button>
+                  <Button 
+                    className="bg-roast-500 hover:bg-roast-600"
+                    onClick={() => showPrompt('Join EveryRoast', 'Create an account to access our full catalog of roasters.')}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
@@ -189,6 +292,14 @@ const Roasters = () => {
       </main>
 
       <Footer />
+      
+      {/* Login prompt dialog */}
+      <LoginPrompt
+        isOpen={showLoginPrompt}
+        onClose={closeLoginPrompt}
+        message={promptMessage}
+        description={promptDescription}
+      />
     </div>
   );
 };
