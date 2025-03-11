@@ -34,7 +34,9 @@ const ProfileForm = ({
   return (
     <div className="flex-1 bg-white p-6 rounded-lg shadow-sm">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Profile Information</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          {name || "User Profile"}
+        </h2>
         {!isEditing ? (
           <Button 
             variant="outline" 
@@ -61,58 +63,61 @@ const ProfileForm = ({
       </div>
       
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-          {isEditing ? (
+        {isEditing ? (
+          <div>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 text-lg font-medium"
               placeholder="Your full name"
             />
-          ) : (
-            <p className="text-gray-800">{name || "Not provided"}</p>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="text-lg text-gray-800 font-medium"></div>
+        )}
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-          {isEditing ? (
-            <div className="flex items-center">
-              <span className="bg-gray-100 px-3 py-2 border border-r-0 border-gray-300 rounded-l-md text-gray-500">@</span>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-1 focus:ring-roast-500"
-                placeholder="username"
-              />
-            </div>
-          ) : (
-            <p className="text-gray-800">@{username || "username"}</p>
-          )}
-        </div>
+        {isEditing ? (
+          <div className="flex items-center">
+            <span className="bg-gray-100 px-3 py-2 border border-r-0 border-gray-300 rounded-l-md text-gray-500">@</span>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              placeholder="username"
+            />
+          </div>
+        ) : (
+          <p className="text-gray-600">@{username || "username"}</p>
+        )}
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <p className="text-gray-800">{email || "Not provided"}</p>
-        </div>
+        {/* Email field is hidden but still editable when in edit mode */}
+        {isEditing && (
+          <div className="hidden">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              placeholder="email@example.com"
+            />
+          </div>
+        )}
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-          {isEditing ? (
+        {isEditing ? (
+          <div>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              rows={4}
+              rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
               placeholder="Tell us about yourself..."
             />
-          ) : (
-            <p className="text-gray-800">{bio || "No bio provided"}</p>
-          )}
-        </div>
+          </div>
+        ) : (
+          <p className="text-gray-700 whitespace-pre-line">{bio || "No bio provided"}</p>
+        )}
       </div>
     </div>
   );
