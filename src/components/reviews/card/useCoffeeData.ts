@@ -13,7 +13,7 @@ export const useCoffeeData = (review: any) => {
     price: review.coffees?.price || 0,
     roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,
     processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod,
-    flavor: review.review_text || "No flavor notes provided",
+    flavor: review.coffees?.flavor_notes || review.review_text || "No flavor notes provided",
     brewingMethod: review.brewing_method || "",
     reviewDate: review.created_at,
     reviewId: review.id,
