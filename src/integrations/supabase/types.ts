@@ -148,6 +148,7 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
+          instagram: string | null
           location: string | null
           logo_url: string | null
           name: string
@@ -159,6 +160,7 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
+          instagram?: string | null
           location?: string | null
           logo_url?: string | null
           name: string
@@ -170,6 +172,7 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
+          instagram?: string | null
           location?: string | null
           logo_url?: string | null
           name?: string

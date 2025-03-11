@@ -1,7 +1,76 @@
-
+import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 
-// Mock data for roasters
+// Fetch all roasters from Supabase
+export const fetchRoasters = async (): Promise<Roaster[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('roasters')
+      .select('*');
+    
+    if (error) {
+      console.error('Error fetching roasters:', error);
+      throw error;
+    }
+    
+    // Transform the data to match the Roaster interface
+    const roasters: Roaster[] = data.map(item => ({
+      id: item.id,
+      name: item.name,
+      location: item.location,
+      description: item.description,
+      website: item.website,
+      instagram: item.instagram,
+      logo_url: item.logo_url,
+      coffeeCount: Math.floor(Math.random() * 15) + 1 // Temporary random count until we implement coffee counting
+    }));
+    
+    return roasters;
+  } catch (error) {
+    console.error('Error in fetchRoasters:', error);
+    // Fall back to mock data if there's an error
+    return roasterData;
+  }
+};
+
+// Fetch a single roaster by ID from Supabase
+export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('roasters')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching roaster by ID:', error);
+      throw error;
+    }
+    
+    if (!data) return null;
+    
+    // Transform the data to match the Roaster interface
+    const roaster: Roaster = {
+      id: data.id,
+      name: data.name,
+      location: data.location,
+      description: data.description,
+      website: data.website,
+      instagram: data.instagram,
+      logo_url: data.logo_url,
+      coffeeCount: Math.floor(Math.random() * 15) + 1 // Temporary random count until we implement coffee counting
+    };
+    
+    return roaster;
+  } catch (error) {
+    console.error('Error in fetchRoasterById:', error);
+    // Fall back to mock data if there's an error
+    const roaster = roasterData.find(r => r.id === id);
+    return roaster || null;
+  }
+};
+
+// Keep the mock data as a fallback
 const roasterData: Roaster[] = [
   {
     id: "1",
@@ -452,14 +521,3 @@ const roasterData: Roaster[] = [
     coffeeCount: 4
   }
 ];
-
-export const fetchRoasters = async (): Promise<Roaster[]> => {
-  // Return the mock data instead of fetching from Supabase
-  return Promise.resolve(roasterData);
-};
-
-export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
-  // Find the roaster in the mock data
-  const roaster = roasterData.find(r => r.id === id);
-  return Promise.resolve(roaster || null);
-};
