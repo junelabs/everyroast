@@ -20,12 +20,12 @@ const Header = () => {
           title: "Not signed in",
           description: "You are already signed out.",
         });
-        navigate('/login');
+        navigate('/');
         return;
       }
       
       // First navigate, then sign out to prevent race conditions
-      navigate('/login');
+      navigate('/');
       await signOut();
       
       toast({
