@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
@@ -5,12 +6,13 @@ import Footer from "@/components/Footer";
 import RoasterCard from '@/components/roasters/RoasterCard';
 import { fetchRoasters } from '@/services/roasterService';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Coffee, Search, MapPin, Filter } from 'lucide-react';
+import { Coffee, Search, MapPin, Filter, PlusCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import LoginPrompt from '@/components/LoginPrompt';
 import { useAuth } from '@/context/auth';
+import RoasterSubmissionDialog from '@/components/roasters/RoasterSubmissionDialog';
 
 const Roasters = () => {
   const { user } = useAuth();
@@ -21,6 +23,7 @@ const Roasters = () => {
   const [promptDescription, setPromptDescription] = useState(
     'Create an account to access all roaster information and filtering features.'
   );
+  const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Fetch roasters data
@@ -101,6 +104,15 @@ const Roasters = () => {
       e.target.blur();
       showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
     }
+  };
+
+  // Handle submit roaster button click
+  const handleSubmitRoasterClick = () => {
+    if (!user) {
+      showPrompt('Access Needed', 'Please log in or sign up to submit a roaster.');
+      return;
+    }
+    setShowSubmissionDialog(true);
   };
 
   const closeLoginPrompt = () => {
@@ -189,6 +201,17 @@ const Roasters = () => {
           </div>
         </div>
         
+        {/* Submit Roaster Button */}
+        <div className="flex justify-end mb-6">
+          <Button 
+            onClick={handleSubmitRoasterClick}
+            className="bg-roast-500 hover:bg-roast-600 text-white"
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Submit a Roaster
+          </Button>
+        </div>
+        
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {renderSkeletons()}
@@ -270,6 +293,12 @@ const Roasters = () => {
         onClose={closeLoginPrompt}
         message={promptMessage}
         description={promptDescription}
+      />
+
+      {/* Roaster submission dialog */}
+      <RoasterSubmissionDialog 
+        isOpen={showSubmissionDialog} 
+        onOpenChange={setShowSubmissionDialog} 
       />
     </div>
   );

@@ -142,6 +142,42 @@ export type Database = {
           },
         ]
       }
+      roaster_submissions: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          instagram: string | null
+          name: string
+          state: string
+          status: string
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          instagram?: string | null
+          name: string
+          state: string
+          status?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          instagram?: string | null
+          name?: string
+          state?: string
+          status?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       roasters: {
         Row: {
           created_at: string
