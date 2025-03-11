@@ -1,10 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe, Instagram, Coffee } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export interface Roaster {
   id: string;
@@ -40,9 +38,7 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
         <div className="flex-1">
-          <Link to={`/roasters/${roaster.id}`} className="hover:text-roast-600 transition-colors">
-            <h3 className="text-xl font-bold text-gray-900 line-clamp-2">{roaster.name}</h3>
-          </Link>
+          <h3 className="text-xl font-bold text-gray-900 line-clamp-2">{roaster.name}</h3>
           {roaster.location && (
             <div className="flex items-center text-gray-500 mt-1">
               <MapPin className="h-4 w-4 mr-1 text-roast-400" />
@@ -51,19 +47,6 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
       </CardHeader>
-      
-      <CardContent className="py-3 flex-1">
-        {roaster.description ? (
-          <p className="text-gray-600 line-clamp-3">{roaster.description}</p>
-        ) : (
-          <p className="text-gray-500">
-            Specialty coffee roaster based in {roaster.location}. 
-            {roaster.instagram && (
-              <span> Follow us on Instagram.</span>
-            )}
-          </p>
-        )}
-      </CardContent>
       
       <CardFooter className="pt-4 flex justify-between border-t border-gray-100">
         <div className="flex gap-1.5">
@@ -96,15 +79,8 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Link to={`/roasters/${roaster.id}`}>
-            <Button variant="ghost" size="sm" className="text-roast-600 hover:text-roast-700 h-7 px-2 text-xs">
-              View Details
-            </Button>
-          </Link>
-          <div className="bg-roast-50 text-roast-700 px-2 py-1 rounded-md text-xs font-medium">
-            <span className="text-roast-900 font-bold mr-1">{randomDrinkers}</span> drinkers
-          </div>
+        <div className="bg-roast-50 text-roast-700 px-2 py-1 rounded-md text-xs font-medium">
+          <span className="text-roast-900 font-bold mr-1">{randomDrinkers}</span> drinkers
         </div>
       </CardFooter>
     </Card>
