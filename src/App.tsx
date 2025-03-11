@@ -10,11 +10,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import CoffeeDetails from "./pages/CoffeeDetails";
-import Roasters from "./pages/Roasters";
-import RoasterDetails from "./pages/RoasterDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -34,9 +30,6 @@ const App = () => (
                 <Profile />
               </ProtectedRoute>
             } />
-            <Route path="/coffee/:id" element={<CoffeeDetails />} />
-            <Route path="/roasters" element={<Roasters />} />
-            <Route path="/roasters/:id" element={<RoasterDetails />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
