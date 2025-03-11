@@ -97,7 +97,7 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           asChild
         >
           <Link to={`/roasters/${roaster.id}`}>
-            View Details
+            # drinkers this week
           </Link>
         </Button>
       </CardFooter>
