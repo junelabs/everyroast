@@ -1,4 +1,3 @@
-
 import { Coffee, Menu, Settings, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,14 +76,14 @@ const ProfileHeader = () => {
       
       {/* Mobile Navigation Overlay */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 bg-white z-40 pt-20 px-6">
-          <div className="flex flex-col gap-6 items-center">
-            <Button variant="ghost" className="flex items-center gap-2 w-full" onClick={closeMenu}>
+        <div className="md:hidden fixed inset-0 bg-white z-40">
+          <div className="flex flex-col items-center justify-center min-h-screen gap-8">
+            <Button variant="ghost" className="flex items-center gap-2 text-xl" onClick={closeMenu}>
               <Settings className="h-5 w-5" />
               Settings
             </Button>
             
-            <Button variant="outline" className="w-full" onClick={handleSignOut}>
+            <Button variant="outline" className="text-xl" onClick={handleSignOut}>
               Sign Out
             </Button>
           </div>

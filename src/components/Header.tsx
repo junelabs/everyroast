@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -112,34 +111,35 @@ const Header = () => {
       
       {/* Mobile Navigation Overlay */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 bg-white z-40 pt-20 px-6">
-          <div className="flex flex-col gap-6 items-center">
-            <Link 
-              to="/roasters" 
-              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
-              onClick={closeMenu}
-            >
-              Roasters
-            </Link>
-            <Link 
-              to="/cafes" 
-              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
-              onClick={closeMenu}
-            >
-              Cafes
-            </Link>
-            <Link 
-              to="/recipes" 
-              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
-              onClick={closeMenu}
-            >
-              Recipes
-            </Link>
-            
-            <div className="border-t border-gray-200 w-full my-4"></div>
+        <div className="md:hidden fixed inset-0 bg-white z-40">
+          <div className="flex flex-col items-center justify-center min-h-screen gap-8">
+            {/* Navigation Links */}
+            <div className="flex flex-col items-center gap-8 mb-8">
+              <Link 
+                to="/roasters" 
+                className="text-gray-700 hover:text-roast-500 transition-colors text-xl"
+                onClick={closeMenu}
+              >
+                Roasters
+              </Link>
+              <Link 
+                to="/cafes" 
+                className="text-gray-700 hover:text-roast-500 transition-colors text-xl"
+                onClick={closeMenu}
+              >
+                Cafes
+              </Link>
+              <Link 
+                to="/recipes" 
+                className="text-gray-700 hover:text-roast-500 transition-colors text-xl"
+                onClick={closeMenu}
+              >
+                Recipes
+              </Link>
+            </div>
             
             {/* Auth Buttons on Mobile */}
-            <div className="flex flex-col w-full gap-4 items-center">
+            <div className="flex flex-col w-full gap-4 items-center px-6">
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" className="w-full" onClick={closeMenu}>
