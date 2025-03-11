@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Instagram } from "lucide-react";
+import { MapPin, Globe, Instagram, Coffee } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface Roaster {
@@ -36,11 +36,13 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="h-10 w-10 bg-roast-100 rounded-md"></div>
+            <Coffee className="h-10 w-10 text-roast-300" />
           )}
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900 line-clamp-2">{roaster.name}</h3>
+          <Link to={`/roasters/${roaster.id}`} className="hover:text-roast-600 transition-colors">
+            <h3 className="text-xl font-bold text-gray-900 line-clamp-2">{roaster.name}</h3>
+          </Link>
           {roaster.location && (
             <div className="flex items-center text-gray-500 mt-1">
               <MapPin className="h-4 w-4 mr-1 text-roast-400" />
@@ -94,8 +96,15 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
         
-        <div className="ml-auto flex items-center bg-roast-50 text-roast-700 px-2 py-1 rounded-md text-xs font-medium">
-          <span className="text-roast-900 font-bold mr-1">{randomDrinkers}</span> drinkers
+        <div className="flex items-center space-x-2">
+          <Link to={`/roasters/${roaster.id}`}>
+            <Button variant="ghost" size="sm" className="text-roast-600 hover:text-roast-700 h-7 px-2 text-xs">
+              View Details
+            </Button>
+          </Link>
+          <div className="bg-roast-50 text-roast-700 px-2 py-1 rounded-md text-xs font-medium">
+            <span className="text-roast-900 font-bold mr-1">{randomDrinkers}</span> drinkers
+          </div>
         </div>
       </CardFooter>
     </Card>
