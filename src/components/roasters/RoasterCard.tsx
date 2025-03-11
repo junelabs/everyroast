@@ -64,30 +64,30 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
       </CardContent>
       
       <CardFooter className="pt-4 flex justify-between border-t border-gray-100">
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {roaster.website && (
-            <Button variant="outline" size="sm" asChild className="text-gray-600">
+            <Button variant="outline" size="sm" asChild className="text-gray-600 h-7 px-2 text-xs">
               <a 
                 href={roaster.website} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center"
               >
-                <Globe className="h-4 w-4 mr-1" />
+                <Globe className="h-3 w-3 mr-1" />
                 Website
               </a>
             </Button>
           )}
           
           {roaster.instagram && (
-            <Button variant="outline" size="sm" asChild className="text-gray-600">
+            <Button variant="outline" size="sm" asChild className="text-gray-600 h-7 px-2 text-xs">
               <a 
                 href={`https://instagram.com/${roaster.instagram.replace('@', '')}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center"
               >
-                <Instagram className="h-4 w-4 mr-1" />
+                <Instagram className="h-3 w-3 mr-1" />
                 Instagram
               </a>
             </Button>
