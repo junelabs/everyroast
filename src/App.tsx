@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import CoffeeDetails from "./pages/CoffeeDetails";
 import Roasters from "./pages/Roasters";
 import RoasterDetails from "./pages/RoasterDetails";
+import Cafes from "./pages/Cafes";
+import Recipes from "./pages/Recipes";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -55,6 +58,8 @@ const App = () => (
             <Route path="/coffee/:id" element={<CoffeeDetails />} />
             <Route path="/roasters" element={<Roasters />} />
             <Route path="/roasters/:id" element={<RoasterDetails />} />
+            <Route path="/cafes" element={<Cafes />} />
+            <Route path="/recipes" element={<Recipes />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
