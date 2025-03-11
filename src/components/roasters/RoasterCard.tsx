@@ -91,15 +91,9 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           )}
         </div>
         
-        <Button 
-          size="sm" 
-          className="ml-auto bg-roast-500 hover:bg-roast-600" 
-          asChild
-        >
-          <Link to={`/roasters/${roaster.id}`}>
-            # drinkers this week
-          </Link>
-        </Button>
+        <div className="ml-auto flex items-center bg-roast-50 text-roast-700 px-3 py-1.5 rounded-md text-sm font-medium">
+          <span className="text-roast-900 font-bold mr-1">127</span> drinkers this week
+        </div>
       </CardFooter>
     </Card>
   );
