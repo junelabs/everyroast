@@ -76,7 +76,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setProfileFetchAttempted(false);
               setIsLoading(false);
               setAuthInitialized(true);
-              navigate('/login');
               return;
             }
             
@@ -197,19 +196,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!user) {
         console.log('[AuthProvider] No user to sign out, redirecting to login');
         setIsLoading(false);
-        navigate('/login');
         return;
       }
       
+      // The actual signout - we handle the state changes directly instead of 
+      // waiting for the onAuthStateChange event to avoid race conditions
       await signOutUser();
       
-      // Note: The onAuthStateChange event will handle state clearing and navigation
-      console.log('[AuthProvider] Signout called successfully');
+      // Immediately update local state
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setProfileFetchAttempted(false);
       
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out from your account.",
-      });
+      console.log('[AuthProvider] Signout completed, local state cleared');
+      
     } catch (error: any) {
       console.error("[AuthProvider] Error during sign out:", error);
       toast({
@@ -217,9 +218,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: error.message || "An error occurred during sign out.",
         variant: "destructive"
       });
+    } finally {
       setIsLoading(false);
-      // Redirect to login page even if there was an error
-      navigate('/login');
     }
   };
 

@@ -60,15 +60,13 @@ export const signOutUser = async () => {
       return; // Return early if no session exists
     }
     
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('[authUtils] Error during sign out:', error);
-      throw error;
-    }
+    // Force signout ignoring errors to ensure client-side session is cleared
+    await supabase.auth.signOut({ scope: 'local' });
     console.log('[authUtils] Sign out successful');
   } catch (error) {
     console.error('[authUtils] Caught exception during sign out:', error);
-    throw error;
+    // We don't throw the error here to ensure the UI state is always updated
+    // even if the backend signout fails
   }
 };
 

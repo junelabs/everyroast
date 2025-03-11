@@ -24,8 +24,14 @@ const Header = () => {
         return;
       }
       
+      // First navigate, then sign out to prevent race conditions
+      navigate('/login');
       await signOut();
-      // Navigation will be handled by the auth state change listener
+      
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out from your account.",
+      });
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
@@ -33,8 +39,6 @@ const Header = () => {
         description: "There was a problem signing you out. Please try again.",
         variant: "destructive"
       });
-      // Redirect to login page anyway on error
-      navigate('/login');
     }
   };
 
@@ -48,15 +52,15 @@ const Header = () => {
       
       {/* Navigation */}
       <div className="hidden md:flex items-center gap-6">
-        <a href="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
+        <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
           Roasters
-        </a>
-        <a href="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
+        </Link>
+        <Link to="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
           Cafes
-        </a>
-        <a href="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
+        </Link>
+        <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
           Recipes
-        </a>
+        </Link>
       </div>
       
       {/* Auth Buttons */}

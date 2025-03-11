@@ -23,8 +23,14 @@ const ProfileHeader = () => {
         return;
       }
       
+      // First navigate, then sign out to prevent race conditions
+      navigate('/login');
       await signOut();
-      // Navigation is handled by auth state change listener in AuthContext
+      
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out from your account.",
+      });
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
@@ -32,8 +38,6 @@ const ProfileHeader = () => {
         description: "There was a problem signing you out. Please try again.",
         variant: "destructive"
       });
-      // Redirect to login page anyway on error
-      navigate('/login');
     }
   };
 
