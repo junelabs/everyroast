@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -22,7 +23,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
   const [sizeUnit, setSizeUnit] = useState<SizeUnit>("g");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   
-  // Review-specific states
+  // Review-specific states with empty defaults
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [brewingMethod, setBrewingMethod] = useState("");

@@ -35,26 +35,35 @@ export const useReviewForm = ({
   useEffect(() => {
     if (isEdit && coffeeId) {
       coffeeData.fetchCoffeeDetails();
-    } else if (!isEdit) {
-      resetForm();
     }
   }, [coffeeId, isEdit]);
 
+  // Update local state when coffeeData changes during edit
+  useEffect(() => {
+    if (isEdit) {
+      setRating(coffeeData.rating);
+      setReviewText(coffeeData.reviewText);
+      setBrewingMethod(coffeeData.brewingMethod);
+    }
+  }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod]);
+
   const resetForm = () => {
-    setRating(0);
-    setReviewText("");
-    setBrewingMethod("");
-    coffeeData.setCoffeeName("");
-    coffeeData.setRoaster("");
-    coffeeData.setOrigin("Ethiopia");
-    coffeeData.setRoastLevel("Medium");
-    coffeeData.setProcessMethod("Washed");
-    coffeeData.setCoffeeType("Single Origin");
-    coffeeData.setPrice(0);
-    coffeeData.setFlavor("");
-    coffeeData.setSize(0);
-    coffeeData.setSizeUnit("g");
-    coffeeData.setImageUrl(null);
+    if (!isEdit) {
+      setRating(0);
+      setReviewText("");
+      setBrewingMethod("");
+      coffeeData.setCoffeeName("");
+      coffeeData.setRoaster("");
+      coffeeData.setOrigin("Ethiopia");
+      coffeeData.setRoastLevel("Medium");
+      coffeeData.setProcessMethod("Washed");
+      coffeeData.setCoffeeType("Single Origin");
+      coffeeData.setPrice(0);
+      coffeeData.setFlavor("");
+      coffeeData.setSize(0);
+      coffeeData.setSizeUnit("g");
+      coffeeData.setImageUrl(null);
+    }
   };
 
   // Use the form submit hook for submission handling
