@@ -8,22 +8,6 @@ const Index = () => {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
   
-  // Display a helpful message if the user came from deleting a coffee
-  useEffect(() => {
-    const deletedParam = new URLSearchParams(window.location.search).get('deleted');
-    if (deletedParam === 'true') {
-      toast({
-        title: "Coffee deleted",
-        description: "The coffee post has been removed successfully."
-      });
-      
-      // Clean up the URL
-      const url = new URL(window.location.href);
-      url.searchParams.delete('deleted');
-      window.history.replaceState({}, document.title, url.toString());
-    }
-  }, [toast]);
-
   // If the user is not authenticated and we're not loading, redirect to login
   if (!user && !isLoading) {
     return <Navigate to="/login" replace />;
