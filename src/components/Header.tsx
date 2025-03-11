@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -64,20 +65,23 @@ const Header = () => {
         {menuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
       
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-6">
-        <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Roasters
-        </Link>
-        <Link to="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Cafes
-        </Link>
-        <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
-          Recipes
-        </Link>
+      {/* Desktop Navigation - rearranged to center the navigation links */}
+      <div className="hidden md:flex items-center justify-between flex-1 ml-8">
+        <div className="flex-1"></div> {/* Spacer to push center content */}
+        <div className="flex items-center gap-6">
+          <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
+            Roasters
+          </Link>
+          <Link to="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
+            Cafes
+          </Link>
+          <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
+            Recipes
+          </Link>
+        </div>
         
         {/* Auth Buttons on Desktop */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-1 justify-end">
           {isAuthenticated ? (
             <>
               <Link to="/profile">
