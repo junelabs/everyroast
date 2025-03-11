@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Coffee, ExternalLink } from "lucide-react";
+import { MapPin, Globe, Coffee, ExternalLink, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface Roaster {
@@ -13,6 +13,7 @@ export interface Roaster {
   description?: string | null;
   logo_url?: string | null;
   website?: string | null;
+  instagram?: string | null;
   coffeeCount?: number;
 }
 
@@ -50,31 +51,62 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
         {roaster.description ? (
           <p className="text-gray-600 line-clamp-3">{roaster.description}</p>
         ) : (
-          <p className="text-gray-400 italic">No description available</p>
+          <p className="text-gray-500">
+            Specialty coffee roaster based in {roaster.location}. 
+            {roaster.instagram && (
+              <span> Follow us on Instagram at {roaster.instagram}</span>
+            )}
+          </p>
         )}
         
-        {roaster.coffeeCount !== undefined && (
-          <Badge variant="outline" className="mt-4 bg-roast-50 text-roast-700 hover:bg-roast-100 border-roast-200">
-            <Coffee className="h-3 w-3 mr-1" />
-            {roaster.coffeeCount} {roaster.coffeeCount === 1 ? 'coffee' : 'coffees'}
-          </Badge>
-        )}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {roaster.coffeeCount !== undefined && (
+            <Badge variant="outline" className="bg-roast-50 text-roast-700 hover:bg-roast-100 border-roast-200">
+              <Coffee className="h-3 w-3 mr-1" />
+              {roaster.coffeeCount} {roaster.coffeeCount === 1 ? 'coffee' : 'coffees'}
+            </Badge>
+          )}
+          
+          {roaster.instagram && (
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
+              <Instagram className="h-3 w-3 mr-1" />
+              {roaster.instagram}
+            </Badge>
+          )}
+        </div>
       </CardContent>
       
       <CardFooter className="pt-4 flex justify-between border-t border-gray-100">
-        {roaster.website && (
-          <Button variant="outline" size="sm" asChild className="text-gray-600">
-            <a 
-              href={roaster.website} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Website
-            </a>
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {roaster.website && (
+            <Button variant="outline" size="sm" asChild className="text-gray-600">
+              <a 
+                href={roaster.website} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Globe className="h-4 w-4 mr-1" />
+                Website
+              </a>
+            </Button>
+          )}
+          
+          {roaster.instagram && (
+            <Button variant="outline" size="sm" asChild className="text-gray-600">
+              <a 
+                href={`https://instagram.com/${roaster.instagram.replace('@', '')}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Instagram className="h-4 w-4 mr-1" />
+                Instagram
+              </a>
+            </Button>
+          )}
+        </div>
+        
         <Button 
           size="sm" 
           className="ml-auto bg-roast-500 hover:bg-roast-600" 
