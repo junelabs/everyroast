@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
@@ -56,13 +57,16 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Review has been deleted successfully."
       });
       
+      // Close dialogs before triggering onDelete callback
+      setIsDeleteDialogOpen(false);
+      setIsModalOpen(false);
+      
       // Call the onDelete callback if provided
       if (onDelete) {
         onDelete();
       }
       
       setIsReviewFormOpen(false); // Ensure the form is closed
-      setIsModalOpen(false); // Close the modal
     } catch (error) {
       console.error("Error deleting review:", error);
       toast({
@@ -70,9 +74,9 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Failed to delete the review. Please try again.",
         variant: "destructive"
       });
+      setIsDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
-      setIsDeleteDialogOpen(false);
     }
   };
   
@@ -91,13 +95,16 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Coffee has been permanently deleted."
       });
       
+      // Close all dialogs before triggering onDelete callback
+      setIsDeleteDialogOpen(false);
+      setIsModalOpen(false);
+      
       // Call the onDelete callback if provided
       if (onDelete) {
         onDelete();
       }
       
       setIsReviewFormOpen(false); // Ensure the form is closed
-      setIsModalOpen(false); // Close the modal
     } catch (error) {
       console.error("Error deleting coffee:", error);
       toast({
@@ -105,9 +112,9 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Failed to delete the coffee. Please try again.",
         variant: "destructive"
       });
+      setIsDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
-      setIsDeleteDialogOpen(false);
     }
   };
   

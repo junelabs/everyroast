@@ -39,6 +39,12 @@ const ReviewDeleteDialog: React.FC<ReviewDeleteDialogProps> = ({
   const buttonText = deleteType === 'coffee' ?
     (isDeleting ? "Deleting..." : "Delete Coffee") :
     (isDeleting ? "Deleting..." : "Delete Review");
+    
+  const handleDeleteClick = async () => {
+    // Execute the delete operation but don't close the dialog
+    // The parent component will handle closing after the operation completes
+    await onDelete();
+  };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -50,10 +56,11 @@ const ReviewDeleteDialog: React.FC<ReviewDeleteDialogProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction 
-            onClick={onDelete}
+            onClick={handleDeleteClick}
             className="bg-rose-500 hover:bg-rose-600 text-white"
+            disabled={isDeleting}
           >
             {buttonText}
           </AlertDialogAction>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -62,8 +63,10 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         title: "Success",
         description: "Review has been deleted successfully."
       });
+      
+      // Close dialogs
       setIsDeleteDialogOpen(false);
-      onClose();
+      onClose(); // Close the main modal
     } catch (error) {
       console.error("Error deleting review:", error);
       toast({
@@ -71,6 +74,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         description: "Failed to delete the review. Please try again.",
         variant: "destructive"
       });
+      setIsDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
     }
@@ -103,8 +107,9 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
           : "Coffee has been removed from your listings."
       });
       
+      // Close dialogs
       setIsDeleteDialogOpen(false);
-      onClose();
+      onClose(); // Close the main modal
     } catch (error) {
       console.error("Error deleting coffee:", error);
       toast({
@@ -112,6 +117,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         description: "Failed to delete the coffee. Please try again.",
         variant: "destructive"
       });
+      setIsDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
     }

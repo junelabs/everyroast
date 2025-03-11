@@ -41,6 +41,11 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
   const buttonText = deleteType === 'coffee' ?
     (isDeleting ? "Removing..." : "Remove Coffee") :
     (isDeleting ? "Deleting..." : "Delete Review");
+    
+  const handleDeleteClick = () => {
+    onDelete();
+    // Don't close the dialog here - let the delete operation handle it
+  };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
@@ -52,10 +57,11 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction 
-            onClick={onDelete}
+            onClick={handleDeleteClick}
             className="bg-rose-500 hover:bg-rose-600 text-white"
+            disabled={isDeleting}
           >
             {buttonText}
           </AlertDialogAction>
