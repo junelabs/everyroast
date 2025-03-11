@@ -6,7 +6,8 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
     const { data, error } = await supabase
       .from('roasters')
-      .select('*');
+      .select('*')
+      .not('location', 'is', null); // Only get roasters with a location
     
     if (error) {
       console.error('Error fetching roasters:', error);

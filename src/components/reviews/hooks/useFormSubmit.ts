@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -145,11 +144,17 @@ export const useFormSubmit = ({
         
         if (!roasterData) {
           console.log("Roaster not found, creating new roaster:", roaster);
+          
+          // When creating a new roaster, assign a default location for demonstration purposes
+          // This prevents the roaster from appearing in the Roasters page until properly set up
+          const defaultLocation = `Origin: ${origin}`; // Use coffee origin as default location
+          
           const { data: newRoaster, error: newRoasterError } = await supabase
             .from('roasters')
             .insert({
               name: roaster,
-              created_by: user.id
+              created_by: user.id,
+              location: defaultLocation // Set a default location based on coffee origin
             })
             .select('id')
             .single();
