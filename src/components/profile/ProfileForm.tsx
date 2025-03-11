@@ -32,8 +32,8 @@ const ProfileForm = ({
   isLoading
 }: ProfileFormProps) => {
   return (
-    <div className="flex-1 bg-white p-6 rounded-lg shadow-sm">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex-1 bg-white h-32 p-6 rounded-lg shadow-sm flex flex-col justify-center">
+      <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">
           {name || "User Profile"}
         </h2>
@@ -62,14 +62,14 @@ const ProfileForm = ({
         )}
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-1.5">
         {isEditing ? (
           <div>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 text-lg font-medium"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 text-lg font-medium"
               placeholder="Your full name"
             />
           </div>
@@ -79,12 +79,12 @@ const ProfileForm = ({
         
         {isEditing ? (
           <div className="flex items-center">
-            <span className="bg-gray-100 px-3 py-2 border border-r-0 border-gray-300 rounded-l-md text-gray-500">@</span>
+            <span className="bg-gray-100 px-3 py-1 border border-r-0 border-gray-300 rounded-l-md text-gray-500">@</span>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              className="flex-1 px-3 py-1 border border-gray-300 rounded-r-md focus:outline-none focus:ring-1 focus:ring-roast-500"
               placeholder="username"
             />
           </div>
@@ -99,7 +99,7 @@ const ProfileForm = ({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
               placeholder="email@example.com"
             />
           </div>
@@ -110,13 +110,13 @@ const ProfileForm = ({
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500"
+              rows={1}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 resize-none"
               placeholder="Tell us about yourself..."
             />
           </div>
         ) : (
-          <p className="text-gray-700 whitespace-pre-line">{bio || "No bio provided"}</p>
+          <p className="text-gray-700 line-clamp-1">{bio || "No bio provided"}</p>
         )}
       </div>
     </div>
