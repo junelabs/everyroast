@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -14,7 +13,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
   const [coffeeName, setCoffeeName] = useState("");
   const [roaster, setRoaster] = useState("");
   const [origin, setOrigin] = useState<CoffeeOrigin>("Ethiopia");
-  const [roastLevel, setRoastLevel] = useState<RoastLevel>("Medium");
+  const [roastLevel, setRoastLevel] = useState<RoastLevel>("Light");
   const [processMethod, setProcessMethod] = useState<ProcessMethod>("Washed");
   const [coffeeType, setCoffeeType] = useState<CoffeeType>("Single Origin");
   const [price, setPrice] = useState<number>(0);

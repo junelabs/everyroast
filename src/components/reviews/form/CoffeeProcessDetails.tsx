@@ -44,6 +44,7 @@ const CoffeeProcessDetails = ({
           <Select 
             value={roastLevel} 
             onValueChange={(value: RoastLevel) => setRoastLevel(value)}
+            defaultValue="Light"
             disabled={readOnly}
           >
             <SelectTrigger className={readOnly ? "bg-gray-100" : ""}>
@@ -81,7 +82,7 @@ const CoffeeProcessDetails = ({
       
       <div className="space-y-2">
         <label htmlFor="flavor" className="block text-sm font-medium">
-          Flavor Notes
+          Flavor Notes (separate by commas)
         </label>
         <Input
           id="flavor"
@@ -91,6 +92,20 @@ const CoffeeProcessDetails = ({
           readOnly={readOnly}
           className={readOnly ? "bg-gray-100" : ""}
         />
+        {!readOnly && flavor && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {flavor.split(',').map((note, index) => (
+              note.trim() && (
+                <span 
+                  key={index}
+                  className="px-2 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                >
+                  {note.trim()}
+                </span>
+              )
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

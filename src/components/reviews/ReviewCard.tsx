@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
