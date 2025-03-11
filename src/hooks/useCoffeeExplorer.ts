@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -82,6 +81,7 @@ export function useCoffeeExplorer() {
     }
   }, [toast]);
 
+  // Keeping the setupRealtimeSubscription function but modifying it to avoid triggering roaster updates
   const setupRealtimeSubscription = useCallback(() => {
     console.log("Setting up realtime subscription for coffees");
     
@@ -97,7 +97,7 @@ export function useCoffeeExplorer() {
         },
         (payload) => {
           console.log('Coffee update detected:', payload);
-          // Refresh the entire list when a coffee is updated
+          // Only update the coffee data, don't refresh roasters
           fetchCommunityCoffees();
         }
       )

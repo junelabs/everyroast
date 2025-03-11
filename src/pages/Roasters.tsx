@@ -18,6 +18,11 @@ const Roasters = () => {
   const { data: roasters, isLoading, error } = useQuery({
     queryKey: ['roasters'],
     queryFn: fetchRoasters,
+    // Disable automatic refetching to prevent realtime updates
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
   });
 
   // Extract all unique locations for filtering
