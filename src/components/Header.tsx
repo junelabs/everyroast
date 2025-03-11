@@ -112,6 +112,15 @@ const Header = () => {
       {/* Mobile Navigation Overlay */}
       {menuOpen && (
         <div className="md:hidden fixed inset-0 bg-white z-40">
+          {/* Close button positioned at top right */}
+          <button 
+            className="absolute top-4 right-6 p-2 text-gray-700 hover:text-roast-500"
+            onClick={closeMenu}
+            aria-label="Close menu"
+          >
+            <X size={32} />
+          </button>
+
           <div className="flex flex-col items-center justify-center min-h-screen gap-8">
             {/* Navigation Links */}
             <div className="flex flex-col items-center gap-8 mb-8">
