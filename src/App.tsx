@@ -10,6 +10,7 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Roasters from "./pages/Roasters";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,21 @@ const App = () => (
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/roasters" element={
+              <ProtectedRoute>
+                <Roasters />
+              </ProtectedRoute>
+            } />
+            <Route path="/cafes" element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            } />
+            <Route path="/recipes" element={
+              <ProtectedRoute>
+                <NotFound />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

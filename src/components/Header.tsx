@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Coffee, User } from "lucide-react";
+import { Coffee, Map, Utensils, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -63,10 +63,27 @@ const Header = () => {
 
   return (
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between z-10 relative">
-      <Link to="/profile" className="flex items-center gap-2">
-        <Coffee className="h-8 w-8 text-roast-500" />
-        <span className="text-xl font-bold text-roast-700">Every Roast</span>
-      </Link>
+      <div className="flex items-center gap-6">
+        <Link to="/profile" className="flex items-center gap-2">
+          <Coffee className="h-8 w-8 text-roast-500" />
+          <span className="text-xl font-bold text-roast-700">Every Roast</span>
+        </Link>
+        
+        <nav className="hidden md:flex items-center gap-6">
+          <Link to="/roasters" className="flex items-center gap-1 text-gray-700 hover:text-roast-500">
+            <Coffee className="h-4 w-4" />
+            <span>Roasters</span>
+          </Link>
+          <Link to="/cafes" className="flex items-center gap-1 text-gray-700 hover:text-roast-500">
+            <Map className="h-4 w-4" />
+            <span>Cafes</span>
+          </Link>
+          <Link to="/recipes" className="flex items-center gap-1 text-gray-700 hover:text-roast-500">
+            <Utensils className="h-4 w-4" />
+            <span>Recipes</span>
+          </Link>
+        </nav>
+      </div>
       
       <div className="flex items-center gap-4">
         <Link to="/profile">

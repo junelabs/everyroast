@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -6,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { hardDeleteCoffee, softDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
+import { hardDeleteCoffee, canDeleteCoffee } from '@/utils/coffeeOperations';
 import { useAuth } from '@/context/auth';
 import ImageSection from '@/components/coffee/modal/ImageSection';
 import RatingBadge from '@/components/coffee/modal/RatingBadge';
@@ -38,7 +37,6 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteType, setDeleteType] = useState<'review' | 'coffee'>('review');
-  const [useHardDelete, setUseHardDelete] = useState(false); // Default to soft delete
 
   const handleDeleteReview = async () => {
     if (!coffee.reviewId) {
@@ -91,17 +89,13 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     try {
       const coffeeId = typeof coffee.id === 'number' ? coffee.id.toString() : coffee.id;
       
-      // Use soft delete by default
-      const deleteFunction = useHardDelete ? hardDeleteCoffee : softDeleteCoffee;
-      const deleted = await deleteFunction(coffeeId);
+      const deleted = await hardDeleteCoffee(coffeeId);
       
       if (!deleted) throw new Error("Failed to delete coffee");
 
       toast({
         title: "Success",
-        description: useHardDelete 
-          ? "Coffee has been permanently deleted." 
-          : "Coffee has been removed from your listings."
+        description: "Coffee has been permanently deleted."
       });
       
       setIsDeleteDialogOpen(false);
@@ -118,9 +112,8 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     }
   };
   
-  const openDeleteDialog = (type: 'review' | 'coffee', hardDelete: boolean = false) => {
+  const openDeleteDialog = (type: 'review' | 'coffee') => {
     setDeleteType(type);
-    setUseHardDelete(hardDelete);
     setIsDeleteDialogOpen(true);
   };
 
@@ -192,7 +185,7 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
                 showActionButtons={showActionButtons}
                 customActions={customActions}
                 onReview={onReview}
-                onDelete={coffee.reviewId ? () => openDeleteDialog('review') : canDelete ? () => openDeleteDialog('coffee', false) : undefined}
+                onDelete={coffee.reviewId ? () => openDeleteDialog('review') : canDelete ? () => openDeleteDialog('coffee') : undefined}
                 onUpvote={handleUpvote}
                 isDeleting={isDeleting}
                 hasReviewId={!!coffee.reviewId}
