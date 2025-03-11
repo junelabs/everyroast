@@ -22,20 +22,20 @@ const Footer = () => {
           <div className="md:w-1/4 mb-8 md:mb-0">
             <h3 className="text-white font-medium mb-4">Platform</h3>
             <ul className="space-y-2">
-              <li><a href="/roasters" className="text-roast-300 hover:text-white transition-colors">Roasters</a></li>
-              <li><a href="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</a></li>
-              <li><a href="/recipes" className="text-roast-300 hover:text-white transition-colors">Recipes</a></li>
-              <li><a href="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</a></li>
+              <li><Link to="/roasters" className="text-roast-300 hover:text-white transition-colors">Roasters</Link></li>
+              <li><Link to="/cafes" className="text-roast-300 hover:text-white transition-colors">Cafes</Link></li>
+              <li><Link to="/recipes" className="text-roast-300 hover:text-white transition-colors">Recipes</Link></li>
+              <li><Link to="/coffee-map" className="text-roast-300 hover:text-white transition-colors">Coffee Map</Link></li>
             </ul>
           </div>
 
           <div className="md:w-1/4 md:text-right">
             <h3 className="text-white font-medium mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><a href="/about" className="text-roast-300 hover:text-white transition-colors">About Us</a></li>
-              <li><a href="/advertise" className="text-roast-300 hover:text-white transition-colors">Advertise</a></li>
-              <li><a href="/privacy-policy" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="/terms-of-service" className="text-roast-300 hover:text-white transition-colors">Terms of Service</a></li>
+              <li><Link to="/about" className="text-roast-300 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/advertise" className="text-roast-300 hover:text-white transition-colors">Advertise</Link></li>
+              <li><Link to="/privacy-policy" className="text-roast-300 hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="text-roast-300 hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

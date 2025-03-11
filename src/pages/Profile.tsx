@@ -9,6 +9,7 @@ const Profile = () => {
   const { user, isLoading } = useAuth();
   
   useEffect(() => {
+    document.title = "Every Roast | Profile";
     console.log("Profile page: Authentication state:", { user: !!user, isLoading });
   }, [user, isLoading]);
 

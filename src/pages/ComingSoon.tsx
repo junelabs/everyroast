@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,6 +16,10 @@ const ComingSoon: React.FC<ComingSoonProps> = ({ type }) => {
     ? 'Discover amazing coffee shops near you and around the world.'
     : 'Explore brewing methods and recipes for your favorite coffees.';
   const icon = type === 'cafes' ? <Coffee className="h-16 w-16" /> : <UtensilsCrossed className="h-16 w-16" />;
+
+  useEffect(() => {
+    document.title = `Every Roast | ${title} Coming Soon`;
+  }, [title]);
 
   return (
     <div className="min-h-screen flex flex-col">

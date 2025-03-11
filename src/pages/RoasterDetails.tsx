@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
@@ -18,6 +18,12 @@ const RoasterDetails = () => {
     queryFn: () => id ? fetchRoasterById(id) : Promise.resolve(null),
     enabled: !!id,
   });
+
+  useEffect(() => {
+    document.title = roaster 
+      ? `Every Roast | ${roaster.name}`
+      : "Every Roast | Roaster Details";
+  }, [roaster]);
 
   if (isLoading) {
     return (

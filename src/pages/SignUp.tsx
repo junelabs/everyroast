@@ -14,6 +14,11 @@ const SignUp = () => {
   const { signUp, user, isLoading, authInitialized } = useAuth();
   const navigate = useNavigate();
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Every Roast | Sign Up";
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await signUp(email, password, { 

@@ -14,6 +14,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Set page title
+  useEffect(() => {
+    document.title = "Every Roast | Login";
+  }, []);
+
   console.log("Login page - auth state:", { user, isLoading, authInitialized });
 
   const handleSubmit = async (e: React.FormEvent) => {

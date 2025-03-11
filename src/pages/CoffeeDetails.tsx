@@ -1,5 +1,6 @@
 
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,11 @@ import { useNavigate } from "react-router-dom";
 const CoffeeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // Set page title
+  useEffect(() => {
+    document.title = "Every Roast | Coffee Details";
+  }, []);
 
   // In a real app, we would fetch the coffee details based on the ID
   // For now, we'll just use a placeholder

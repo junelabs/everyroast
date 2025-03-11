@@ -11,6 +11,11 @@ const Index = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   
+  // Set page title
+  useEffect(() => {
+    document.title = "Every Roast | Discover Great Coffee";
+  }, []);
+  
   // Display a helpful message if the user came from deleting a coffee
   useEffect(() => {
     const deletedParam = new URLSearchParams(window.location.search).get('deleted');
