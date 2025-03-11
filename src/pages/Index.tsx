@@ -1,30 +1,48 @@
 
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
-  
-  // If the user is not authenticated and we're not loading, redirect to login
-  if (!user && !isLoading) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  // If the user is authenticated, redirect to profile
-  if (user && !isLoading) {
-    return <Navigate to="/profile" replace />;
-  }
 
-  // Show a loading state while auth is being determined
+  // You can add special effects or data loading for authenticated users here
+  useEffect(() => {
+    if (user && !isLoading) {
+      console.log("Index: User is authenticated:", user.email);
+      // You could fetch personalized data here
+    }
+  }, [user, isLoading]);
+  
+  // Display a helpful message if the user came from deleting a coffee
+  useEffect(() => {
+    const deletedParam = new URLSearchParams(window.location.search).get('deleted');
+    if (deletedParam === 'true') {
+      toast({
+        title: "Coffee deleted",
+        description: "The coffee post has been removed successfully."
+      });
+      
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('deleted');
+      window.history.replaceState({}, document.title, url.toString());
+    }
+  }, [toast]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-roast-500 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading...</p>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      {!user && <HeroSection />}
+      <div className="container mx-auto px-4 py-12 flex-grow">
+        <CoffeeExplorerSection />
       </div>
+      <Footer />
     </div>
   );
 };

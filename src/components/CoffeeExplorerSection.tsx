@@ -9,21 +9,21 @@ import LoadMoreButton from '@/components/coffee/LoadMoreButton';
 const CoffeeExplorerSection = () => {
   const [visibleCoffees, setVisibleCoffees] = useState(4);
   const { user } = useAuth();
-  const { coffeeData, isLoading, fetchUserCoffees, setupRealtimeSubscription } = useCoffeeExplorer();
+  const { coffeeData, isLoading, fetchCommunityCoffees, setupRealtimeSubscription } = useCoffeeExplorer();
   
   // Fetch fresh data when component mounts
   useEffect(() => {
     console.log("CoffeeExplorerSection mounted, fetching coffees...");
-    fetchUserCoffees();
+    fetchCommunityCoffees();
     
     // Set up an interval to re-fetch coffees every 30 seconds to ensure we don't miss any changes
     const intervalId = setInterval(() => {
-      console.log("Scheduled refresh of user coffees");
-      fetchUserCoffees();
+      console.log("Scheduled refresh of community coffees");
+      fetchCommunityCoffees();
     }, 30000);
     
     return () => clearInterval(intervalId);
-  }, [fetchUserCoffees]);
+  }, [fetchCommunityCoffees]);
   
   // Set up realtime subscription separately to avoid re-subscribing on every render
   useEffect(() => {
@@ -44,7 +44,7 @@ const CoffeeExplorerSection = () => {
   return (
     <section className="py-8 bg-white">
       <div className="container mx-auto px-6">
-        <h2 className="text-3xl font-bold text-roast-800 mb-6 pl-0">Your Coffee Reviews</h2>
+        <h2 className="text-3xl font-bold text-roast-800 mb-6 pl-0">Community Coffee Reviews</h2>
         
         <FilterTabs />
         
