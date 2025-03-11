@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -65,26 +64,20 @@ const Header = () => {
         {menuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
       
-      {/* Desktop Navigation - properly centered navigation links */}
-      <div className="hidden md:flex items-center justify-between w-full ml-8">
-        {/* Left spacer */}
-        <div className="w-1/4"></div>
-        
-        {/* Centered navigation links */}
-        <div className="flex items-center justify-center gap-6 w-2/4">
-          <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
-            Roasters
-          </Link>
-          <Link to="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
-            Cafes
-          </Link>
-          <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
-            Recipes
-          </Link>
-        </div>
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-6">
+        <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Roasters
+        </Link>
+        <Link to="/cafes" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Cafes
+        </Link>
+        <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
+          Recipes
+        </Link>
         
         {/* Auth Buttons on Desktop */}
-        <div className="flex items-center gap-4 justify-end w-1/4">
+        <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
               <Link to="/profile">
@@ -119,9 +112,9 @@ const Header = () => {
       {/* Mobile Navigation Overlay */}
       {menuOpen && (
         <div className="md:hidden fixed inset-0 bg-white z-40">
-          <div className="flex flex-col items-center min-h-screen">
-            {/* Centered navigation links */}
-            <div className="flex flex-col items-center justify-center flex-1 gap-8">
+          <div className="flex flex-col items-center justify-center min-h-screen gap-8">
+            {/* Navigation Links */}
+            <div className="flex flex-col items-center gap-8 mb-8">
               <Link 
                 to="/roasters" 
                 className="text-gray-700 hover:text-roast-500 transition-colors text-xl"
@@ -146,7 +139,7 @@ const Header = () => {
             </div>
             
             {/* Auth Buttons on Mobile */}
-            <div className="flex flex-col w-full gap-4 items-center px-6 mb-16">
+            <div className="flex flex-col w-full gap-4 items-center px-6">
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" className="w-full" onClick={closeMenu}>

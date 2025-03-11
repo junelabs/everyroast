@@ -1,4 +1,3 @@
-
 import { Coffee, Menu, Settings, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -65,7 +64,7 @@ const ProfileHeader = () => {
       </button>
       
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center justify-end gap-4">
+      <div className="hidden md:flex items-center gap-4">
         <Button variant="ghost">
           <Settings className="h-5 w-5 mr-2" />
           Settings
