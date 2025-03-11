@@ -201,17 +201,6 @@ const Roasters = () => {
           </div>
         </div>
         
-        {/* Submit Roaster Button */}
-        <div className="flex justify-end mb-6">
-          <Button 
-            onClick={handleSubmitRoasterClick}
-            className="bg-roast-500 hover:bg-roast-600 text-white"
-          >
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Submit a Roaster
-          </Button>
-        </div>
-        
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {renderSkeletons()}
@@ -234,6 +223,15 @@ const Roasters = () => {
                 {searchTerm && ` for "${searchTerm}"`}
                 {selectedLocations.length > 0 && ' in selected locations'}
               </p>
+              
+              {/* Submit Roaster Button - Moved here from its previous location */}
+              <Button 
+                onClick={handleSubmitRoasterClick}
+                className="bg-roast-500 hover:bg-roast-600 text-white"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Submit a Roaster
+              </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -278,9 +276,18 @@ const Roasters = () => {
                 ? "No roasters match your current search or filter criteria. Try adjusting your filters."
                 : "There are currently no coffee roasters in our database."}
             </p>
-            {(searchTerm || selectedLocations.length > 0) && (
-              <Button onClick={clearFilters}>Clear Filters</Button>
-            )}
+            <div className="flex justify-center gap-4">
+              {(searchTerm || selectedLocations.length > 0) && (
+                <Button onClick={clearFilters}>Clear Filters</Button>
+              )}
+              <Button 
+                onClick={handleSubmitRoasterClick}
+                className="bg-roast-500 hover:bg-roast-600 text-white"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Submit a Roaster
+              </Button>
+            </div>
           </div>
         )}
       </main>
