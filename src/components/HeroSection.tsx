@@ -60,7 +60,7 @@ const HeroSection = () => {
           </div>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            Discover the best coffee has to offer
+            What are you brewing?
           </h1>
           
           <p className="text-xl mb-8 text-coffee-100/90 max-w-2xl">
