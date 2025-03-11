@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Edit, Save, Loader2 } from "lucide-react";
 
@@ -32,8 +31,8 @@ const ProfileForm = ({
   isLoading
 }: ProfileFormProps) => {
   return (
-    <div className="flex-1 bg-white h-32 p-6 rounded-lg shadow-sm flex flex-col justify-center">
-      <div className="flex justify-between items-center">
+    <div className="flex-1 bg-white min-h-[12rem] p-6 rounded-lg shadow-sm flex flex-col justify-center">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-800">
           {name || "User Profile"}
         </h2>
@@ -62,7 +61,7 @@ const ProfileForm = ({
         )}
       </div>
       
-      <div className="space-y-1.5">
+      <div className="space-y-3">
         {isEditing ? (
           <div>
             <input
@@ -110,13 +109,13 @@ const ProfileForm = ({
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              rows={1}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 resize-none"
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-roast-500 resize-none min-h-[4.5rem]"
               placeholder="Tell us about yourself..."
             />
           </div>
         ) : (
-          <p className="text-gray-700 line-clamp-1">{bio || "No bio provided"}</p>
+          <p className="text-gray-700 line-clamp-3 min-h-[3rem]">{bio || "No bio provided"}</p>
         )}
       </div>
     </div>
