@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Coffee, ExternalLink, Instagram } from "lucide-react";
+import { MapPin, Globe, Coffee, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface Roaster {
@@ -60,13 +60,6 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
         )}
         
         <div className="mt-4 flex flex-wrap gap-2">
-          {roaster.coffeeCount !== undefined && (
-            <Badge variant="outline" className="bg-roast-50 text-roast-700 hover:bg-roast-100 border-roast-200">
-              <Coffee className="h-3 w-3 mr-1" />
-              {roaster.coffeeCount} {roaster.coffeeCount === 1 ? 'coffee' : 'coffees'}
-            </Badge>
-          )}
-          
           {roaster.instagram && (
             <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
               <Instagram className="h-3 w-3 mr-1" />
@@ -95,7 +88,7 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           {roaster.instagram && (
             <Button variant="outline" size="sm" asChild className="text-gray-600">
               <a 
-                href={`https://instagram.com/${roaster.instagram.replace('@', '')}`} 
+                href={`https://instagram.com/${roaster.instagram.replace('@', '')}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center"
