@@ -40,7 +40,7 @@ export const useReviewForm = ({
 
   // Update local state when coffeeData changes during edit
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && coffeeData.rating > 0) {
       setRating(coffeeData.rating);
       setReviewText(coffeeData.reviewText);
       setBrewingMethod(coffeeData.brewingMethod);
