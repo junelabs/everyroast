@@ -1,15 +1,18 @@
 
-import { useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
 import Footer from "@/components/Footer";
+import LoginPrompt from "@/components/LoginPrompt";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [hasShownPrompt, setHasShownPrompt] = useState(false);
   
   // Set page title
   useEffect(() => {
@@ -32,6 +35,31 @@ const Index = () => {
     }
   }, [toast]);
 
+  // Track scroll position and show login prompt
+  const handleScroll = useCallback(() => {
+    if (user || hasShownPrompt) return;
+    
+    const scrollPosition = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const scrollThreshold = windowHeight * 0.1; // 10% of the window height
+    
+    if (scrollPosition > scrollThreshold && !showLoginPrompt) {
+      setShowLoginPrompt(true);
+    }
+  }, [user, hasShownPrompt, showLoginPrompt]);
+  
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
+  
+  const closeLoginPrompt = () => {
+    setShowLoginPrompt(false);
+    setHasShownPrompt(true); // Only show once per session
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -40,6 +68,12 @@ const Index = () => {
         <CoffeeExplorerSection />
       </div>
       <Footer />
+      
+      {/* Login prompt dialog */}
+      <LoginPrompt
+        isOpen={showLoginPrompt}
+        onClose={closeLoginPrompt}
+      />
     </div>
   );
 };
