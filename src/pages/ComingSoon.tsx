@@ -37,16 +37,9 @@ const ComingSoon: React.FC<ComingSoonProps> = ({ type }) => {
             {description}
           </p>
           
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3">
-              <Calendar className="h-5 w-5 text-roast-500 mr-2" />
-              <span className="text-gray-800">Coming Fall 2023</span>
-            </div>
-          </div>
-          
           <div className="space-y-6">
             <p className="text-gray-600">
-              We're brewing something special. Sign up now to be the first to know when we launch!
+              We're brewing something special. Join our community today!
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -54,7 +47,7 @@ const ComingSoon: React.FC<ComingSoonProps> = ({ type }) => {
                 <Link to="/">Return Home</Link>
               </Button>
               <Button asChild className="bg-roast-500 hover:bg-roast-600">
-                <Link to="/signup">Sign Up for Updates</Link>
+                <Link to="/signup">Sign Up</Link>
               </Button>
             </div>
           </div>
