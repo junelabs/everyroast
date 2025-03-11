@@ -1,5 +1,6 @@
 
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
@@ -8,16 +9,17 @@ import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, authInitialized } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // You can add special effects or data loading for authenticated users here
+  // Redirect authenticated users to profile page
   useEffect(() => {
-    if (user && !isLoading) {
-      console.log("Index: User is authenticated:", user.email);
-      // You could fetch personalized data here
+    if (user && !isLoading && authInitialized) {
+      console.log("Index: User is authenticated, redirecting to profile");
+      navigate('/profile', { replace: true });
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, authInitialized, navigate]);
   
   // Display a helpful message if the user came from deleting a coffee
   useEffect(() => {
