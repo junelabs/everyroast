@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Coffee, Instagram } from "lucide-react";
+import { MapPin, Globe, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface Roaster {
@@ -33,7 +33,7 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
               className="h-full w-full object-cover"
             />
           ) : (
-            <Coffee className="h-10 w-10 text-roast-400" />
+            <div className="h-10 w-10 bg-roast-100 rounded-md"></div>
           )}
         </div>
         <div className="flex-1">
@@ -54,19 +54,10 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
           <p className="text-gray-500">
             Specialty coffee roaster based in {roaster.location}. 
             {roaster.instagram && (
-              <span> Follow us on Instagram at {roaster.instagram}</span>
+              <span> Follow us on Instagram.</span>
             )}
           </p>
         )}
-        
-        <div className="mt-4 flex flex-wrap gap-2">
-          {roaster.instagram && (
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
-              <Instagram className="h-3 w-3 mr-1" />
-              {roaster.instagram}
-            </Badge>
-          )}
-        </div>
       </CardContent>
       
       <CardFooter className="pt-4 flex justify-between border-t border-gray-100">
