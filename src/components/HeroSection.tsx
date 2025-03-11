@@ -55,7 +55,7 @@ const HeroSection = () => {
                 <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
               </div>
               <span className="font-semibold">#1 Coffee Community</span>
-              <span className="text-coffee-100/70 text-xs">SINCE 2023</span>
+              <span className="text-coffee-100/70 text-xs">SINCE 2025</span>
             </div>
           </div>
           
