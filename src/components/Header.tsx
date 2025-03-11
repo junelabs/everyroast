@@ -1,15 +1,20 @@
 
 import { Button } from "@/components/ui/button";
-import { Coffee, User } from "lucide-react";
+import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const isAuthenticated = !!user;
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   const handleSignOut = async () => {
     try {
@@ -27,6 +32,7 @@ const Header = () => {
       // First navigate, then sign out to prevent race conditions
       navigate('/');
       await signOut();
+      closeMenu();
       
       toast({
         title: "Signed out successfully",
@@ -43,14 +49,23 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between z-10 relative">
-      {/* Logo */}
+    <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 relative bg-white">
+      {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
         <Coffee className="h-8 w-8 text-roast-500" />
         <span className="text-xl font-bold text-roast-700">Every Roast</span>
       </Link>
       
-      {/* Navigation */}
+      {/* Hamburger Menu Button - visible on mobile only */}
+      <button 
+        className="md:hidden text-gray-700 hover:text-roast-500 p-2" 
+        onClick={toggleMenu}
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+      >
+        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+      
+      {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-6">
         <Link to="/roasters" className="text-gray-700 hover:text-roast-500 transition-colors">
           Roasters
@@ -61,39 +76,104 @@ const Header = () => {
         <Link to="/recipes" className="text-gray-700 hover:text-roast-500 transition-colors">
           Recipes
         </Link>
+        
+        {/* Auth Buttons on Desktop */}
+        <div className="flex items-center gap-4">
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Button>
+              </Link>
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-roast-500"
+                onClick={handleSignOut}
+              >
+                Log out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" className="text-gray-700 hover:text-roast-500">Log in</Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6">
+                  Join Every Roast →
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
       </div>
       
-      {/* Auth Buttons */}
-      <div className="flex items-center gap-4">
-        {isAuthenticated ? (
-          <>
-            <Link to="/profile">
-              <Button variant="outline" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Profile
-              </Button>
-            </Link>
-            <Button 
-              variant="ghost" 
-              className="text-gray-700 hover:text-roast-500"
-              onClick={handleSignOut}
+      {/* Mobile Navigation Overlay */}
+      {menuOpen && (
+        <div className="md:hidden fixed inset-0 bg-white z-40 pt-20 px-6">
+          <div className="flex flex-col gap-6 items-center">
+            <Link 
+              to="/roasters" 
+              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
+              onClick={closeMenu}
             >
-              Log out
-            </Button>
-          </>
-        ) : (
-          <>
-            <Link to="/login">
-              <Button variant="ghost" className="text-gray-700 hover:text-roast-500">Log in</Button>
+              Roasters
             </Link>
-            <Link to="/signup">
-              <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6">
-                Join Every Roast →
-              </Button>
+            <Link 
+              to="/cafes" 
+              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
+              onClick={closeMenu}
+            >
+              Cafes
             </Link>
-          </>
-        )}
-      </div>
+            <Link 
+              to="/recipes" 
+              className="text-gray-700 hover:text-roast-500 transition-colors text-lg py-2"
+              onClick={closeMenu}
+            >
+              Recipes
+            </Link>
+            
+            <div className="border-t border-gray-200 w-full my-4"></div>
+            
+            {/* Auth Buttons on Mobile */}
+            <div className="flex flex-col w-full gap-4 items-center">
+              {isAuthenticated ? (
+                <>
+                  <Link to="/profile" className="w-full" onClick={closeMenu}>
+                    <Button variant="outline" className="flex items-center gap-2 w-full">
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-700 hover:text-roast-500 w-full"
+                    onClick={handleSignOut}
+                  >
+                    Log out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="w-full" onClick={closeMenu}>
+                    <Button variant="ghost" className="text-gray-700 hover:text-roast-500 w-full">
+                      Log in
+                    </Button>
+                  </Link>
+                  <Link to="/signup" className="w-full" onClick={closeMenu}>
+                    <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6 w-full">
+                      Join Every Roast →
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

@@ -1,14 +1,19 @@
 
-import { Coffee, Settings } from "lucide-react";
+import { Coffee, Menu, Settings, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 const ProfileHeader = () => {
   const { signOut, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   const handleSignOut = async () => {
     try {
@@ -26,6 +31,7 @@ const ProfileHeader = () => {
       // First navigate, then sign out to prevent race conditions
       navigate('/');
       await signOut();
+      closeMenu();
       
       toast({
         title: "Signed out successfully",
@@ -42,15 +48,24 @@ const ProfileHeader = () => {
   };
 
   return (
-    <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between bg-white border-b">
-      <div className="flex items-center gap-2">
-        <Link to="/" className="flex items-center gap-2">
-          <Coffee className="h-6 w-6 text-roast-500" />
-          <span className="text-xl font-bold text-roast-700">EveryRoast</span>
-        </Link>
-      </div>
+    <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between bg-white border-b z-50 relative">
+      {/* Logo - always visible */}
+      <Link to="/" className="flex items-center gap-2">
+        <Coffee className="h-6 w-6 text-roast-500" />
+        <span className="text-xl font-bold text-roast-700">EveryRoast</span>
+      </Link>
       
-      <div className="flex items-center gap-4">
+      {/* Hamburger Menu Button - visible on mobile only */}
+      <button 
+        className="md:hidden text-gray-700 hover:text-roast-500 p-2" 
+        onClick={toggleMenu}
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+      >
+        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+      
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-4">
         <Button variant="ghost">
           <Settings className="h-5 w-5 mr-2" />
           Settings
@@ -59,6 +74,22 @@ const ProfileHeader = () => {
           Sign Out
         </Button>
       </div>
+      
+      {/* Mobile Navigation Overlay */}
+      {menuOpen && (
+        <div className="md:hidden fixed inset-0 bg-white z-40 pt-20 px-6">
+          <div className="flex flex-col gap-6 items-center">
+            <Button variant="ghost" className="flex items-center gap-2 w-full" onClick={closeMenu}>
+              <Settings className="h-5 w-5" />
+              Settings
+            </Button>
+            
+            <Button variant="outline" className="w-full" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
