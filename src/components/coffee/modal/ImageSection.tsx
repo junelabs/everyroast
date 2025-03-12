@@ -14,7 +14,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-72 md:h-full">
       <div 
         className="w-full h-full cursor-pointer relative"
         onClick={() => setFullscreenOpen(true)}

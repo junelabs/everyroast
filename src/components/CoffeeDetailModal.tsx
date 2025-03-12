@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -154,12 +155,12 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden max-h-[80vh] md:max-h-[550px]">
+        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
           <DialogTitle className="sr-only">Coffee Details</DialogTitle>
-          <div className="grid md:grid-cols-2 h-full">
+          <div className="grid md:grid-cols-2">
             <ImageSection imageSrc={coffee.image} altText={coffee.name} />
             
-            <div className="p-6 bg-white md:overflow-y-auto">
+            <div className="p-6 bg-white">
               <div className="flex items-center gap-4 mb-4">
                 <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
                 <RatingBadge rating={coffee.rating} />
@@ -210,3 +211,4 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
 };
 
 export default CoffeeDetailModal;
+
