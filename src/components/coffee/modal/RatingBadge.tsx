@@ -7,6 +7,8 @@ interface RatingBadgeProps {
 }
 
 const RatingBadge: React.FC<RatingBadgeProps> = ({ rating }) => {
+  if (!rating) return null;
+  
   return (
     <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />

@@ -20,13 +20,6 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
       
       <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
       
-      {review.rating && (
-        <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          <span className="text-base font-medium">{review.rating}</span>
-        </div>
-      )}
-      
       {review.created_at && (
         <div className="absolute top-4 left-4 z-10 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs">
           {formatDate(review.created_at)}
@@ -34,10 +27,17 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
       )}
       
       <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
-        <div className="flex justify-between mb-2">
+        <div className="flex justify-between items-center mb-2">
           <div>
             <h3 className="text-xl font-bold">{review.coffees?.name || ""}</h3>
           </div>
+          
+          {review.rating && (
+            <div className="flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-base font-medium">{review.rating}</span>
+            </div>
+          )}
         </div>
         
         <div className="flex justify-between mb-2">
