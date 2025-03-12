@@ -27,8 +27,6 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
 
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-medium mb-2">Your Review</h3>
-      
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-2">Flavor Notes</h4>
         {flavorNotes.length > 0 ? (
