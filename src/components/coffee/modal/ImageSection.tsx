@@ -13,7 +13,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
 
   return (
     <>
-      <div className="relative h-72 md:h-[500px] group">
+      <div className="relative h-72 md:h-72 group">
         <img 
           src={imageSrc} 
           alt={altText} 
