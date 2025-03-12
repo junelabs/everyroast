@@ -13,7 +13,7 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
   return (
     <div className="w-full h-full relative">
       <img 
-        src={review.coffees?.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
+        src={review.coffees?.image_url || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
         alt={review.coffees?.name || "Coffee"} 
         className="w-full h-full object-cover"
         loading="lazy"

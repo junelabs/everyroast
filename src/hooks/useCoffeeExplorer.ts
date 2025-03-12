@@ -49,7 +49,7 @@ export function useCoffeeExplorer() {
             name: coffee.name,
             origin: coffee.origin || 'Unknown',
             roaster: coffee.roasters?.name || 'Unknown Roaster',
-            image: coffee.image_url || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            image: coffee.image_url || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
             rating: parseFloat(averageRating.toFixed(1)),
             price: coffee.price || 0,
             roastLevel: coffee.roast_level || 'Medium',
