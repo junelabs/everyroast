@@ -66,20 +66,6 @@ const HeroSection = () => {
             Don't sip alone, connect with fellow coffee lovers here.
           </p>
           
-          <div className="flex mb-10">
-            <div className="flex -space-x-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="h-10 w-10 rounded-full border-2 border-coffee-800 overflow-hidden">
-                  <img 
-                    src={`https://i.pravatar.cc/100?img=${i+10}`} 
-                    alt="Community member" 
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">☕</span>
