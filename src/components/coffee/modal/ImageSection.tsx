@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
