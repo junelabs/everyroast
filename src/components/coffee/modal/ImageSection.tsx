@@ -27,6 +27,13 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
         >
           <Maximize2 size={16} />
         </button>
+        <button 
+          className="absolute bottom-3 right-3 bg-black/50 text-white p-2 rounded-full"
+          onClick={() => setIsFullView(true)}
+          aria-label="View full image"
+        >
+          <Maximize2 size={16} />
+        </button>
       </div>
 
       <Dialog open={isFullView} onOpenChange={setIsFullView}>
