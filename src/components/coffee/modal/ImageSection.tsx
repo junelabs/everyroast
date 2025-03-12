@@ -37,12 +37,12 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
       </div>
 
       <Dialog open={isFullView} onOpenChange={setIsFullView}>
-        <DialogContent className="p-0 max-w-screen-xl w-[95vw] h-[95vh] flex items-center justify-center">
-          <div className="w-full h-full relative">
+        <DialogContent className="p-0 max-w-4xl w-auto md:w-auto h-auto flex items-center justify-center bg-transparent">
+          <div className="relative w-full h-full flex items-center justify-center">
             <img 
               src={imageSrc} 
               alt={altText} 
-              className="w-full h-full object-contain" 
+              className="max-w-full max-h-[80vh] object-contain rounded-md" 
             />
           </div>
         </DialogContent>
