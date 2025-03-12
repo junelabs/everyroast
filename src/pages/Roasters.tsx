@@ -149,8 +149,8 @@ const Roasters = () => {
       <div className="bg-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold text-roast-800 mb-4">Coffee Roasters</h1>
-          <p className="text-lg text-roast-600 max-w-3xl">
-            Discover exceptional coffee roasters from around the world. Is there a roaster that should be on this list? Let us know!
+          <p className="text-lg text-black max-w-3xl">
+            Discover exceptional coffee roasters from around the world. If you want to add a roaster to this list, click the button below to submit one!
           </p>
           <div className="mt-4">
             <Button 
