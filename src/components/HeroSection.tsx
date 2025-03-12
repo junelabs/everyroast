@@ -3,18 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Star } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const [email, setEmail] = useState("");
-  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Welcome to Every Roast!",
-      description: "We've sent a confirmation email to your inbox.",
-    });
+    // Redirect to signup page with email pre-populated
+    navigate(`/signup?email=${encodeURIComponent(email)}`);
   };
 
   return (
@@ -149,7 +147,7 @@ const HeroSection = () => {
                 Join Every Roast →
               </Button>
               <p className="text-center text-sm text-gray-500">
-                If you already have an account, we'll log you in
+                Create your account or sign in to get started
               </p>
             </form>
           </div>

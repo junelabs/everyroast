@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Coffee, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/auth";
 
@@ -13,11 +13,21 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const { signUp, user, isLoading, authInitialized } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Set page title
   useEffect(() => {
     document.title = "Every Roast | Sign Up";
   }, []);
+
+  // Check for email in URL parameters and set it
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const emailParam = params.get('email');
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [location.search]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
