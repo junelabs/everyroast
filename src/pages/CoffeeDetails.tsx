@@ -52,14 +52,7 @@ const CoffeeDetails = () => {
               </div>
             </div>
             
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-4xl font-bold text-roast-900">Ethiopian Yirgacheffe</h1>
-              
-              <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
-                <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 mr-1" />
-                <span className="font-medium">4.8</span>
-              </div>
-            </div>
+            <h1 className="text-4xl font-bold text-roast-900 mb-2">Ethiopian Yirgacheffe</h1>
             
             <div className="flex items-center text-roast-600 mb-6">
               <Coffee className="h-5 w-5 mr-1" />
