@@ -31,7 +31,7 @@ const Roasters = () => {
     queryKey: ['roasters'],
     queryFn: fetchRoasters,
     staleTime: Infinity, // Data never goes stale automatically
-    cacheTime: 1000 * 60 * 60, // Cache for an hour
+    gcTime: 1000 * 60 * 60, // Cache for an hour (renamed from cacheTime)
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
