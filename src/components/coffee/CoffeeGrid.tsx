@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import CoffeeCard from '@/components/CoffeeCard';
 import { Coffee } from '@/types/coffee';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,24 +10,14 @@ interface CoffeeGridProps {
   visibleCount: number;
 }
 
-const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCount }) => {
-  // Log when coffees change for debugging
-  useEffect(() => {
-    console.log("CoffeeGrid received coffees:", coffees.length);
-    
-    // Check if any coffees have empty properties that might cause issues
-    coffees.forEach(coffee => {
-      if (!coffee.id || !coffee.name) {
-        console.warn("Coffee with missing critical data:", coffee);
-      }
-    });
-  }, [coffees]);
-
+const CoffeeGrid: React.FC<CoffeeGridProps> = React.memo(({ coffees, isLoading, visibleCount }) => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(4)].map((_, index) => (
-          <div key={index} className="aspect-square bg-gray-200 animate-pulse rounded-xl"></div>
+        {[...Array(visibleCount || 6)].map((_, index) => (
+          <div key={index} className="aspect-square">
+            <Skeleton className="w-full h-full rounded-xl" />
+          </div>
         ))}
       </div>
     );
@@ -44,12 +34,14 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCoun
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {coffees.slice(0, visibleCount).map((coffee) => (
-        <div key={coffee.id} className="w-full h-full aspect-square">
+        <div key={coffee.id} className="w-full aspect-square">
           <CoffeeCard coffee={coffee} />
         </div>
       ))}
     </div>
   );
-};
+});
+
+CoffeeGrid.displayName = 'CoffeeGrid';
 
 export default CoffeeGrid;

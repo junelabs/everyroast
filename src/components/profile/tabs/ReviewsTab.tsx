@@ -1,5 +1,5 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Plus } from "lucide-react";
@@ -7,6 +7,7 @@ import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewCard from "@/components/reviews/ReviewCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ReviewsTabProps {
   defaultTab?: boolean;
@@ -14,103 +15,112 @@ interface ReviewsTabProps {
 
 const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
   const { user } = useAuth();
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState<any>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchUserReviews();
-    }
-  }, [user]);
-
-  // Modified: Only fetch reviews when the form closes after editing, not after deleting
-  useEffect(() => {
-    if (!isReviewFormOpen && selectedReview) {
-      if (!isAddingNew) {
-        setSelectedReview(null);
-      }
-      fetchUserReviews();
-    }
-  }, [isReviewFormOpen]);
-
-  const fetchUserReviews = async () => {
-    setIsLoading(true);
-    try {
-      console.log("Fetching reviews for user ID:", user?.id);
-      const { data, error } = await supabase
-        .from('reviews')
-        .select(`
+  // Memoize the fetch function
+  const fetchUserReviews = useCallback(async () => {
+    console.log("Fetching reviews for user ID:", user?.id);
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(`
+        id,
+        rating,
+        review_text,
+        brewing_method,
+        created_at,
+        coffee_id,
+        coffees (
           id,
-          rating,
-          review_text,
-          brewing_method,
-          created_at,
-          coffee_id,
-          coffees (
-            id,
-            name,
-            image_url,
-            roaster_id,
-            origin,
-            roast_level,
-            process_method,
-            price,
-            flavor_notes,
-            type,
-            roasters (
-              name
-            )
+          name,
+          image_url,
+          roaster_id,
+          origin,
+          roast_level,
+          process_method,
+          price,
+          flavor_notes,
+          type,
+          roasters (
+            name
           )
-        `)
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
+        )
+      `)
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Error fetching reviews:", error);
-      } else {
-        console.log("Reviews fetched successfully:", data);
-        // Add debug logging to check the type field
-        if (data && data.length > 0) {
-          console.log("Sample coffee type:", data[0].coffees?.type);
-        }
-        setReviews(data || []);
-      }
-    } catch (error) {
-      console.error("Error in fetchUserReviews:", error);
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      console.error("Error fetching reviews:", error);
+      throw error;
     }
-  };
+    
+    console.log("Reviews fetched successfully:", data);
+    return data || [];
+  }, [user?.id]);
 
-  const handleEditReview = (review: any) => {
+  // Use React Query for better caching and loading states
+  const { data: reviews = [], isLoading, error } = useQuery({
+    queryKey: ['userReviews', user?.id],
+    queryFn: fetchUserReviews,
+    enabled: !!user?.id,
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60 * 2, // Consider data stale after 2 minutes
+  });
+
+  const handleEditReview = useCallback((review: any) => {
     setIsAddingNew(false);
     setSelectedReview(review);
     setIsReviewFormOpen(true);
-  };
+  }, []);
 
-  const handleCloseReviewForm = () => {
+  const handleCloseReviewForm = useCallback(() => {
     setIsReviewFormOpen(false);
     setIsAddingNew(false);
     setSelectedReview(null);
-    fetchUserReviews();
-  };
+  }, []);
 
-  const handleAddNewReview = () => {
+  const handleAddNewReview = useCallback(() => {
     setIsAddingNew(true);
     setSelectedReview(null);
     setTimeout(() => {
       setIsReviewFormOpen(true);
     }, 100);
-  };
+  }, []);
 
-  // Added: Function to handle review deletion
-  const handleReviewDeleted = () => {
+  const handleReviewDeleted = useCallback(() => {
     setSelectedReview(null);
-    fetchUserReviews();
-  };
+  }, []);
+
+  // Loading state with skeletons
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Your Reviews</h2>
+          <Button disabled className="bg-roast-500 flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Review
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="aspect-square">
+              <Skeleton className="w-full h-full rounded-xl" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500">Error loading reviews. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -125,11 +135,7 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-8">
-          <p>Loading reviews...</p>
-        </div>
-      ) : reviews.length > 0 ? (
+      {reviews.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {reviews.map((review) => (
             <ReviewCard 
@@ -160,8 +166,6 @@ const ReviewsTab = ({ defaultTab = false }: ReviewsTabProps) => {
   );
 };
 
-export default ReviewsTab;
-
 // Empty state component for reviews tab
 const EmptyReviewsState = ({ onAddReview }: { onAddReview: () => void }) => (
   <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -180,3 +184,5 @@ const EmptyReviewsState = ({ onAddReview }: { onAddReview: () => void }) => (
     </div>
   </div>
 );
+
+export default ReviewsTab;

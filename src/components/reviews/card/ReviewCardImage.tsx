@@ -9,7 +9,7 @@ interface ReviewCardImageProps {
   formatDate: (dateString: string) => string;
 }
 
-const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate }) => {
+const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, formatDate }) => {
   return (
     <div className="w-full h-full relative">
       <img 
@@ -17,6 +17,7 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
         alt={review.coffees?.name || "Coffee"} 
         className="w-full h-full object-cover"
         loading="lazy"
+        decoding="async"
       />
       
       <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
@@ -81,6 +82,8 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
       </div>
     </div>
   );
-};
+});
+
+ReviewCardImage.displayName = 'ReviewCardImage';
 
 export default ReviewCardImage;
