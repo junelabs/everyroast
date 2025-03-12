@@ -13,7 +13,7 @@ const FavoritesTab = () => {
           <p className="text-gray-600 max-w-md mx-auto mb-6">
             Follow your favorite coffee roasters to see their latest offerings.
           </p>
-          <Link to="/">
+          <Link to="/roasters">
             <Button className="bg-roast-500 hover:bg-roast-600">
               Discover Roasters
             </Button>
