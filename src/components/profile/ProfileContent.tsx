@@ -1,5 +1,7 @@
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Edit, Save, Loader2 } from "lucide-react";
 import ProfileImage from "@/components/profile/ProfileImage";
 import ProfileForm from "@/components/profile/ProfileForm";
 import ProfileTabs from "@/components/profile/ProfileTabs";
