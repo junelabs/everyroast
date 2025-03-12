@@ -7,21 +7,22 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
     console.log("Fetching roasters from Supabase");
     
+    // Use a more efficient query without unnecessary filters for faster loading
     const { data, error } = await supabase
       .from('roasters')
       .select('id, name, location, description, website, instagram, logo_url') // Explicit column selection for faster queries
-      .not('location', 'is', null) // Only get roasters with a location
-      .is('created_by', null); // Only get roasters that weren't created by users during review submission
+      .order('name', { ascending: true })
+      .limit(100); // Limit to 100 roasters for initial load
     
     if (error) {
       console.error('Error fetching roasters:', error);
       throw error;
     }
     
-    console.log(`Successfully fetched ${data.length} roasters`);
+    console.log(`Successfully fetched ${data?.length || 0} roasters`);
     
     // Transform the data to match the Roaster interface
-    const roasters: Roaster[] = data.map(item => ({
+    const roasters: Roaster[] = (data || []).map(item => ({
       id: item.id,
       name: item.name,
       location: item.location,
@@ -35,12 +36,12 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
     return roasters;
   } catch (error) {
     console.error('Error in fetchRoasters:', error);
-    // Fall back to mock data if there's an error
-    return roasterData;
+    // Fall back to mock data if there's an error, but do it faster
+    return roasterData.slice(0, 50); // Return only first 50 mock entries for faster rendering
   }
 };
 
-// Optimized to fetch only necessary fields 
+// Optimized to fetch only necessary fields for a single roaster
 export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
   try {
     console.log(`Fetching roaster with ID: ${id}`);

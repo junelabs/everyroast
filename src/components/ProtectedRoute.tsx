@@ -18,7 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (isLoading || !authInitialized) {
       timer = window.setInterval(() => {
         setTimeElapsed(prev => prev + 1);
-      }, 1000);
+      }, 500); // Faster timer checks (500ms instead of 1000ms)
     } else {
       setTimeElapsed(0);
     }
@@ -36,16 +36,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [authInitialized, isLoading, user, navigate]);
 
-  console.log("ProtectedRoute: auth state:", { user, isLoading, authInitialized, timeElapsed });
-
-  // Force continue after a much shorter timeout if we have a user
-  if (timeElapsed >= 3 && user) {
+  // Force continue after a shorter timeout if we have a user
+  if (timeElapsed >= 2 && user) {
     console.log("ProtectedRoute: Forcing continuation after short timeout with existing user");
     return <>{children}</>;
   }
 
-  // Show loading state with timeout
-  if ((isLoading || !authInitialized) && timeElapsed < 3) {
+  // Show loading state with shorter timeout
+  if ((isLoading || !authInitialized) && timeElapsed < 2) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
