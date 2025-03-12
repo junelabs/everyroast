@@ -113,7 +113,7 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
     <>
       <div 
         onClick={() => setIsModalOpen(true)}
-        className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block aspect-square bg-white cursor-pointer"
+        className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block bg-white cursor-pointer aspect-square h-full w-full"
       >
         <ReviewCardImage 
           review={review} 

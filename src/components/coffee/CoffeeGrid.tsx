@@ -44,7 +44,9 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCoun
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {coffees.slice(0, visibleCount).map((coffee) => (
-        <CoffeeCard key={coffee.id} coffee={coffee} />
+        <div key={coffee.id} className="w-full h-full aspect-square">
+          <CoffeeCard coffee={coffee} />
+        </div>
       ))}
     </div>
   );
