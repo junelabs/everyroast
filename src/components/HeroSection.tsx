@@ -108,13 +108,7 @@ const HeroSection = () => {
                 alt="Coffee brewing" 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center">
-                  <div className="h-14 w-14 bg-roast-500 rounded-full flex items-center justify-center">
-                    <div className="border-t-4 border-r-4 border-white w-5 h-5 transform rotate-45 translate-x-[-2px]"></div>
-                  </div>
-                </div>
-              </div>
+              {/* Removed the arrow overlay */}
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
