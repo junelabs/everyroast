@@ -1,5 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Maximize2 } from 'lucide-react';
 
 interface ImageSectionProps {
   imageSrc: string;
@@ -7,14 +9,38 @@ interface ImageSectionProps {
 }
 
 const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
+  const [isFullView, setIsFullView] = useState(false);
+
   return (
-    <div className="relative h-72 md:h-[500px]">
-      <img 
-        src={imageSrc} 
-        alt={altText} 
-        className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
-      />
-    </div>
+    <>
+      <div className="relative h-72 md:h-[500px] group">
+        <img 
+          src={imageSrc} 
+          alt={altText} 
+          className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none cursor-pointer"
+          onClick={() => setIsFullView(true)}
+        />
+        <button 
+          className="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          onClick={() => setIsFullView(true)}
+          aria-label="View full image"
+        >
+          <Maximize2 size={16} />
+        </button>
+      </div>
+
+      <Dialog open={isFullView} onOpenChange={setIsFullView}>
+        <DialogContent className="p-0 max-w-screen-xl w-[95vw] h-[95vh] flex items-center justify-center">
+          <div className="w-full h-full relative">
+            <img 
+              src={imageSrc} 
+              alt={altText} 
+              className="w-full h-full object-contain" 
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
