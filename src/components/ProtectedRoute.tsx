@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 
 interface ProtectedRouteProps {
@@ -11,6 +11,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading, authInitialized } = useAuth();
   const [timeElapsed, setTimeElapsed] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if the current route is public (doesn't require authentication)
+  const isPublicRoute = ['/roasters', '/roasters/'].some(path => 
+    location.pathname === path || location.pathname.startsWith('/roasters/')
+  );
   
   useEffect(() => {
     let timer: number | undefined;
@@ -18,7 +24,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (isLoading || !authInitialized) {
       timer = window.setInterval(() => {
         setTimeElapsed(prev => prev + 1);
-      }, 500); // Faster timer checks (500ms instead of 1000ms)
+      }, 500); // Faster timer checks
     } else {
       setTimeElapsed(0);
     }
@@ -28,17 +34,23 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     };
   }, [isLoading, authInitialized]);
 
-  // Check auth state once it's initialized
+  // For public routes, bypass auth check entirely
+  if (isPublicRoute) {
+    console.log("Public route detected, bypassing auth check");
+    return <>{children}</>;
+  }
+
+  // Check auth state once it's initialized, but only for non-public routes
   useEffect(() => {
-    if (authInitialized && !isLoading && !user) {
+    if (!isPublicRoute && authInitialized && !isLoading && !user) {
       console.log("User not authenticated, redirecting to login");
       navigate('/login', { replace: true });
     }
-  }, [authInitialized, isLoading, user, navigate]);
+  }, [authInitialized, isLoading, user, navigate, isPublicRoute]);
 
-  // Force continue after a shorter timeout if we have a user
-  if (timeElapsed >= 2 && user) {
-    console.log("ProtectedRoute: Forcing continuation after short timeout with existing user");
+  // Force continue after a shorter timeout if we have a user or on public routes
+  if (timeElapsed >= 2 && (user || isPublicRoute)) {
+    console.log("ProtectedRoute: Forcing continuation after short timeout");
     return <>{children}</>;
   }
 
@@ -47,17 +59,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
-        <div className="text-roast-500">Loading your profile...</div>
+        <div className="text-roast-500">Loading...</div>
       </div>
     );
   }
 
   // If no user and we're not loading, Navigate component will handle redirect
-  if (!user && !isLoading && authInitialized) {
+  if (!user && !isLoading && authInitialized && !isPublicRoute) {
     return <Navigate to="/login" replace />;
   }
 
-  // User is authenticated, render the protected content
+  // User is authenticated or it's a public route, render the content
   return <>{children}</>;
 };
 
