@@ -8,7 +8,7 @@ interface ImageSectionProps {
 
 const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
   return (
-    <div className="relative h-64 md:h-full">
+    <div className="relative h-72 md:h-full">
       <img 
         src={imageSrc} 
         alt={altText} 
