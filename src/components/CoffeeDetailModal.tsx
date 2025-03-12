@@ -161,11 +161,11 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             <ImageSection imageSrc={coffee.image} altText={coffee.name} />
             
             <div className="p-6 bg-white">
-              <div className="flex items-center space-x-3 mb-2">
+              <div className="flex items-center gap-4 mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
                 <RatingBadge rating={coffee.rating} />
               </div>
               
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{coffee.name}</h2>
               <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
               
               <CoffeeAttributes
@@ -211,3 +211,4 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
 };
 
 export default CoffeeDetailModal;
+
