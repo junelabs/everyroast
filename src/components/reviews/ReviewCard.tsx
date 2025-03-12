@@ -1,48 +1,39 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { hardDeleteCoffee } from '@/utils/coffeeOperations';
-import { useAuth } from '@/context/auth';
 
 // Import refactored components
 import ReviewCardImage from './card/ReviewCardImage';
 import ReviewDeleteDialog from './card/ReviewDeleteDialog';
+import ReviewActions from './card/ReviewActions';
 import { useCoffeeData, formatReviewDate } from './card/useCoffeeData';
 
 interface ReviewCardProps {
   review: any;
   onEdit: (review: any) => void;
-  onDelete?: () => void; // Added onDelete prop
+  onDelete?: () => void;
 }
 
-const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
+const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteType, setDeleteType] = useState<'review' | 'coffee'>('review');
   const { toast } = useToast();
-  const { user } = useAuth();
-
-  // Debug logging to check the review data
-  console.log("Review in ReviewCard:", review);
-  console.log("Coffee type in ReviewCard:", review.coffees?.type);
 
   // Get coffee data from the review
   const { coffee } = useCoffeeData(review);
-  
-  // Check if the current user is the owner of this coffee
-  const isOwner = user && review.coffees?.created_by === user.id;
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     onEdit(review);
-  };
+  }, [review, onEdit]);
 
-  const handleDeleteReview = async () => {
+  const handleDeleteReview = useCallback(async () => {
     setIsDeleting(true);
     try {
       const { error } = await supabase
@@ -57,16 +48,14 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Review has been deleted successfully."
       });
       
-      // Close dialogs before triggering onDelete callback
       setIsDeleteDialogOpen(false);
       setIsModalOpen(false);
       
-      // Call the onDelete callback if provided
       if (onDelete) {
         onDelete();
       }
       
-      setIsReviewFormOpen(false); // Ensure the form is closed
+      setIsReviewFormOpen(false);
     } catch (error) {
       console.error("Error deleting review:", error);
       toast({
@@ -78,12 +67,11 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
     } finally {
       setIsDeleting(false);
     }
-  };
+  }, [review.id, onDelete, toast]);
   
-  const handleDeleteCoffee = async () => {
+  const handleDeleteCoffee = useCallback(async () => {
     setIsDeleting(true);
     try {
-      // Get the coffee ID from the review
       const coffeeId = review.coffee_id;
       if (!coffeeId) throw new Error("Coffee ID not found");
       
@@ -95,16 +83,14 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         description: "Coffee has been permanently deleted."
       });
       
-      // Close all dialogs before triggering onDelete callback
       setIsDeleteDialogOpen(false);
       setIsModalOpen(false);
       
-      // Call the onDelete callback if provided
       if (onDelete) {
         onDelete();
       }
       
-      setIsReviewFormOpen(false); // Ensure the form is closed
+      setIsReviewFormOpen(false);
     } catch (error) {
       console.error("Error deleting coffee:", error);
       toast({
@@ -116,20 +102,12 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
     } finally {
       setIsDeleting(false);
     }
-  };
+  }, [review.coffee_id, onDelete, toast]);
   
-  const openDeleteDialog = (type: 'review' | 'coffee') => {
+  const openDeleteDialog = useCallback((type: 'review' | 'coffee') => {
     setDeleteType(type);
     setIsDeleteDialogOpen(true);
-  };
-  
-  const handleDelete = async () => {
-    if (deleteType === 'review') {
-      await handleDeleteReview();
-    } else {
-      await handleDeleteCoffee();
-    }
-  };
+  }, []);
 
   return (
     <>
@@ -153,37 +131,12 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         }}
         showActionButtons={true}
         customActions={
-          <div className="space-y-3 mt-4">
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline"
-                className="flex-1"
-                onClick={handleEdit}
-              >
-                Edit Review
-              </Button>
-              
-              <Button 
-                variant="ghost"
-                className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"
-                onClick={() => openDeleteDialog('review')}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Deleting..." : "Delete Review"}
-              </Button>
-            </div>
-            
-            {isOwner && (
-              <Button 
-                variant="destructive"
-                className="w-full"
-                onClick={() => openDeleteDialog('coffee')}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Deleting Coffee..." : "Delete Coffee Post"}
-              </Button>
-            )}
-          </div>
+          <ReviewActions
+            review={review}
+            onEdit={handleEdit}
+            onOpenDeleteDialog={openDeleteDialog}
+            isDeleting={isDeleting}
+          />
         }
       />
       
@@ -205,11 +158,13 @@ const ReviewCard = ({ review, onEdit, onDelete }: ReviewCardProps) => {
         setIsOpen={setIsDeleteDialogOpen}
         coffeeName={review.coffees?.name || "this coffee"}
         isDeleting={isDeleting}
-        onDelete={handleDelete}
+        onDelete={deleteType === 'review' ? handleDeleteReview : handleDeleteCoffee}
         deleteType={deleteType}
       />
     </>
   );
-};
+});
+
+ReviewCard.displayName = 'ReviewCard';
 
 export default ReviewCard;
