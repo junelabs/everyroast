@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe, Instagram, Coffee } from "lucide-react";
@@ -19,9 +19,12 @@ interface RoasterCardProps {
   roaster: Roaster;
 }
 
-const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
-  // Generate a random number between 20 and 99 for drinkers count
-  const randomDrinkers = Math.floor(Math.random() * (99 - 20 + 1)) + 20;
+// Memoize the component to prevent unnecessary re-renders
+const RoasterCard: React.FC<RoasterCardProps> = memo(({ roaster }) => {
+  // Generate a random number between 20 and 99 for drinkers count - memoized by component
+  const randomDrinkers = React.useMemo(() => 
+    Math.floor(Math.random() * (99 - 20 + 1)) + 20
+  , []);
   
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md hover:border-roast-200">
@@ -32,6 +35,7 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
               src={roaster.logo_url} 
               alt={`${roaster.name} logo`} 
               className="h-full w-full object-cover"
+              loading="lazy" // Add lazy loading for images
             />
           ) : (
             <Coffee className="h-10 w-10 text-roast-300" />
@@ -85,6 +89,9 @@ const RoasterCard: React.FC<RoasterCardProps> = ({ roaster }) => {
       </CardFooter>
     </Card>
   );
-};
+});
+
+// Add display name for better debug experience
+RoasterCard.displayName = 'RoasterCard';
 
 export default RoasterCard;

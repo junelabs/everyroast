@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -26,59 +26,57 @@ const Roasters = () => {
   const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Fetch roasters data
+  // Fetch roasters data with optimized caching strategy
   const { data: roasters, isLoading, error } = useQuery({
     queryKey: ['roasters'],
     queryFn: fetchRoasters,
-    // Disable automatic refetching to prevent realtime updates
-    refetchOnMount: false,
+    staleTime: Infinity, // Data never goes stale automatically
+    cacheTime: 1000 * 60 * 60, // Cache for an hour
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    staleTime: Infinity,
   });
 
-  // Extract all unique locations for filtering
-  const locations = roasters 
-    ? [...new Set(roasters.filter(r => r.location).map(r => r.location as string))]
-    : [];
+  // Extract locations using useMemo to avoid unnecessary recalculations
+  const locations = useMemo(() => {
+    if (!roasters) return [];
+    return [...new Set(roasters.filter(r => r.location).map(r => r.location as string))];
+  }, [roasters]);
 
-  // Filter roasters based on search term and selected locations
-  const filteredRoasters = roasters 
-    ? roasters.filter(roaster => {
-        const matchesSearch = searchTerm === '' || 
-          roaster.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (roaster.description && roaster.description.toLowerCase().includes(searchTerm.toLowerCase()));
-        
-        const matchesLocation = selectedLocations.length === 0 || 
-          (roaster.location && selectedLocations.includes(roaster.location));
-        
-        return matchesSearch && matchesLocation;
-      })
-    : [];
+  // Memoize filtered roasters to avoid unnecessary filtering on each render
+  const filteredRoasters = useMemo(() => {
+    if (!roasters) return [];
+    
+    return roasters.filter(roaster => {
+      const matchesSearch = searchTerm === '' || 
+        roaster.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (roaster.description && roaster.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesLocation = selectedLocations.length === 0 || 
+        (roaster.location && selectedLocations.includes(roaster.location));
+      
+      return matchesSearch && matchesLocation;
+    });
+  }, [roasters, searchTerm, selectedLocations]);
 
-  // Handle login prompt
-  const showPrompt = (message: string, description: string) => {
+  // Memoize callback functions to prevent unnecessary re-renders
+  const showPrompt = useCallback((message: string, description: string) => {
     setPromptMessage(message);
     setPromptDescription(description);
     setShowLoginPrompt(true);
-  };
+  }, []);
 
-  // Toggle location filter
-  const toggleLocation = (location: string) => {
+  const toggleLocation = useCallback((location: string) => {
     if (!user) {
       showPrompt('Access Needed', 'Please log in or sign up to use the location filters.');
       return;
     }
     
-    if (selectedLocations.includes(location)) {
-      setSelectedLocations(selectedLocations.filter(loc => loc !== location));
-    } else {
-      setSelectedLocations([...selectedLocations, location]);
-    }
-  };
+    setSelectedLocations(prev => 
+      prev.includes(location) ? prev.filter(loc => loc !== location) : [...prev, location]
+    );
+  }, [user, showPrompt]);
 
-  // Clear all filters
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     if (!user && (searchTerm || selectedLocations.length > 0)) {
       showPrompt('Access Needed', 'Please log in or sign up to clear filters.');
       return;
@@ -86,41 +84,38 @@ const Roasters = () => {
     
     setSearchTerm('');
     setSelectedLocations([]);
-  };
+  }, [user, searchTerm, selectedLocations.length, showPrompt]);
 
-  // Handle search input
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) {
       e.preventDefault();
       showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
       return;
     }
     setSearchTerm(e.target.value);
-  };
+  }, [user, showPrompt]);
 
-  // Prevent search input focus for non-authenticated users
-  const handleSearchFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     if (!user) {
       e.target.blur();
       showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
     }
-  };
+  }, [user, showPrompt]);
 
-  // Handle submit roaster button click
-  const handleSubmitRoasterClick = () => {
+  const handleSubmitRoasterClick = useCallback(() => {
     if (!user) {
       showPrompt('Access Needed', 'Please log in or sign up to submit a roaster.');
       return;
     }
     setShowSubmissionDialog(true);
-  };
+  }, [user, showPrompt]);
 
-  const closeLoginPrompt = () => {
+  const closeLoginPrompt = useCallback(() => {
     setShowLoginPrompt(false);
-  };
+  }, []);
 
-  // Create loading skeletons for the grid
-  const renderSkeletons = () => {
+  // Create loading skeletons for the grid - memoized to prevent recreation on each render
+  const renderSkeletons = useCallback(() => {
     return Array(6).fill(0).map((_, index) => (
       <div key={`skeleton-${index}`} className="border rounded-lg p-6">
         <div className="flex items-center gap-4">
@@ -140,7 +135,13 @@ const Roasters = () => {
         </div>
       </div>
     ));
-  };
+  }, []);
+
+  // Only display visible items for better performance
+  const visibleRoasters = useMemo(() => {
+    const limit = user ? filteredRoasters.length : Math.min(filteredRoasters.length, 6);
+    return filteredRoasters.slice(0, limit);
+  }, [filteredRoasters, user]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -224,18 +225,18 @@ const Roasters = () => {
               We encountered a problem while loading the roasters. Please try again later.
             </p>
           </div>
-        ) : filteredRoasters.length > 0 ? (
+        ) : visibleRoasters.length > 0 ? (
           <>
             <div className="mb-6 flex items-center justify-between">
               <p className="text-gray-500">
-                Showing {filteredRoasters.length} {filteredRoasters.length === 1 ? 'roaster' : 'roasters'}
+                Showing {visibleRoasters.length} {visibleRoasters.length === 1 ? 'roaster' : 'roasters'}
                 {searchTerm && ` for "${searchTerm}"`}
                 {selectedLocations.length > 0 && ' in selected locations'}
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRoasters.slice(0, user ? undefined : 6).map(roaster => (
+              {visibleRoasters.map(roaster => (
                 <RoasterCard key={roaster.id} roaster={roaster} />
               ))}
             </div>

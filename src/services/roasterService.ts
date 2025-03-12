@@ -2,12 +2,14 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 
-// Fetch all roasters from Supabase
+// Fetch all roasters from Supabase with optimized query
 export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
+    console.log("Fetching roasters from Supabase");
+    
     const { data, error } = await supabase
       .from('roasters')
-      .select('*')
+      .select('id, name, location, description, website, instagram, logo_url') // Explicit column selection for faster queries
       .not('location', 'is', null) // Only get roasters with a location
       .is('created_by', null); // Only get roasters that weren't created by users during review submission
     
@@ -15,6 +17,8 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
       console.error('Error fetching roasters:', error);
       throw error;
     }
+    
+    console.log(`Successfully fetched ${data.length} roasters`);
     
     // Transform the data to match the Roaster interface
     const roasters: Roaster[] = data.map(item => ({
@@ -36,21 +40,28 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   }
 };
 
-// Fetch a single roaster by ID from Supabase
+// Optimized to fetch only necessary fields 
 export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
   try {
+    console.log(`Fetching roaster with ID: ${id}`);
+    
     const { data, error } = await supabase
       .from('roasters')
-      .select('*')
+      .select('id, name, location, description, website, instagram, logo_url')
       .eq('id', id)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to avoid errors if not found
     
     if (error) {
       console.error('Error fetching roaster by ID:', error);
       throw error;
     }
     
-    if (!data) return null;
+    if (!data) {
+      console.log(`No roaster found with ID: ${id}`);
+      return null;
+    }
+    
+    console.log(`Successfully fetched roaster: ${data.name}`);
     
     // Transform the data to match the Roaster interface
     const roaster: Roaster = {
