@@ -25,7 +25,7 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCoun
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, index) => (
           <div key={index} className="aspect-square bg-gray-200 animate-pulse rounded-xl"></div>
         ))}
@@ -42,7 +42,7 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = ({ coffees, isLoading, visibleCoun
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {coffees.slice(0, visibleCount).map((coffee) => (
         <CoffeeCard key={coffee.id} coffee={coffee} />
       ))}

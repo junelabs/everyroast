@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star } from 'lucide-react';
 import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
@@ -32,47 +33,47 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = ({ review, formatDate })
         </div>
       )}
       
-      <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-6">
-        <div className="flex justify-between mb-3">
+      <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
+        <div className="flex justify-between mb-2">
           <div>
             <h3 className="text-xl font-bold">{review.coffees?.name || ""}</h3>
           </div>
         </div>
         
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-2">
           {review.coffees?.roasters?.name && (
             <div className="flex items-center text-gray-100 text-sm">
-              <span className="mr-2">☕️</span>
+              <span className="mr-1">☕️</span>
               <span>{review.coffees.roasters.name}</span>
             </div>
           )}
           {review.coffees?.origin && (
             <div className="flex items-center text-gray-200 text-sm">
-              <span className="mr-2">📍</span>
+              <span className="mr-1">📍</span>
               <span>{review.coffees.origin}</span>
             </div>
           )}
         </div>
         
-        <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/20">
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
           {review.coffees?.roast_level && (
             <div className="flex items-center">
-              <span className="text-lg mr-2">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
-              <div className="text-sm">{review.coffees.roast_level}</div>
+              <span className="text-base mr-1">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
+              <div className="text-xs">{review.coffees.roast_level}</div>
             </div>
           )}
           
           {review.coffees?.process_method && (
             <div className="flex items-center">
-              <span className="text-lg mr-2">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
-              <div className="text-sm">{review.coffees.process_method}</div>
+              <span className="text-base mr-1">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
+              <div className="text-xs">{review.coffees.process_method}</div>
             </div>
           )}
           
           {review.coffees?.price !== null && review.coffees?.price !== undefined && (
             <div className="flex items-center justify-end">
-              <span className="text-lg mr-2">💰</span>
-              <div className="text-sm">${Number(review.coffees.price).toFixed(2)}</div>
+              <span className="text-base mr-1">💰</span>
+              <div className="text-xs">${Number(review.coffees.price).toFixed(2)}</div>
             </div>
           )}
         </div>
