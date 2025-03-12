@@ -146,12 +146,21 @@ const Roasters = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       
-      <div className="bg-gradient-to-r from-roast-50 to-roast-100 py-12">
+      <div className="bg-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold text-roast-800 mb-4">Coffee Roasters</h1>
-          <p className="text-lg text-roast-600 max-w-2xl">
-            Discover exceptional coffee roasters from around the world. Each with their own unique story and approach to the craft of roasting.
+          <p className="text-lg text-roast-600 max-w-3xl">
+            Discover exceptional coffee roasters from around the world. If you want to add a roaster to this list, click the button below to submit one!
           </p>
+          <div className="mt-4">
+            <Button 
+              onClick={handleSubmitRoasterClick}
+              className="bg-roast-500 hover:bg-roast-600 text-white"
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Submit a Roaster
+            </Button>
+          </div>
         </div>
       </div>
       
@@ -223,15 +232,6 @@ const Roasters = () => {
                 {searchTerm && ` for "${searchTerm}"`}
                 {selectedLocations.length > 0 && ' in selected locations'}
               </p>
-              
-              {/* Submit Roaster Button - Moved here from its previous location */}
-              <Button 
-                onClick={handleSubmitRoasterClick}
-                className="bg-roast-500 hover:bg-roast-600 text-white"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Submit a Roaster
-              </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
