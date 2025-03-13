@@ -7,10 +7,12 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
     console.log("Fetching roasters from Supabase");
     
-    // Use a more efficient query without unnecessary filters for faster loading
+    // Use a more efficient query that explicitly excludes user-created roasters
     const { data, error } = await supabase
       .from('roasters')
-      .select('id, name, location, description, website, instagram, logo_url') // Explicit column selection for faster queries
+      .select('id, name, location, description, website, instagram, logo_url')
+      .is('created_by', null) // Only get official roasters (no user-created ones)
+      .is('location', null, { operator: 'not' }) // Additional filter to ensure we only get roasters with a location
       .order('name', { ascending: true })
       .limit(100); // Limit to 100 roasters for initial load
     
@@ -50,6 +52,7 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
       .from('roasters')
       .select('id, name, location, description, website, instagram, logo_url')
       .eq('id', id)
+      .is('created_by', null) // Only get official roasters (no user-created ones)
       .maybeSingle(); // Use maybeSingle instead of single to avoid errors if not found
     
     if (error) {

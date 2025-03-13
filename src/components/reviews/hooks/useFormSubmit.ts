@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -146,14 +145,16 @@ export const useFormSubmit = ({
         if (!roasterData) {
           console.log("Roaster not found, creating new user-submitted roaster:", roaster);
           
-          // Create a temporary roaster entry that won't show in the Roasters page
-          // We explicitly set created_by to the user's ID to filter it out in the roasters page
+          // Create a temporary roaster entry that is completely isolated from the Roasters page
           const { data: newRoaster, error: newRoasterError } = await supabase
             .from('roasters')
             .insert({
               name: roaster,
-              created_by: user.id, // This is intentionally set to identify user-created roasters
-              location: null // Explicitly set to null to prevent it from showing up in the Roasters page
+              created_by: user.id, // Mark as user-created
+              location: null, // Explicitly set to null 
+              website: null, // Additional null fields to ensure it's recognized as user-created
+              description: null, // Additional null field to ensure it's recognized as user-created
+              instagram: null // Additional null field to ensure it's recognized as user-created
             })
             .select('id')
             .single();
