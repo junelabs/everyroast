@@ -12,7 +12,7 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
       .from('roasters')
       .select('id, name, location, description, website, instagram, logo_url')
       .is('created_by', null) // Only get official roasters (no user-created ones)
-      .is('location', null, { operator: 'not' }) // Additional filter to ensure we only get roasters with a location
+      .not('location', 'is', null) // Fix: Correct syntax to filter out null locations
       .order('name', { ascending: true })
       .limit(100); // Limit to 100 roasters for initial load
     
