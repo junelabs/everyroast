@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 
@@ -7,12 +6,11 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
     console.log("Fetching roasters from Supabase");
     
-    // Use a more efficient query that explicitly excludes user-created roasters
+    // Query for official roasters (not user-created ones)
     const { data, error } = await supabase
       .from('roasters')
       .select('id, name, location, description, website, instagram, logo_url')
       .is('created_by', null) // Only get official roasters (no user-created ones)
-      .not('location', 'is', null) // Fix: Correct syntax to filter out null locations
       .order('name', { ascending: true })
       .limit(100); // Limit to 100 roasters for initial load
     
