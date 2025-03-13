@@ -31,7 +31,7 @@ import LoginPrompt from '@/components/LoginPrompt';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Roaster name must be at least 2 characters' }),
   city: z.string().min(2, { message: 'City is required' }),
-  state: z.string().min(2, { message: 'State is required' }),
+  state: z.string().min(2, { message: 'State or Country is required' }),
   website: z.string().optional(),
   instagram: z.string().optional(),
 });
@@ -164,9 +164,9 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
                     name="state"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>State*</FormLabel>
+                        <FormLabel>State or Country*</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter state" {...field} />
+                          <Input placeholder="Enter state or country" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
