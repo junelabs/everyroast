@@ -36,8 +36,8 @@ function App() {
             <Route path="/roasters" element={<Roasters />} />
             <Route path="/roasters/:id" element={<RoasterDetails />} />
             <Route path="/coffee/:id" element={<CoffeeDetails />} />
-            <Route path="/cafes" element={<ComingSoon title="Cafes" />} />
-            <Route path="/recipes" element={<ComingSoon title="Recipes" />} />
+            <Route path="/cafes" element={<ComingSoon type="cafes" />} />
+            <Route path="/recipes" element={<ComingSoon type="recipes" />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route 
