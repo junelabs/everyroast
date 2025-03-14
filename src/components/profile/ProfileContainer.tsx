@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -11,7 +12,7 @@ interface ProfileContainerProps {
 }
 
 const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
-  const { profile, updateProfile, isLoading: authLoading, user } = useAuth();
+  const { profile, updateProfile, isLoading: authLoading, user, authInitialized } = useAuth();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -20,10 +21,23 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
-  console.log("ProfileContainer: Auth loading state:", authLoading);
-  console.log("ProfileContainer: User state:", user?.id);
-  console.log("ProfileContainer: Profile state:", profile?.id);
+  console.log("ProfileContainer: Auth state:", { 
+    authLoading, 
+    authInitialized,
+    userId: user?.id,
+    profileId: profile?.id,
+    profileLoading
+  });
+
+  // If authentication is complete and no user, redirect to login
+  useEffect(() => {
+    if (!authLoading && authInitialized && !user) {
+      console.log("ProfileContainer: No authenticated user, redirecting to login");
+      navigate('/login', { replace: true });
+    }
+  }, [user, authLoading, authInitialized, navigate]);
 
   // Set a shorter timeout for profile loading to prevent infinite loading
   useEffect(() => {
@@ -56,10 +70,10 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
         const emailUsername = user.email.split('@')[0];
         setUsername(emailUsername || "");
       }
-    } else if (!authLoading && !user) {
+    } else if (!authLoading && !user && authInitialized) {
       setProfileLoading(false);
     }
-  }, [profile, authLoading, user]);
+  }, [profile, authLoading, user, authInitialized, username]);
 
   useEffect(() => {
     if (!user) return;
@@ -162,6 +176,21 @@ const ProfileContainer = ({ showHeader = true }: ProfileContainerProps) => {
 
   // Only show loading for a maximum of 3 seconds
   const isPageLoading = (authLoading || (profileLoading && !!user)) && profileLoading;
+
+  // If no authenticated user after loading is complete, show empty state
+  if (!isPageLoading && !user && authInitialized && !authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <div className="text-roast-600 text-lg">Please log in to view your profile</div>
+        <button 
+          className="mt-4 px-4 py-2 bg-roast-500 text-white rounded-md hover:bg-roast-600"
+          onClick={() => navigate('/login')}
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

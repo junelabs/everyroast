@@ -48,14 +48,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [authInitialized, isLoading, user, navigate, isPublicRoute]);
 
+  // Maximum wait time reduced to prevent showing anonymous state
+  const maxWaitTime = 2; // Seconds
+
   // Force continue after a shorter timeout if we have a user or on public routes
-  if (timeElapsed >= 2 && (user || isPublicRoute)) {
+  if (timeElapsed >= maxWaitTime && (user || isPublicRoute)) {
     console.log("ProtectedRoute: Forcing continuation after short timeout");
     return <>{children}</>;
   }
 
   // Show loading state with shorter timeout
-  if ((isLoading || !authInitialized) && timeElapsed < 2) {
+  if ((isLoading || !authInitialized) && timeElapsed < maxWaitTime) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
