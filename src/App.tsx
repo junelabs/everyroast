@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import Index from '@/pages/Index';
 import Roasters from '@/pages/Roasters';
@@ -29,31 +29,29 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <div className="app">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/roasters" element={<Roasters />} />
-            <Route path="/roasters/:id" element={<RoasterDetails />} />
-            <Route path="/coffee/:id" element={<CoffeeDetails />} />
-            <Route path="/cafes" element={<ComingSoon type="cafes" />} />
-            <Route path="/recipes" element={<ComingSoon type="recipes" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route 
-              path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="/admin/populate-roasters" element={<RoasterPopulator />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
-        </div>
-      </Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/roasters" element={<Roasters />} />
+          <Route path="/roasters/:id" element={<RoasterDetails />} />
+          <Route path="/coffee/:id" element={<CoffeeDetails />} />
+          <Route path="/cafes" element={<ComingSoon type="cafes" />} />
+          <Route path="/recipes" element={<ComingSoon type="recipes" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/admin/populate-roasters" element={<RoasterPopulator />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </div>
     </AuthProvider>
   );
 }
