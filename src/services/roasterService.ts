@@ -8,13 +8,12 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
     console.log("Fetching roasters from Supabase");
     
-    // Query for official roasters (not user-created ones)
+    // Query for all roasters (both official and international ones)
     const { data, error } = await supabase
       .from('roasters')
-      .select('id, name, location, description, website, instagram, logo_url')
-      .is('created_by', null) // Only get official roasters (no user-created ones)
+      .select('id, name, location, description, website, instagram, logo_url, created_at')
       .order('name', { ascending: true })
-      .limit(100); // Limit to 100 roasters for initial load
+      .limit(200); // Increased limit to accommodate international roasters
     
     if (error) {
       console.error('Error fetching roasters:', error);
@@ -38,18 +37,22 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
     return roasters;
   } catch (error) {
     console.error('Error in fetchRoasters:', error);
-    // Fall back to mock data if there's an error, but do it faster
-    return roasterData.slice(0, 50); // Return only first 50 mock entries for faster rendering
+    // Fall back to mock data if there's an error, but return all mock data
+    return roasterData; // Return all mock entries as fallback
   }
 };
 
-// Add new roasters to Supabase
+// Add new roasters to Supabase with better error handling and logging
 export const addNewRoasters = async (roasters: Omit<Roaster, 'id' | 'coffeeCount'>[]): Promise<void> => {
   try {
-    console.log("Adding new roasters to Supabase");
+    console.log(`Adding ${roasters.length} new roasters to Supabase`);
+    
+    let addedCount = 0;
+    let skippedCount = 0;
+    let errorCount = 0;
     
     for (const roaster of roasters) {
-      // Check if roaster already exists
+      // Check if roaster already exists by name
       const { data: existingRoaster, error: checkError } = await supabase
         .from('roasters')
         .select('id')
@@ -57,7 +60,8 @@ export const addNewRoasters = async (roasters: Omit<Roaster, 'id' | 'coffeeCount
         .maybeSingle();
       
       if (checkError) {
-        console.error('Error checking for existing roaster:', checkError);
+        console.error(`Error checking for existing roaster ${roaster.name}:`, checkError);
+        errorCount++;
         continue;
       }
       
@@ -76,17 +80,21 @@ export const addNewRoasters = async (roasters: Omit<Roaster, 'id' | 'coffeeCount
         
         if (insertError) {
           console.error(`Error adding roaster ${roaster.name}:`, insertError);
+          errorCount++;
         } else {
           console.log(`Successfully added roaster: ${roaster.name}`);
+          addedCount++;
         }
       } else {
         console.log(`Roaster ${roaster.name} already exists, skipping`);
+        skippedCount++;
       }
     }
     
-    console.log("Finished adding new roasters");
+    console.log(`Finished adding roasters: ${addedCount} added, ${skippedCount} skipped, ${errorCount} errors`);
   } catch (error) {
     console.error('Error in addNewRoasters:', error);
+    throw error;
   }
 };
 

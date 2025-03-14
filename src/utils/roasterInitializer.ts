@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { roasterData } from "@/data/mockRoasterData";
 import { addNewRoasters } from "@/services/roasterService";
+import { useToast } from "@/components/ui/use-toast";
 
 // This utility function initializes the roaster database by adding the international roasters
 // This can be called when the app starts or from an admin page
@@ -19,14 +20,18 @@ export const initializeRoasterDatabase = async (): Promise<void> => {
       return;
     }
     
+    console.log(`Current roaster count in database: ${count}`);
+    
     // If the database has fewer than 50 roasters, add the new ones
     if (count !== null && count < 50) {
       console.log(`Only ${count} roasters found in database. Adding international roasters...`);
       
       // Extract relevant data from mock roasters (exclude id and coffeeCount)
       const roastersToAdd = roasterData
-        .filter(r => r.id >= "57") // Only add the new international roasters (IDs 57+)
+        .filter(r => parseInt(r.id) >= 57) // Only add the new international roasters (IDs 57+)
         .map(({ id, coffeeCount, ...rest }) => rest);
+      
+      console.log(`Preparing to add ${roastersToAdd.length} international roasters to the database`);
       
       // Add the roasters to the database
       await addNewRoasters(roastersToAdd);
