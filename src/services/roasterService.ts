@@ -43,6 +43,53 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
   }
 };
 
+// Add new roasters to Supabase
+export const addNewRoasters = async (roasters: Omit<Roaster, 'id' | 'coffeeCount'>[]): Promise<void> => {
+  try {
+    console.log("Adding new roasters to Supabase");
+    
+    for (const roaster of roasters) {
+      // Check if roaster already exists
+      const { data: existingRoaster, error: checkError } = await supabase
+        .from('roasters')
+        .select('id')
+        .eq('name', roaster.name)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Error checking for existing roaster:', checkError);
+        continue;
+      }
+      
+      // If roaster doesn't exist, add it
+      if (!existingRoaster) {
+        const { error: insertError } = await supabase
+          .from('roasters')
+          .insert({
+            name: roaster.name,
+            location: roaster.location,
+            description: roaster.description || null,
+            website: roaster.website || null,
+            instagram: roaster.instagram || null,
+            logo_url: roaster.logo_url || null
+          });
+        
+        if (insertError) {
+          console.error(`Error adding roaster ${roaster.name}:`, insertError);
+        } else {
+          console.log(`Successfully added roaster: ${roaster.name}`);
+        }
+      } else {
+        console.log(`Roaster ${roaster.name} already exists, skipping`);
+      }
+    }
+    
+    console.log("Finished adding new roasters");
+  } catch (error) {
+    console.error('Error in addNewRoasters:', error);
+  }
+};
+
 // Optimized to fetch only necessary fields for a single roaster
 export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
   try {

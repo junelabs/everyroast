@@ -1,69 +1,61 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/auth";
-import { useAuth } from "./context/auth";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import CoffeeDetails from "./pages/CoffeeDetails";
-import Roasters from "./pages/Roasters";
-import RoasterDetails from "./pages/RoasterDetails";
-import Cafes from "./pages/Cafes";
-import Recipes from "./pages/Recipes";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Index from '@/pages/Index';
+import Roasters from '@/pages/Roasters';
+import RoasterDetails from '@/pages/RoasterDetails';
+import Cafes from '@/pages/Cafes';
+import Recipes from '@/pages/Recipes';
+import NotFound from '@/pages/NotFound';
+import Login from '@/pages/Login';
+import SignUp from '@/pages/SignUp';
+import ComingSoon from '@/pages/ComingSoon';
+import Profile from '@/pages/Profile';
+import { AuthProvider } from '@/context/auth';
+import { Toaster } from '@/components/ui/toaster';
+import CoffeeDetails from './pages/CoffeeDetails';
+import RoasterPopulator from './pages/RoasterPopulator';
+import ProtectedRoute from './components/ProtectedRoute';
+import { initializeRoasterDatabase } from './utils/roasterInitializer';
 
-const queryClient = new QueryClient();
+function App() {
+  useEffect(() => {
+    // Initialize the roaster database with international roasters when the app starts
+    initializeRoasterDatabase()
+      .then(() => console.log("Roaster database initialization complete"))
+      .catch(err => console.error("Error initializing roaster database:", err));
+  }, []);
 
-const IndexRouteWrapper = () => {
-  const { user, isLoading, authInitialized } = useAuth();
-  
-  if (isLoading || !authInitialized) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500 mb-4"></div>
-        <div className="text-roast-500">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (user) {
-    return <Navigate to="/profile" replace />;
-  }
-  
-  return <Index />;
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<IndexRouteWrapper />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/coffee/:id" element={<CoffeeDetails />} />
-          <Route path="/roasters" element={<Roasters />} />
-          <Route path="/roasters/:id" element={<RoasterDetails />} />
-          <Route path="/cafes" element={<Cafes />} />
-          <Route path="/recipes" element={<Recipes />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="app">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/roasters" element={<Roasters />} />
+            <Route path="/roasters/:id" element={<RoasterDetails />} />
+            <Route path="/coffee/:id" element={<CoffeeDetails />} />
+            <Route path="/cafes" element={<ComingSoon title="Cafes" />} />
+            <Route path="/recipes" element={<ComingSoon title="Recipes" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/admin/populate-roasters" element={<RoasterPopulator />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
 
 export default App;
