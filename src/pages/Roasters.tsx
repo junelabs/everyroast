@@ -10,7 +10,6 @@ import { Coffee, Search, MapPin, Filter, PlusCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import LoginPrompt from '@/components/LoginPrompt';
 import { useAuth } from '@/context/auth';
 import RoasterSubmissionDialog from '@/components/roasters/RoasterSubmissionDialog';
 
@@ -18,11 +17,6 @@ const Roasters = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [promptMessage, setPromptMessage] = useState('Join our coffee community');
-  const [promptDescription, setPromptDescription] = useState(
-    'Create an account to access all roaster information and filtering features.'
-  );
   const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -75,15 +69,7 @@ const Roasters = () => {
   }, []);
 
   const handleSubmitRoasterClick = useCallback(() => {
-    if (!user) {
-      setShowLoginPrompt(true);
-      return;
-    }
     setShowSubmissionDialog(true);
-  }, [user]);
-
-  const closeLoginPrompt = useCallback(() => {
-    setShowLoginPrompt(false);
   }, []);
 
   // Create loading skeletons for the grid - memoized to prevent recreation on each render
@@ -235,14 +221,6 @@ const Roasters = () => {
 
       <Footer />
       
-      {/* Login prompt dialog */}
-      <LoginPrompt
-        isOpen={showLoginPrompt}
-        onClose={closeLoginPrompt}
-        message={promptMessage}
-        description={promptDescription}
-      />
-
       {/* Roaster submission dialog */}
       <RoasterSubmissionDialog 
         isOpen={showSubmissionDialog} 
