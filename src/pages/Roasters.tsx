@@ -59,56 +59,28 @@ const Roasters = () => {
   }, [roasters, searchTerm, selectedLocations]);
 
   // Memoize callback functions to prevent unnecessary re-renders
-  const showPrompt = useCallback((message: string, description: string) => {
-    setPromptMessage(message);
-    setPromptDescription(description);
-    setShowLoginPrompt(true);
-  }, []);
-
   const toggleLocation = useCallback((location: string) => {
-    if (!user) {
-      showPrompt('Access Needed', 'Please log in or sign up to use the location filters.');
-      return;
-    }
-    
     setSelectedLocations(prev => 
       prev.includes(location) ? prev.filter(loc => loc !== location) : [...prev, location]
     );
-  }, [user, showPrompt]);
+  }, []);
 
   const clearFilters = useCallback(() => {
-    if (!user && (searchTerm || selectedLocations.length > 0)) {
-      showPrompt('Access Needed', 'Please log in or sign up to clear filters.');
-      return;
-    }
-    
     setSearchTerm('');
     setSelectedLocations([]);
-  }, [user, searchTerm, selectedLocations.length, showPrompt]);
+  }, []);
 
   const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) {
-      e.preventDefault();
-      showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
-      return;
-    }
     setSearchTerm(e.target.value);
-  }, [user, showPrompt]);
-
-  const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    if (!user) {
-      e.target.blur();
-      showPrompt('Access Needed', 'Please log in or sign up to search for roasters.');
-    }
-  }, [user, showPrompt]);
+  }, []);
 
   const handleSubmitRoasterClick = useCallback(() => {
     if (!user) {
-      showPrompt('Access Needed', 'Please log in or sign up to submit a roaster.');
+      setShowLoginPrompt(true);
       return;
     }
     setShowSubmissionDialog(true);
-  }, [user, showPrompt]);
+  }, [user]);
 
   const closeLoginPrompt = useCallback(() => {
     setShowLoginPrompt(false);
@@ -136,12 +108,6 @@ const Roasters = () => {
       </div>
     ));
   }, []);
-
-  // Only display visible items for better performance
-  const visibleRoasters = useMemo(() => {
-    const limit = user ? filteredRoasters.length : Math.min(filteredRoasters.length, 6);
-    return filteredRoasters.slice(0, limit);
-  }, [filteredRoasters, user]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -175,7 +141,6 @@ const Roasters = () => {
                 placeholder="Search roasters by name or description..."
                 value={searchTerm}
                 onChange={handleSearchInputChange}
-                onFocus={handleSearchFocus}
               />
             </div>
             
@@ -225,46 +190,21 @@ const Roasters = () => {
               We encountered a problem while loading the roasters. Please try again later.
             </p>
           </div>
-        ) : visibleRoasters.length > 0 ? (
+        ) : filteredRoasters.length > 0 ? (
           <>
             <div className="mb-6 flex items-center justify-between">
               <p className="text-gray-500">
-                Showing {visibleRoasters.length} {visibleRoasters.length === 1 ? 'roaster' : 'roasters'}
+                Showing {filteredRoasters.length} {filteredRoasters.length === 1 ? 'roaster' : 'roasters'}
                 {searchTerm && ` for "${searchTerm}"`}
                 {selectedLocations.length > 0 && ' in selected locations'}
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visibleRoasters.map(roaster => (
+              {filteredRoasters.map(roaster => (
                 <RoasterCard key={roaster.id} roaster={roaster} />
               ))}
             </div>
-            
-            {!user && filteredRoasters.length > 6 && (
-              <div className="mt-8 p-6 bg-roast-50 rounded-lg text-center">
-                <h3 className="text-xl font-semibold text-roast-800 mb-2">
-                  Log in to see {filteredRoasters.length - 6} more roasters
-                </h3>
-                <p className="text-roast-600 mb-4">
-                  Join our free coffee community to access our full roaster catalog and more features.
-                </p>
-                <div className="flex justify-center gap-4">
-                  <Button 
-                    variant="outline"
-                    onClick={() => showPrompt('Welcome Back', 'Log in to access all roaster information.')}
-                  >
-                    Log In
-                  </Button>
-                  <Button 
-                    className="bg-roast-500 hover:bg-roast-600"
-                    onClick={() => showPrompt('Join EveryRoast', 'Create an account to access our full catalog of roasters.')}
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              </div>
-            )}
           </>
         ) : (
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
