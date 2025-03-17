@@ -3,6 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
 
+// Generate a random coffee count between 5 and 20
+const generateCoffeeCount = () => Math.floor(Math.random() * 16) + 5; // Random number between 5 and 20
+
 // Fetch all roasters from Supabase with optimized query
 export const fetchRoasters = async (): Promise<Roaster[]> => {
   try {
@@ -32,14 +35,17 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
       website: item.website,
       instagram: item.instagram,
       logo_url: item.logo_url,
-      coffeeCount: Math.floor(Math.random() * 15) + 1 // Temporary random count until we implement coffee counting
+      coffeeCount: generateCoffeeCount() // Use the new function for coffee count
     }));
     
     return roasters;
   } catch (error) {
     console.error('Error in fetchRoasters:', error);
     // Fall back to mock data if there's an error, but do it faster
-    return roasterData.slice(0, 50); // Return only first 50 mock entries for faster rendering
+    return roasterData.slice(0, 50).map(roaster => ({
+      ...roaster,
+      coffeeCount: generateCoffeeCount() // Update mock data with new coffee count range
+    }));
   }
 };
 
@@ -76,7 +82,7 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
       website: data.website,
       instagram: data.instagram,
       logo_url: data.logo_url,
-      coffeeCount: Math.floor(Math.random() * 15) + 1 // Temporary random count until we implement coffee counting
+      coffeeCount: generateCoffeeCount() // Use the new function for coffee count
     };
     
     return roaster;
@@ -84,6 +90,6 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
     console.error('Error in fetchRoasterById:', error);
     // Fall back to mock data if there's an error
     const roaster = roasterData.find(r => r.id === id);
-    return roaster || null;
+    return roaster ? { ...roaster, coffeeCount: generateCoffeeCount() } : null; // Update with new coffee count
   }
 };
