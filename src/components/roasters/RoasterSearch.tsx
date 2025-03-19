@@ -39,6 +39,7 @@ const RoasterSearch: React.FC<RoasterSearchProps> = ({
             <button
               className="absolute right-3 top-1/2 transform -translate-y-1/2"
               onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
             >
               <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
             </button>
@@ -55,7 +56,10 @@ const RoasterSearch: React.FC<RoasterSearchProps> = ({
             locations={locations}
             selectedLocations={selectedLocations}
             onSelectLocation={toggleLocation}
-            onClearLocations={clearFilters}
+            onClearLocations={() => {
+              // Just clear location filters, not search term
+              toggleLocation(selectedLocations[0]);
+            }}
           />
           
           {hasFilters && (

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
@@ -7,11 +7,28 @@ import Footer from "@/components/Footer";
 import { fetchRoasterById } from '@/services/roasterService';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MapPin, Globe, ArrowLeft } from 'lucide-react';
-import { Coffee as CoffeeIcon } from 'lucide-react';
+import { 
+  MapPin, 
+  Globe, 
+  Instagram, 
+  ArrowLeft, 
+  Coffee as CoffeeIcon,
+  Info 
+} from 'lucide-react';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from '@/components/ui/card';
 
 const RoasterDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const [activeTab, setActiveTab] = useState("about");
   
   const { data: roaster, isLoading, error } = useQuery({
     queryKey: ['roaster', id],
@@ -85,20 +102,30 @@ const RoasterDetails = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <Link to="/roasters">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Roasters
-          </Button>
-        </Link>
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/roasters">Roasters</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{roaster.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
           <div className="p-8">
             <div className="flex flex-col md:flex-row gap-8">
-              <div className="h-48 w-48 flex items-center justify-center rounded-lg bg-gray-100 overflow-hidden">
+              <div className="h-48 w-48 flex items-center justify-center rounded-lg bg-roast-50 border border-roast-100 overflow-hidden">
                 {roaster.logo_url ? (
                   <img 
                     src={roaster.logo_url} 
@@ -121,38 +148,111 @@ const RoasterDetails = () => {
                     </div>
                   )}
                   
-                  {roaster.website && (
-                    <a 
-                      href={roaster.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                      <Globe className="h-5 w-5 mr-2" />
-                      <span>Visit Website</span>
-                    </a>
-                  )}
-                </div>
-                
-                <div className="mt-6 space-y-4">
-                  <h2 className="text-xl font-semibold text-gray-800">About</h2>
-                  {roaster.description ? (
-                    <p className="text-gray-600 whitespace-pre-line">{roaster.description}</p>
-                  ) : (
-                    <p className="text-gray-400 italic">No description available for this roaster.</p>
-                  )}
-                </div>
-                
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">Coffee Offerings</h2>
-                  <div className="bg-roast-50 p-4 rounded-lg inline-flex items-center">
-                    <CoffeeIcon className="h-5 w-5 mr-2 text-roast-500" />
-                    <span className="font-medium">{roaster.coffeeCount || 0} {(roaster.coffeeCount === 1) ? 'coffee' : 'coffees'} from this roaster</span>
+                  <div className="flex gap-3">
+                    {roaster.website && (
+                      <a 
+                        href={roaster.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        <Globe className="h-5 w-5 mr-1" />
+                        <span>Website</span>
+                      </a>
+                    )}
+                    
+                    {roaster.instagram && (
+                      <a 
+                        href={`https://instagram.com/${roaster.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-pink-600 hover:text-pink-800 transition-colors"
+                      >
+                        <Instagram className="h-5 w-5 mr-1" />
+                        <span>Instagram</span>
+                      </a>
+                    )}
                   </div>
+                </div>
+                
+                <div className="bg-roast-50 text-roast-700 px-3 py-1.5 rounded-md text-sm font-medium flex items-center mt-6 w-fit">
+                  <CoffeeIcon className="h-4 w-4 mr-2 text-roast-500" />
+                  <span className="text-roast-900 font-bold mr-1">{roaster.coffeeCount || 0}</span> 
+                  {(roaster.coffeeCount === 1) ? 'coffee' : 'coffees'} in the database
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        
+        <Tabs defaultValue="about" className="w-full" onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 max-w-md mb-6">
+            <TabsTrigger value="about" className="flex items-center gap-1.5">
+              <Info className="h-4 w-4" />
+              About
+            </TabsTrigger>
+            <TabsTrigger value="coffees" className="flex items-center gap-1.5">
+              <CoffeeIcon className="h-4 w-4" />
+              Coffees ({roaster.coffeeCount || 0})
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="about" className="space-y-8">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">About {roaster.name}</h2>
+              {roaster.description ? (
+                <p className="text-gray-600 whitespace-pre-line">{roaster.description}</p>
+              ) : (
+                <div className="bg-gray-50 p-6 rounded-lg text-center">
+                  <Info className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-500">
+                    No description available for this roaster.
+                  </p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="coffees" className="space-y-8">
+            {roaster.coffeeCount && roaster.coffeeCount > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Will be populated with real coffee data in a future PR */}
+                {Array.from({ length: Math.min(roaster.coffeeCount, 6) }).map((_, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="flex gap-3">
+                      <div className="h-16 w-16 bg-roast-100 rounded-md flex items-center justify-center">
+                        <CoffeeIcon className="h-8 w-8 text-roast-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Coffee #{index + 1}</h3>
+                        <p className="text-sm text-gray-500">
+                          Example coffee from {roaster.name}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                <div className="bg-gray-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                  <CoffeeIcon className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium mb-2">No Coffees Found</h3>
+                <p className="text-gray-600 mb-6">
+                  There are currently no coffees from this roaster in our database.
+                </p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+        
+        <div className="flex justify-start mt-8 mb-4">
+          <Button asChild variant="outline">
+            <Link to="/roasters">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Roasters
+            </Link>
+          </Button>
         </div>
       </main>
       
