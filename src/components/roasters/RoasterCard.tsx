@@ -20,6 +20,19 @@ interface RoasterCardProps {
   roaster: Roaster;
 }
 
+const getLogoUrl = (roaster: Roaster) => {
+  if (roaster.logo_url) return roaster.logo_url;
+
+  try {
+    if (!roaster.website) return null;
+    const domain = new URL(roaster.website).hostname.replace(/^www\./, '');
+    return `https://logo.clearbit.com/${domain}`;
+  } catch {
+    return null;
+  }
+};
+
+
 // Memoize the component to prevent unnecessary re-renders
 const RoasterCard: React.FC<RoasterCardProps> = memo(({ roaster }) => {
   return (
@@ -27,12 +40,16 @@ const RoasterCard: React.FC<RoasterCardProps> = memo(({ roaster }) => {
       <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md hover:border-roast-200 hover:bg-roast-50/30 cursor-pointer">
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
           <div className="h-20 w-20 flex items-center justify-center rounded-xl bg-roast-50 border border-roast-100 overflow-hidden">
-            {roaster.logo_url ? (
-              <img 
-                src={roaster.logo_url} 
-                alt={`${roaster.name} logo`} 
+            {getLogoUrl(roaster) ? (
+              <img
+                src={getLogoUrl(roaster)}
+                alt={`${roaster.name} logo`}
                 className="h-full w-full object-cover"
-                loading="lazy" // Add lazy loading for images
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/default-logo.png'; // optional fallback
+                }}
               />
             ) : (
               <Coffee className="h-10 w-10 text-roast-300" />
