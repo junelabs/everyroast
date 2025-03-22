@@ -25,6 +25,18 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from '@/components/ui/card';
 
+const getLogoUrl = (roaster) => {
+  if (roaster.logo_url) return roaster.logo_url;
+
+  try {
+    if (!roaster.website) return null;
+    const domain = new URL(roaster.website).hostname.replace(/^www\./, '');
+    return `https://logo.clearbit.com/${domain}`;
+  } catch {
+    return null;
+  }
+};
+
 const RoasterDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState("about");
@@ -129,15 +141,20 @@ const RoasterDetails = () => {
           <div className="p-8">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="h-48 w-48 flex items-center justify-center rounded-lg bg-roast-50 border border-roast-100 overflow-hidden">
-                {roaster.logo_url ? (
-                  <img 
-                    src={roaster.logo_url} 
-                    alt={`${roaster.name} logo`} 
+                {getLogoUrl(roaster) ? (
+                  <img
+                    src={getLogoUrl(roaster)}
+                    alt={`${roaster.name} logo`}
                     className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/default-logo.png'; // fallback image
+                    }}
                   />
                 ) : (
                   <CoffeeIcon className="h-20 w-20 text-roast-400" />
                 )}
+
               </div>
               
               <div className="flex-1">
