@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import CommunitySection from "@/components/CommunitySection";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -36,9 +38,11 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <HeroSection />
+      <FeaturesSection />
       <div className="container mx-auto px-4 py-12 flex-grow">
         <CoffeeExplorerSection />
       </div>
+      <CommunitySection />
       <Footer />
     </div>
   );

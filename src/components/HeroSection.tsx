@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
@@ -16,7 +16,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="relative w-full min-h-screen flex items-center">
+    <div className="relative w-full py-24 sm:py-32 overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
@@ -41,93 +41,60 @@ const HeroSection = () => {
         </svg>
       </div>
       
-      <div className="container mx-auto px-6 md:px-12 z-10 flex flex-col md:flex-row items-center gap-12 py-20">
-        <div className="md:w-7/12 text-white">
-          <div className="mb-8 inline-block">
-            <div className="flex items-center gap-2 border border-coffee-300/30 bg-coffee-900/30 backdrop-blur-sm py-2 px-4 rounded-full text-sm">
-              <div className="flex items-center">
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              </div>
-              <span className="font-semibold">#1 Coffee Community</span>
-              <span className="text-coffee-100/70 text-xs">SINCE 2025</span>
-            </div>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            What are you brewing?
+      <div className="container mx-auto px-6 md:px-12 z-10 relative flex flex-col lg:flex-row items-center gap-12">
+        <div className="lg:w-7/12 text-white text-center lg:text-left">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Discover Your Perfect <span className="text-roast-300">Cup of Coffee</span>
           </h1>
           
-          <p className="text-xl mb-8 text-coffee-100/90 max-w-2xl">
-            We're building the #1 community of coffee enthusiasts logging and sharing their experiences. 
-            Don't sip alone, connect with fellow coffee lovers here.
+          <p className="text-xl mb-8 text-coffee-100/90 max-w-2xl mx-auto lg:mx-0">
+            Join thousands of coffee enthusiasts sharing their experiences and discoveries. Log, rate, and connect over the perfect brew.
           </p>
           
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">☕</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Record and rate your favorite coffees and roasters
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">❤️</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Connect with coffee enthusiasts worldwide
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📊</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Track your flavor preferences over time
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">💬</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Join coffee discussions and events
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🔍</span>
-              <span className="text-lg font-medium underline decoration-coffee-300/50">
-                Discover new roasters and recipes
-              </span>
-            </div>
+          <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-12">
+            <span className="bg-roast-500/20 backdrop-blur-sm border border-roast-500/30 text-white px-4 py-2 rounded-full text-sm font-medium">
+              5,000+ Coffee Reviews
+            </span>
+            <span className="bg-roast-500/20 backdrop-blur-sm border border-roast-500/30 text-white px-4 py-2 rounded-full text-sm font-medium">
+              1,200+ Roasters
+            </span>
+            <span className="bg-roast-500/20 backdrop-blur-sm border border-roast-500/30 text-white px-4 py-2 rounded-full text-sm font-medium">
+              37,000+ Users
+            </span>
           </div>
         </div>
         
-        <div className="md:w-5/12 w-full max-w-md">
+        <div className="lg:w-5/12 w-full max-w-md">
           <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
-            <div className="relative w-full h-48 mb-6 rounded-lg overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=927&q=80" 
-                alt="Coffee brewing" 
-                className="w-full h-full object-cover"
-              />
-              {/* Removed the arrow overlay */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex">
+                {Array(5).fill(0).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                ))}
+              </div>
+              <span className="text-sm font-medium text-gray-600">#1 Coffee Community</span>
             </div>
+            
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Join Every Roast</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 type="email"
-                placeholder="Type your email..."
-                className="w-full py-6 px-4 text-lg"
+                placeholder="Enter your email"
+                className="w-full py-5 px-4"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
               <Button 
                 type="submit" 
-                className="w-full bg-roast-500 hover:bg-roast-600 text-white py-6 text-lg font-medium rounded-lg"
+                className="w-full bg-roast-500 hover:bg-roast-600 text-white py-6 font-medium rounded-lg flex items-center justify-center gap-2"
               >
-                Join Every Roast →
+                Get Started
+                <ArrowRight className="h-4 w-4" />
               </Button>
               <p className="text-center text-sm text-gray-500">
-                Create your account or sign in to get started
+                Free to join. No credit card required.
               </p>
             </form>
           </div>
