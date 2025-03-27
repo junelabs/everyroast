@@ -39,7 +39,7 @@ const Index = () => {
       <Header />
       <HeroSection />
       <FeaturesSection />
-      <div className="container mx-auto px-4 py-12 flex-grow">
+      <div className="container mx-auto px-4 py-12 flex-grow bg-white">
         <CoffeeExplorerSection />
       </div>
       <CommunitySection />
