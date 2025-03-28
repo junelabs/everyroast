@@ -31,20 +31,20 @@ export const getStepInfo = ({ currentStep, isEdit }: StepManagerProps): StepInfo
     case FORM_STEPS.COFFEE_INFO:
       return {
         icon: <Coffee className="h-5 w-5 text-roast-500" />,
-        title: isEdit ? "Edit Coffee Details" : "Enter Coffee Details",
-        description: "Tell us about the coffee you're logging"
+        title: isEdit ? "Edit Coffee Details" : "Coffee Details",
+        description: "Enter coffee origin, type, and flavor notes"
       };
     case FORM_STEPS.BREW_INFO:
       return {
         icon: <CupSoda className="h-5 w-5 text-roast-500" />,
-        title: "Brewing Information",
-        description: "How did you brew this coffee?"
+        title: "Brewing Recipe",
+        description: "How did you brew this coffee? Method, dose, water, temp, time"
       };
     case FORM_STEPS.REVIEW_INFO:
       return {
         icon: <Info className="h-5 w-5 text-roast-500" />,
         title: "Your Review",
-        description: "Share your thoughts about this coffee"
+        description: "Rate and share your thoughts about this coffee"
       };
     default:
       return {
