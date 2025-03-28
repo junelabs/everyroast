@@ -107,7 +107,7 @@ const Header = () => {
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button className={`rounded-full px-6 ${isHomePage ? 'bg-white text-roast-500 hover:bg-gray-100' : 'bg-roast-500 hover:bg-roast-600 text-white'}`}>
+                <Button className={`rounded-full px-6 ${isHomePage ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'}`}>
                   Join Every Roast →
                 </Button>
               </Link>
@@ -180,7 +180,7 @@ const Header = () => {
                     </Button>
                   </Link>
                   <Link to="/signup" className="w-full" onClick={closeMenu}>
-                    <Button className="bg-roast-500 hover:bg-roast-600 text-white rounded-full px-6 w-full">
+                    <Button className="bg-red-600 hover:bg-red-700 text-white rounded-full px-6 w-full">
                       Join Every Roast →
                     </Button>
                   </Link>
