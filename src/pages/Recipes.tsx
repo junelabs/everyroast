@@ -1,10 +1,9 @@
-
 import React, { useEffect } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { UtensilsCrossed, CupSoda, Coffee, Clock } from "lucide-react";
+import { UtensilsCrossed, CupSoda, Coffee, Clock, Thermometer } from "lucide-react";
 
 const Recipes = () => {
   useEffect(() => {
