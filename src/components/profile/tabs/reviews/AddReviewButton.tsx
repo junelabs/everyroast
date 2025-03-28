@@ -15,7 +15,7 @@ const AddReviewButton = ({ isLoading, onAddReview }: AddReviewButtonProps) => {
       disabled={isLoading}
     >
       <Plus className="h-4 w-4" />
-      Add Review
+      Log a coffee
     </Button>
   );
 };

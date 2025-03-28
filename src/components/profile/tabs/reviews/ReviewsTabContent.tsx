@@ -91,7 +91,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Your Reviews</h2>
+        <h2 className="text-lg font-semibold">Your Coffee Log</h2>
         <AddReviewButton 
           isLoading={isLoading}
           onAddReview={handleAddNewReview}
