@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/auth";
+import { Card } from "@/components/ui/card";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -173,38 +174,43 @@ const ReviewForm = ({
         
         {currentStep === FORM_STEPS.SELECT_COFFEE ? (
           <div className="space-y-6 pt-4">
-            <h3 className="font-medium">Recent Coffees</h3>
+            <h3 className="font-medium text-xl">Recent Coffees</h3>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-0 rounded-lg border overflow-hidden">
               {isLoadingRecentCoffees ? (
                 Array(4).fill(0).map((_, i) => (
-                  <div key={i} className="bg-gray-100 rounded-md h-32 animate-pulse"></div>
+                  <div key={i} className="h-20 animate-pulse bg-gray-100 border-b last:border-b-0"></div>
                 ))
               ) : recentCoffees.length > 0 ? (
-                recentCoffees.map((coffee: any) => (
-                  <Button
+                recentCoffees.map((coffee: any, index: number) => (
+                  <div 
                     key={coffee.id}
-                    variant="outline"
-                    className="h-32 p-2 flex flex-col items-center justify-center text-center hover:border-roast-500 hover:bg-roast-50"
+                    className={`border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer`}
                     onClick={() => handleSelectCoffee(coffee.id)}
                   >
-                    {coffee.image_url ? (
-                      <div className="h-16 w-16 mb-2 rounded-full overflow-hidden">
-                        <img 
-                          src={coffee.image_url} 
-                          alt={coffee.name} 
-                          className="h-full w-full object-cover"
-                        />
+                    <div className="flex items-center p-4">
+                      <div className="h-14 w-14 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
+                        {coffee.image_url ? (
+                          <img 
+                            src={coffee.image_url} 
+                            alt={coffee.name} 
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center">
+                            <Coffee className="h-8 w-8 text-gray-400" />
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <Coffee className="h-16 w-16 mb-2 text-gray-400" />
-                    )}
-                    <span className="text-sm font-medium line-clamp-1">{coffee.name}</span>
-                    <span className="text-xs text-gray-500 line-clamp-1">{coffee.roasters?.name || 'Unknown Roaster'}</span>
-                  </Button>
+                      <div className="ml-4">
+                        <h4 className="font-medium text-gray-900">{coffee.name}</h4>
+                        <p className="text-sm text-gray-500">{coffee.roasters?.name || 'Unknown Roaster'}</p>
+                      </div>
+                    </div>
+                  </div>
                 ))
               ) : (
-                <div className="col-span-2 text-center py-6 text-gray-500">
+                <div className="text-center py-6 text-gray-500">
                   No recent coffees found
                 </div>
               )}
