@@ -180,6 +180,8 @@ const ReviewForm = ({
               <ReviewSection
                 rating={form.rating}
                 setRating={form.setRating}
+                brewingMethod={form.brewingMethod}
+                setBrewingMethod={form.setBrewingMethod}
                 reviewText={form.reviewText}
                 setReviewText={form.setReviewText}
               />
