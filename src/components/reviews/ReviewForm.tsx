@@ -123,13 +123,6 @@ const ReviewForm = ({
           >
             {currentStep === FORM_STEPS.COFFEE_INFO && (
               <>
-                {!isEdit && (
-                  <ImageUpload 
-                    imageUrl={form.imageUrl}
-                    setImageUrl={form.setImageUrl}
-                  />
-                )}
-                
                 <CoffeeDetailsSection 
                   coffeeName={form.coffeeName}
                   setCoffeeName={form.setCoffeeName}
@@ -157,7 +150,15 @@ const ReviewForm = ({
                   coffeeTypes={form.coffeeTypes}
                   sizeUnits={form.sizeUnits}
                   readOnly={false}
+                  hidePriceSize={true}
                 />
+                
+                {!isEdit && (
+                  <ImageUpload 
+                    imageUrl={form.imageUrl}
+                    setImageUrl={form.setImageUrl}
+                  />
+                )}
               </>
             )}
             

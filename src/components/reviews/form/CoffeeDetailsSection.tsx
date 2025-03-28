@@ -31,6 +31,7 @@ interface CoffeeDetailsSectionProps {
   coffeeTypes: CoffeeType[];
   sizeUnits: SizeUnit[];
   readOnly?: boolean;
+  hidePriceSize?: boolean;
 }
 
 const CoffeeDetailsSection = ({
@@ -59,7 +60,8 @@ const CoffeeDetailsSection = ({
   processMethods,
   coffeeTypes,
   sizeUnits,
-  readOnly = false
+  readOnly = false,
+  hidePriceSize = false
 }: CoffeeDetailsSectionProps) => {
   return (
     <div className="space-y-4 border-b pb-4">
@@ -79,16 +81,18 @@ const CoffeeDetailsSection = ({
         readOnly={readOnly}
       />
       
-      <CoffeeSizePrice
-        price={price}
-        setPrice={setPrice}
-        size={size}
-        setSize={setSize}
-        sizeUnit={sizeUnit}
-        setSizeUnit={setSizeUnit}
-        sizeUnits={sizeUnits}
-        readOnly={readOnly}
-      />
+      {!hidePriceSize && (
+        <CoffeeSizePrice
+          price={price}
+          setPrice={setPrice}
+          size={size}
+          setSize={setSize}
+          sizeUnit={sizeUnit}
+          setSizeUnit={setSizeUnit}
+          sizeUnits={sizeUnits}
+          readOnly={readOnly}
+        />
+      )}
       
       <CoffeeProcessDetails
         roastLevel={roastLevel}
