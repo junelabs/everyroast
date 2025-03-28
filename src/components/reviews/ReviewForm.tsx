@@ -79,6 +79,29 @@ const ReviewForm = ({
         return [];
       }
       
+      // Get unique coffee IDs from the most recent reviews
+      const { data: reviewData, error: reviewError } = await supabase
+        .from('reviews')
+        .select('coffee_id, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(recentCoffeeLimit);
+        
+      if (reviewError) {
+        console.error("Error fetching recent review coffee IDs:", reviewError);
+        return [];
+      }
+      
+      // If no reviews, return empty array
+      if (!reviewData || reviewData.length === 0) {
+        return [];
+      }
+      
+      // Get unique coffee IDs, preserving order
+      const uniqueCoffeeIds = [...new Set(reviewData.map(r => r.coffee_id))];
+      console.log("Unique coffee IDs from recent reviews:", uniqueCoffeeIds);
+      
+      // Fetch coffee details for these IDs, only non-deleted coffees
       const { data, error } = await supabase
         .from('coffees')
         .select(`
@@ -88,10 +111,9 @@ const ReviewForm = ({
           deleted_at,
           roasters (name)
         `)
-        .eq('created_by', user.id)
+        .in('id', uniqueCoffeeIds)
         .is('deleted_at', null) // Filter out deleted coffees
-        .order('created_at', { ascending: false })
-        .limit(recentCoffeeLimit);
+        .order('created_at', { ascending: false });
         
       if (error) {
         console.error("Error fetching recent coffees:", error);
@@ -104,7 +126,14 @@ const ReviewForm = ({
       const validCoffees = data?.filter(coffee => !coffee.deleted_at) || [];
       console.log("Valid coffees after filtering:", validCoffees.length);
       
-      return validCoffees;
+      // Sort the valid coffees to match the original review order
+      const sortedCoffees = validCoffees.sort((a, b) => {
+        const aIndex = uniqueCoffeeIds.indexOf(a.id);
+        const bIndex = uniqueCoffeeIds.indexOf(b.id);
+        return aIndex - bIndex;
+      });
+      
+      return sortedCoffees.slice(0, recentCoffeeLimit);
     },
     enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE && reviewCount > 0,
     staleTime: 0, // Force fresh data every time the selection screen is shown
