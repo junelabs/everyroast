@@ -16,6 +16,7 @@ interface UseReviewFormProps {
     water?: number;
     temperature?: number;
     brewTime?: string;
+    brewNotes?: string;
   };
   isEdit?: boolean;
   onClose: () => void;
@@ -39,6 +40,7 @@ export const useReviewForm = ({
   const [water, setWater] = useState(initialData?.water || 0);
   const [temperature, setTemperature] = useState(initialData?.temperature || 0);
   const [brewTime, setBrewTime] = useState(initialData?.brewTime || "");
+  const [brewNotes, setBrewNotes] = useState(initialData?.brewNotes || "");
   
   useEffect(() => {
     if (isEdit && coffeeId) {
@@ -56,8 +58,11 @@ export const useReviewForm = ({
       setWater(coffeeData.water || 0);
       setTemperature(coffeeData.temperature || 0);
       setBrewTime(coffeeData.brewTime || "");
+      setBrewNotes(coffeeData.brewNotes || "");
     }
-  }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod, coffeeData.dosage, coffeeData.water, coffeeData.temperature, coffeeData.brewTime]);
+  }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod, 
+      coffeeData.dosage, coffeeData.water, coffeeData.temperature, coffeeData.brewTime,
+      coffeeData.brewNotes]);
 
   const resetForm = () => {
     if (!isEdit) {
@@ -68,6 +73,7 @@ export const useReviewForm = ({
       setWater(0);
       setTemperature(0);
       setBrewTime("");
+      setBrewNotes("");
       coffeeData.setCoffeeName("");
       coffeeData.setRoaster("");
       coffeeData.setOrigin("Ethiopia");
@@ -95,6 +101,7 @@ export const useReviewForm = ({
     water,
     temperature,
     brewTime,
+    brewNotes,
     imageUrl: coffeeData.imageUrl,
     coffeeName: coffeeData.coffeeName,
     roaster: coffeeData.roaster,
@@ -120,6 +127,7 @@ export const useReviewForm = ({
     water, setWater,
     temperature, setTemperature,
     brewTime, setBrewTime,
+    brewNotes, setBrewNotes,
     
     // Form submission states and handlers
     isSubmitting: formSubmit.isSubmitting,

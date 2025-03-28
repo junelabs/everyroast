@@ -20,6 +20,7 @@ interface UseFormSubmitProps {
   water: number;
   temperature: number;
   brewTime: string;
+  brewNotes: string;
   imageUrl: string | null;
   coffeeName: string;
   roaster: string;
@@ -48,6 +49,7 @@ export const useFormSubmit = ({
   water,
   temperature,
   brewTime,
+  brewNotes,
   imageUrl,
   coffeeName,
   roaster,
@@ -221,7 +223,8 @@ export const useFormSubmit = ({
         dosage: dosage || null,
         water: water || null,
         temperature: temperature || null,
-        brew_time: brewTime || null
+        brew_time: brewTime || null,
+        brew_notes: brewNotes || null
       };
 
       console.log("Review data being saved:", reviewData);

@@ -30,6 +30,7 @@ interface ReviewFormProps {
     water?: number;
     temperature?: number;
     brewTime?: string;
+    brewNotes?: string;
   };
   isEdit?: boolean;
   reviewCount?: number;
@@ -174,6 +175,8 @@ const ReviewForm = ({
                 setTemperature={form.setTemperature}
                 brewTime={form.brewTime}
                 setBrewTime={form.setBrewTime}
+                brewNotes={form.brewNotes}
+                setBrewNotes={form.setBrewNotes}
               />
             )}
             
@@ -181,10 +184,10 @@ const ReviewForm = ({
               <ReviewSection
                 rating={form.rating}
                 setRating={form.setRating}
-                brewingMethod={form.brewingMethod}
-                setBrewingMethod={form.setBrewingMethod}
                 reviewText={form.reviewText}
                 setReviewText={form.setReviewText}
+                brewingMethod={form.brewingMethod}
+                setBrewingMethod={form.setBrewingMethod}
               />
             )}
           </FormLayout>

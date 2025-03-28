@@ -1,6 +1,7 @@
 
 import { Input } from "@/components/ui/input";
-import { CupSoda, Droplets, Timer, Thermometer } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { CupSoda, Droplets, Timer, Thermometer, FileText } from "lucide-react";
 
 interface BrewingMethodInputProps {
   brewingMethod: string;
@@ -13,6 +14,8 @@ interface BrewingMethodInputProps {
   setTemperature?: (temp: number) => void;
   brewTime?: string;
   setBrewTime?: (time: string) => void;
+  brewNotes?: string;
+  setBrewNotes?: (notes: string) => void;
 }
 
 const BrewingMethodInput = ({ 
@@ -25,7 +28,9 @@ const BrewingMethodInput = ({
   temperature,
   setTemperature,
   brewTime,
-  setBrewTime
+  setBrewTime,
+  brewNotes,
+  setBrewNotes
 }: BrewingMethodInputProps) => {
   return (
     <div className="space-y-4">
@@ -101,6 +106,20 @@ const BrewingMethodInput = ({
             placeholder="2:30"
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="brew-notes" className="text-sm font-medium flex items-center gap-1">
+          <FileText className="h-4 w-4 text-gray-500" />
+          Detailed Notes
+        </label>
+        <Textarea
+          id="brew-notes"
+          value={brewNotes || ''}
+          onChange={(e) => setBrewNotes && setBrewNotes(e.target.value)}
+          placeholder="Add any additional notes about your brewing process, adjustments, or observations..."
+          className="min-h-[100px]"
+        />
       </div>
     </div>
   );

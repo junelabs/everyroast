@@ -14,6 +14,7 @@ interface ReviewFormModalProps {
     water?: number;
     temperature?: number;
     brewTime?: string;
+    brewNotes?: string;
   };
   isEdit: boolean;
   reviewCount: number;
