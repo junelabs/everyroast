@@ -2,6 +2,8 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CupSoda, Droplets, Timer, Thermometer, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Toggle } from "@/components/ui/toggle";
 
 interface BrewingMethodInputProps {
   brewingMethod: string;
@@ -32,10 +34,47 @@ const BrewingMethodInput = ({
   brewNotes,
   setBrewNotes
 }: BrewingMethodInputProps) => {
+  const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
+  const [displayTemp, setDisplayTemp] = useState<number | undefined>(temperature);
+
+  // Convert between C and F when unit or temperature changes
+  useEffect(() => {
+    if (temperature === undefined) {
+      setDisplayTemp(undefined);
+      return;
+    }
+    
+    if (tempUnit === 'C') {
+      setDisplayTemp(temperature);
+    } else {
+      // Convert C to F: (C * 9/5) + 32
+      setDisplayTemp(Math.round((temperature * 9/5) + 32));
+    }
+  }, [temperature, tempUnit]);
+
+  const handleTempChange = (value: string) => {
+    if (!setTemperature) return;
+    
+    const tempValue = value === '' ? undefined : Number(value);
+    if (tempValue === undefined) {
+      setTemperature(0);
+      return;
+    }
+    
+    if (tempUnit === 'C') {
+      setTemperature(tempValue);
+    } else {
+      // Convert F to C: (F - 32) * 5/9
+      setTemperature(Math.round((tempValue - 32) * 5/9));
+    }
+  };
+
+  const toggleTempUnit = () => {
+    setTempUnit(prev => prev === 'C' ? 'F' : 'C');
+  };
+
   return (
     <div className="space-y-4">
-      <h3 className="font-medium">Brewing Information</h3>
-      
       <div className="space-y-2">
         <label htmlFor="brewing-method" className="text-sm font-medium flex items-center gap-1">
           <CupSoda className="h-4 w-4 text-gray-500" />
@@ -83,14 +122,22 @@ const BrewingMethodInput = ({
         <div className="space-y-2">
           <label htmlFor="temperature" className="text-sm font-medium flex items-center gap-1">
             <Thermometer className="h-4 w-4 text-red-500" />
-            Temperature (°C)
+            Temperature
+            <Toggle 
+              size="sm" 
+              pressed={tempUnit === 'F'} 
+              onPressedChange={toggleTempUnit}
+              className="ml-2 px-2 py-0 h-6 text-xs"
+            >
+              °{tempUnit}
+            </Toggle>
           </label>
           <Input
             id="temperature"
             type="number"
-            value={temperature || ''}
-            onChange={(e) => setTemperature && setTemperature(Number(e.target.value))}
-            placeholder="94"
+            value={displayTemp || ''}
+            onChange={(e) => handleTempChange(e.target.value)}
+            placeholder={tempUnit === 'C' ? "94" : "201"}
           />
         </div>
         

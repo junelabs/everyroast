@@ -103,6 +103,7 @@ export type Database = {
       }
       reviews: {
         Row: {
+          brew_notes: string | null
           brew_time: string | null
           brewing_method: string | null
           coffee_id: string
@@ -117,6 +118,7 @@ export type Database = {
           water: number | null
         }
         Insert: {
+          brew_notes?: string | null
           brew_time?: string | null
           brewing_method?: string | null
           coffee_id: string
@@ -131,6 +133,7 @@ export type Database = {
           water?: number | null
         }
         Update: {
+          brew_notes?: string | null
           brew_time?: string | null
           brewing_method?: string | null
           coffee_id?: string
