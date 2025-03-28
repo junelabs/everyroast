@@ -12,6 +12,7 @@ interface ReviewFormModalProps {
     brewingMethod: string;
   };
   isEdit: boolean;
+  reviewCount: number;
 }
 
 const ReviewFormModal = ({ 
@@ -20,7 +21,8 @@ const ReviewFormModal = ({
   coffeeId, 
   reviewId, 
   initialData, 
-  isEdit 
+  isEdit,
+  reviewCount 
 }: ReviewFormModalProps) => {
   return (
     <ReviewForm 
@@ -30,6 +32,7 @@ const ReviewFormModal = ({
       reviewId={reviewId}
       initialData={initialData}
       isEdit={isEdit}
+      reviewCount={reviewCount}
     />
   );
 };

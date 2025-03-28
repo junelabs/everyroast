@@ -130,6 +130,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
           brewingMethod: selectedReview?.brewing_method || ""
         }}
         isEdit={!isAddingNew && !!selectedReview}
+        reviewCount={reviews.length}
       />
     </div>
   );

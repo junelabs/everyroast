@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -16,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/auth";
-import { Card } from "@/components/ui/card";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -29,6 +29,7 @@ interface ReviewFormProps {
     brewingMethod: string;
   };
   isEdit?: boolean;
+  reviewCount?: number;
 }
 
 // Define steps for the multi-step form
@@ -45,7 +46,8 @@ const ReviewForm = ({
   coffeeId, 
   reviewId, 
   initialData, 
-  isEdit = false 
+  isEdit = false,
+  reviewCount = 0
 }: ReviewFormProps) => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
@@ -59,13 +61,23 @@ const ReviewForm = ({
     onClose
   });
 
+  // Calculate the limit based on review count
+  const recentCoffeeLimit = reviewCount < 4 ? reviewCount : 4;
+  console.log(`Setting recent coffee limit to: ${recentCoffeeLimit}`);
+
   // Fetch recent coffees
   const { data: recentCoffees = [], isLoading: isLoadingRecentCoffees } = useQuery({
-    queryKey: ['recentCoffees', user?.id],
+    queryKey: ['recentCoffees', user?.id, recentCoffeeLimit],
     queryFn: async () => {
       if (!user?.id) return [];
       
-      console.log("Fetching recent coffees, excluding deleted ones");
+      console.log(`Fetching up to ${recentCoffeeLimit} recent coffees, excluding deleted ones`);
+      
+      // If user has no reviews, return empty array to avoid unnecessary query
+      if (reviewCount === 0) {
+        console.log("User has no reviews, skipping recent coffees fetch");
+        return [];
+      }
       
       const { data, error } = await supabase
         .from('coffees')
@@ -79,7 +91,7 @@ const ReviewForm = ({
         .eq('created_by', user.id)
         .is('deleted_at', null) // Filter out deleted coffees
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(recentCoffeeLimit);
         
       if (error) {
         console.error("Error fetching recent coffees:", error);
@@ -94,7 +106,7 @@ const ReviewForm = ({
       
       return validCoffees;
     },
-    enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE,
+    enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE && reviewCount > 0,
     staleTime: 0, // Force fresh data every time the selection screen is shown
     refetchOnMount: true // Always refetch when the component mounts
   });
@@ -193,7 +205,7 @@ const ReviewForm = ({
             
             <div className="space-y-0 rounded-lg border overflow-hidden">
               {isLoadingRecentCoffees ? (
-                Array(4).fill(0).map((_, i) => (
+                Array(Math.min(4, reviewCount || 1)).fill(0).map((_, i) => (
                   <div key={i} className="h-20 animate-pulse bg-gray-100 border-b last:border-b-0"></div>
                 ))
               ) : recentCoffees.length > 0 ? (
@@ -226,7 +238,7 @@ const ReviewForm = ({
                 ))
               ) : (
                 <div className="text-center py-6 text-gray-500">
-                  No recent coffees found
+                  {reviewCount > 0 ? "No recent coffees found" : "You haven't logged any coffees yet"}
                 </div>
               )}
             </div>
