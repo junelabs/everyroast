@@ -35,7 +35,7 @@ const Index = () => {
   }, [toast]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white relative">
       <Header />
       <HeroSection />
       <FeaturesSection />
