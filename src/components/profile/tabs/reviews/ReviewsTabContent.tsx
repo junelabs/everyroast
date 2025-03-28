@@ -34,6 +34,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
           water,
           temperature,
           brew_time,
+          brew_notes,
           created_at,
           coffee_id,
           coffees (
@@ -135,7 +136,8 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
           dosage: selectedReview?.dosage || 0,
           water: selectedReview?.water || 0,
           temperature: selectedReview?.temperature || 0,
-          brewTime: selectedReview?.brew_time || ""
+          brewTime: selectedReview?.brew_time || "",
+          brewNotes: selectedReview?.brew_notes || ""
         }}
         isEdit={!isAddingNew && !!selectedReview}
         reviewCount={reviews.length}

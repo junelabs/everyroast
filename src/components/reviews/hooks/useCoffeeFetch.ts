@@ -31,6 +31,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
   const [water, setWater] = useState(0);
   const [temperature, setTemperature] = useState(0);
   const [brewTime, setBrewTime] = useState("");
+  const [brewNotes, setBrewNotes] = useState(""); // Add the missing brewNotes state
 
   const fetchCoffeeDetails = async () => {
     try {
@@ -120,6 +121,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
           setWater(reviewData.water || 0);
           setTemperature(reviewData.temperature || 0);
           setBrewTime(reviewData.brew_time || "");
+          setBrewNotes(reviewData.brew_notes || ""); // Add this line to set brewNotes from review data
         }
       }
     } catch (error) {
@@ -154,6 +156,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
     water, setWater,
     temperature, setTemperature,
     brewTime, setBrewTime,
+    brewNotes, setBrewNotes, // Add this line to expose the brewNotes state and setter
     
     // Functions
     fetchCoffeeDetails
