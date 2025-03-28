@@ -75,6 +75,7 @@ const ReviewForm = ({
           roasters (name)
         `)
         .eq('created_by', user.id)
+        .is('deleted_at', null) // Filter out deleted coffees
         .order('created_at', { ascending: false })
         .limit(4);
         
