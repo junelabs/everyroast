@@ -43,6 +43,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
             price,
             flavor_notes,
             type,
+            deleted_at,
             roasters (
               name
             )
@@ -57,7 +58,12 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
       }
       
       console.log("Reviews fetched successfully:", data);
-      return data || [];
+      
+      // Filter out reviews for deleted coffees
+      const validReviews = data?.filter(review => !review.coffees?.deleted_at) || [];
+      console.log("Valid reviews (excluding deleted coffees):", validReviews.length);
+      
+      return validReviews;
     },
     enabled: !!user?.id,
     gcTime: 1000 * 60 * 5, // Cache for 5 minutes
