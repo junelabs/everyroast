@@ -12,6 +12,7 @@ interface FormLayoutProps {
   totalSteps?: number;
   onNextStep?: () => void;
   onPrevStep?: () => void;
+  showStepIndicator?: boolean;
 }
 
 const FormLayout = ({
@@ -23,7 +24,8 @@ const FormLayout = ({
   currentStep = 0,
   totalSteps = 1,
   onNextStep,
-  onPrevStep
+  onPrevStep,
+  showStepIndicator = true
 }: FormLayoutProps) => {
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
@@ -31,7 +33,7 @@ const FormLayout = ({
   return (
     <form onSubmit={onSubmit} className="space-y-6 pt-4">
       {/* Step indicator */}
-      {totalSteps > 1 && (
+      {showStepIndicator && totalSteps > 1 && (
         <div className="flex items-center justify-between mb-4">
           {Array.from({ length: totalSteps }).map((_, index) => (
             <div 
