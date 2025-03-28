@@ -73,6 +73,7 @@ const ReviewForm = ({
           id,
           name, 
           image_url,
+          deleted_at,
           roasters (name)
         `)
         .eq('created_by', user.id)
@@ -86,9 +87,16 @@ const ReviewForm = ({
       }
       
       console.log("Fetched coffees:", data);
-      return data || [];
+      
+      // Additional client-side filter to ensure no deleted coffees
+      const validCoffees = data?.filter(coffee => !coffee.deleted_at) || [];
+      console.log("Valid coffees after filtering:", validCoffees.length);
+      
+      return validCoffees;
     },
-    enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE
+    enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE,
+    staleTime: 0, // Force fresh data every time the selection screen is shown
+    refetchOnMount: true // Always refetch when the component mounts
   });
 
   // Reset form and step when dialog opens/closes or isEdit changes
@@ -310,7 +318,6 @@ const ReviewForm = ({
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-roast-500"
                     />
                   </div>
-                  {/* Additional brew details would go here in future versions */}
                 </div>
               </div>
             )}

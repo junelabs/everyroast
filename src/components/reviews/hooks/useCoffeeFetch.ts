@@ -32,6 +32,11 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
     try {
       console.log("Fetching coffee details for ID:", coffeeId);
       
+      if (!coffeeId) {
+        console.log("No coffee ID provided, skipping fetch");
+        return;
+      }
+      
       const { data: coffeeData, error: coffeeError } = await supabase
         .from('coffees')
         .select(`
@@ -45,6 +50,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
       if (coffeeError) {
         console.error("Error fetching coffee:", coffeeError);
         if (coffeeError.message.includes("No rows found")) {
+          console.error("Coffee may have been deleted or is unavailable");
           toast({
             title: "Coffee not found",
             description: "This coffee may have been deleted or is unavailable.",
@@ -59,6 +65,16 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
       console.log("Coffee data retrieved:", coffeeData);
       
       if (coffeeData) {
+        if (coffeeData.deleted_at) {
+          console.error("Coffee is marked as deleted:", coffeeData.deleted_at);
+          toast({
+            title: "Coffee unavailable",
+            description: "This coffee is no longer available.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
         setCoffeeName(coffeeData.name || "");
         setRoaster(coffeeData.roasters?.name || "");
         setOrigin(coffeeData.origin as CoffeeOrigin || "Ethiopia");
