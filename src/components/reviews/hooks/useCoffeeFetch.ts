@@ -27,6 +27,10 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [brewingMethod, setBrewingMethod] = useState("");
+  const [dosage, setDosage] = useState(0);
+  const [water, setWater] = useState(0);
+  const [temperature, setTemperature] = useState(0);
+  const [brewTime, setBrewTime] = useState("");
 
   const fetchCoffeeDetails = async () => {
     try {
@@ -112,6 +116,10 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
           setRating(reviewData.rating || 0);
           setReviewText(reviewData.review_text || "");
           setBrewingMethod(reviewData.brewing_method || "");
+          setDosage(reviewData.dosage || 0);
+          setWater(reviewData.water || 0);
+          setTemperature(reviewData.temperature || 0);
+          setBrewTime(reviewData.brew_time || "");
         }
       }
     } catch (error) {
@@ -142,6 +150,10 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
     rating, setRating,
     reviewText, setReviewText,
     brewingMethod, setBrewingMethod,
+    dosage, setDosage,
+    water, setWater,
+    temperature, setTemperature,
+    brewTime, setBrewTime,
     
     // Functions
     fetchCoffeeDetails

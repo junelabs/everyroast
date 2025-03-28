@@ -12,6 +12,10 @@ interface UseReviewFormProps {
     rating: number;
     reviewText: string;
     brewingMethod: string;
+    dosage?: number;
+    water?: number;
+    temperature?: number;
+    brewTime?: string;
   };
   isEdit?: boolean;
   onClose: () => void;
@@ -31,6 +35,10 @@ export const useReviewForm = ({
   const [rating, setRating] = useState(initialData?.rating || 0);
   const [reviewText, setReviewText] = useState(initialData?.reviewText || "");
   const [brewingMethod, setBrewingMethod] = useState(initialData?.brewingMethod || "");
+  const [dosage, setDosage] = useState(initialData?.dosage || 0);
+  const [water, setWater] = useState(initialData?.water || 0);
+  const [temperature, setTemperature] = useState(initialData?.temperature || 0);
+  const [brewTime, setBrewTime] = useState(initialData?.brewTime || "");
   
   useEffect(() => {
     if (isEdit && coffeeId) {
@@ -44,14 +52,22 @@ export const useReviewForm = ({
       setRating(coffeeData.rating);
       setReviewText(coffeeData.reviewText);
       setBrewingMethod(coffeeData.brewingMethod);
+      setDosage(coffeeData.dosage || 0);
+      setWater(coffeeData.water || 0);
+      setTemperature(coffeeData.temperature || 0);
+      setBrewTime(coffeeData.brewTime || "");
     }
-  }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod]);
+  }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod, coffeeData.dosage, coffeeData.water, coffeeData.temperature, coffeeData.brewTime]);
 
   const resetForm = () => {
     if (!isEdit) {
       setRating(0);
       setReviewText("");
       setBrewingMethod("");
+      setDosage(0);
+      setWater(0);
+      setTemperature(0);
+      setBrewTime("");
       coffeeData.setCoffeeName("");
       coffeeData.setRoaster("");
       coffeeData.setOrigin("Ethiopia");
@@ -75,6 +91,10 @@ export const useReviewForm = ({
     rating,
     reviewText,
     brewingMethod,
+    dosage,
+    water,
+    temperature,
+    brewTime,
     imageUrl: coffeeData.imageUrl,
     coffeeName: coffeeData.coffeeName,
     roaster: coffeeData.roaster,
@@ -94,6 +114,12 @@ export const useReviewForm = ({
     rating, setRating,
     reviewText, setReviewText,
     brewingMethod, setBrewingMethod,
+    
+    // Brewing recipe states
+    dosage, setDosage,
+    water, setWater,
+    temperature, setTemperature,
+    brewTime, setBrewTime,
     
     // Form submission states and handlers
     isSubmitting: formSubmit.isSubmitting,

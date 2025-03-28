@@ -30,6 +30,10 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
           rating,
           review_text,
           brewing_method,
+          dosage,
+          water,
+          temperature,
+          brew_time,
           created_at,
           coffee_id,
           coffees (
@@ -127,7 +131,11 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
         initialData={{
           rating: selectedReview?.rating || 0,
           reviewText: selectedReview?.review_text || "",
-          brewingMethod: selectedReview?.brewing_method || ""
+          brewingMethod: selectedReview?.brewing_method || "",
+          dosage: selectedReview?.dosage || 0,
+          water: selectedReview?.water || 0,
+          temperature: selectedReview?.temperature || 0,
+          brewTime: selectedReview?.brew_time || ""
         }}
         isEdit={!isAddingNew && !!selectedReview}
         reviewCount={reviews.length}

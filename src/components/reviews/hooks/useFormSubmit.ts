@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -15,6 +16,10 @@ interface UseFormSubmitProps {
   rating: number;
   reviewText: string;
   brewingMethod: string;
+  dosage: number;
+  water: number;
+  temperature: number;
+  brewTime: string;
   imageUrl: string | null;
   coffeeName: string;
   roaster: string;
@@ -39,6 +44,10 @@ export const useFormSubmit = ({
   rating,
   reviewText,
   brewingMethod,
+  dosage,
+  water,
+  temperature,
+  brewTime,
   imageUrl,
   coffeeName,
   roaster,
@@ -208,7 +217,11 @@ export const useFormSubmit = ({
         user_id: user.id,
         rating,
         review_text: reviewText,
-        brewing_method: brewingMethod || null
+        brewing_method: brewingMethod || null,
+        dosage: dosage || null,
+        water: water || null,
+        temperature: temperature || null,
+        brew_time: brewTime || null
       };
 
       console.log("Review data being saved:", reviewData);

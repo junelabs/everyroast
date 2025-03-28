@@ -10,6 +10,10 @@ interface ReviewFormModalProps {
     rating: number;
     reviewText: string;
     brewingMethod: string;
+    dosage?: number;
+    water?: number;
+    temperature?: number;
+    brewTime?: string;
   };
   isEdit: boolean;
   reviewCount: number;

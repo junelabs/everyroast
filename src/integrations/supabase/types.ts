@@ -103,34 +103,46 @@ export type Database = {
       }
       reviews: {
         Row: {
+          brew_time: string | null
           brewing_method: string | null
           coffee_id: string
           created_at: string
+          dosage: number | null
           id: string
           rating: number
           review_text: string | null
+          temperature: number | null
           updated_at: string
           user_id: string
+          water: number | null
         }
         Insert: {
+          brew_time?: string | null
           brewing_method?: string | null
           coffee_id: string
           created_at?: string
+          dosage?: number | null
           id?: string
           rating: number
           review_text?: string | null
+          temperature?: number | null
           updated_at?: string
           user_id: string
+          water?: number | null
         }
         Update: {
+          brew_time?: string | null
           brewing_method?: string | null
           coffee_id?: string
           created_at?: string
+          dosage?: number | null
           id?: string
           rating?: number
           review_text?: string | null
+          temperature?: number | null
           updated_at?: string
           user_id?: string
+          water?: number | null
         }
         Relationships: [
           {
