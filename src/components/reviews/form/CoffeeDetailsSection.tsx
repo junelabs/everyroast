@@ -65,8 +65,6 @@ const CoffeeDetailsSection = ({
 }: CoffeeDetailsSectionProps) => {
   return (
     <div className="space-y-4 border-b pb-4">
-      <h3 className="font-medium">Coffee Details</h3>
-      
       <CoffeeBasicDetails
         coffeeName={coffeeName}
         setCoffeeName={setCoffeeName}
