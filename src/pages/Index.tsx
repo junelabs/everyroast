@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import RoasterPreviewSection from "@/components/RoasterPreviewSection";
 import CoffeeExplorerSection from "@/components/CoffeeExplorerSection";
-import FeaturesSection from "@/components/FeaturesSection";
 import CommunitySection from "@/components/CommunitySection";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/auth";
@@ -39,7 +39,7 @@ const Index = () => {
       <Header />
       <main className="flex-grow flex flex-col">
         <HeroSection />
-        <FeaturesSection />
+        <RoasterPreviewSection />
         <div className="container mx-auto px-4 py-12 bg-white">
           <CoffeeExplorerSection />
         </div>
