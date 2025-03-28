@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -53,7 +52,11 @@ const Header = () => {
   };
 
   return (
-    <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 absolute top-0 left-0 right-0 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
+    <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 ${
+      isHomePage 
+        ? 'bg-transparent absolute top-0 left-0 right-0' 
+        : 'bg-white sticky top-0 border-b border-gray-100 shadow-sm'
+    }`}>
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
         <Coffee className={`h-8 w-8 ${isHomePage ? 'text-white' : 'text-roast-500'}`} />

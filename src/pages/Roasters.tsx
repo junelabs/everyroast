@@ -93,7 +93,7 @@ const Roasters = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       
-      <div className="bg-white py-12">
+      <div className="bg-white pt-6 pb-12 mt-0">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold text-roast-800 mb-4">Coffee Roasters</h1>
           <p className="text-lg text-black max-w-3xl">
