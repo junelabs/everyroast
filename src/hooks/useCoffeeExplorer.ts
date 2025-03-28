@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -28,8 +29,8 @@ export function useCoffeeExplorer() {
 
       console.log("Raw coffee data:", data);
       
-      // Filter out any null or undefined data
-      const validCoffees = data?.filter(coffee => coffee && !coffee.deleted_at) || [];
+      // No need for additional filter since we're already filtering at database level
+      const validCoffees = data || [];
       console.log("Valid coffees after filter:", validCoffees.length);
 
       const coffeeWithProfiles = await Promise.all(

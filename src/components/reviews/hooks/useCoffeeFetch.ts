@@ -36,12 +36,25 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
         .from('coffees')
         .select(`
           *,
-          roasters(name)
+          roasters (name)
         `)
         .eq('id', coffeeId)
+        .is('deleted_at', null) // Make sure to filter out deleted coffees
         .single();
       
-      if (coffeeError) throw coffeeError;
+      if (coffeeError) {
+        console.error("Error fetching coffee:", coffeeError);
+        if (coffeeError.message.includes("No rows found")) {
+          toast({
+            title: "Coffee not found",
+            description: "This coffee may have been deleted or is unavailable.",
+            variant: "destructive"
+          });
+        } else {
+          throw coffeeError;
+        }
+        return;
+      }
       
       console.log("Coffee data retrieved:", coffeeData);
       

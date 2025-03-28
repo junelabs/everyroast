@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -66,6 +65,8 @@ const ReviewForm = ({
     queryFn: async () => {
       if (!user?.id) return [];
       
+      console.log("Fetching recent coffees, excluding deleted ones");
+      
       const { data, error } = await supabase
         .from('coffees')
         .select(`
@@ -79,7 +80,12 @@ const ReviewForm = ({
         .order('created_at', { ascending: false })
         .limit(4);
         
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching recent coffees:", error);
+        throw error;
+      }
+      
+      console.log("Fetched coffees:", data);
       return data || [];
     },
     enabled: !!user?.id && currentStep === FORM_STEPS.SELECT_COFFEE
