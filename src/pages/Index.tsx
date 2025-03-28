@@ -37,12 +37,14 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white relative">
       <Header />
-      <HeroSection />
-      <FeaturesSection />
-      <div className="container mx-auto px-4 py-12 flex-grow bg-white">
-        <CoffeeExplorerSection />
-      </div>
-      <CommunitySection />
+      <main className="flex-grow flex flex-col">
+        <HeroSection />
+        <FeaturesSection />
+        <div className="container mx-auto px-4 py-12 bg-white">
+          <CoffeeExplorerSection />
+        </div>
+        <CommunitySection />
+      </main>
       <Footer />
     </div>
   );

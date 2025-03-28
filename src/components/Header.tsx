@@ -53,7 +53,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 relative ${isHomePage ? 'bg-transparent absolute top-0 left-0 right-0' : 'bg-white'}`}>
+    <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 absolute top-0 left-0 right-0 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
         <Coffee className={`h-8 w-8 ${isHomePage ? 'text-white' : 'text-roast-500'}`} />

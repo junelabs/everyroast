@@ -16,7 +16,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="relative w-full py-24 sm:py-32 overflow-hidden">
+    <div className="relative w-full pt-32 pb-24 sm:pt-40 sm:pb-32 overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
