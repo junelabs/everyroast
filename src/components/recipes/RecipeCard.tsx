@@ -33,34 +33,21 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   userName,
   coffeeId,
   createdAt,
-  imageUrl
 }) => {
   return (
     <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-start gap-2">
-          <div>
-            <h3 className="text-lg font-semibold line-clamp-1">
-              {coffeeId ? (
-                <Link to={`/coffee/${coffeeId}`} className="hover:text-roast-500 transition-colors">
-                  {coffeeName}
-                </Link>
-              ) : (
-                coffeeName
-              )}
-            </h3>
-            <p className="text-sm text-muted-foreground">{roaster}</p>
-          </div>
-          
-          {imageUrl && (
-            <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
-              <img 
-                src={imageUrl} 
-                alt={coffeeName} 
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
+        <div>
+          <h3 className="text-lg font-semibold line-clamp-1">
+            {coffeeId ? (
+              <Link to={`/coffee/${coffeeId}`} className="hover:text-roast-500 transition-colors">
+                {coffeeName}
+              </Link>
+            ) : (
+              coffeeName
+            )}
+          </h3>
+          <p className="text-sm text-muted-foreground">{roaster}</p>
         </div>
       </CardHeader>
       

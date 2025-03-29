@@ -41,7 +41,7 @@ const Recipes = () => {
               name
             )
           ),
-          profiles:user_id (
+          profiles (
             username
           )
         `)
@@ -65,7 +65,7 @@ const Recipes = () => {
         brew_notes: recipe.brew_notes,
         user_name: recipe.profiles?.username,
         created_at: recipe.created_at,
-        image_url: recipe.coffees.image_url
+        image_url: null // Not passing the image URL to the recipe card
       }));
       
       setRecipes(formattedRecipes);
