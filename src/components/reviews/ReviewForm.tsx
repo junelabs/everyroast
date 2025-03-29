@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -138,7 +137,7 @@ const ReviewForm = ({
     setCurrentStep(FORM_STEPS.COFFEE_INFO);
   };
 
-  // Update the handleSubmit function to handle validation
+  // Update the handleSubmit function to handle validation without toast for rating
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -146,13 +145,8 @@ const ReviewForm = ({
     if (currentStep === FORM_STEPS.REVIEW_INFO) {
       setAttemptedSubmit(true);
       
-      // Only proceed if rating is valid
+      // Only proceed if rating is valid, but don't show toast anymore
       if (!validateReviewStep()) {
-        toast({
-          title: "Rating Required",
-          description: "Please select a star rating before submitting your review.",
-          variant: "destructive"
-        });
         return Promise.resolve(); // Return resolved promise but don't proceed
       }
     }

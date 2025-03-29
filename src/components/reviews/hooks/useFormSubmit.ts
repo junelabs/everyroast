@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -78,14 +77,8 @@ export const useFormSubmit = ({
       return false;
     }
     
-    if (rating === 0) {
-      toast({
-        title: "Rating required",
-        description: "Please select a rating before submitting.",
-        variant: "destructive"
-      });
-      return false;
-    }
+    // We'll handle the rating validation in the ReviewForm component
+    // so we don't show a toast here anymore
     
     if (!isEdit && !coffeeName) {
       toast({
