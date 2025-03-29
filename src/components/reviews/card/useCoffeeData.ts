@@ -2,13 +2,28 @@
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
 export const useCoffeeData = (review: any) => {
+  // Helper function to check if an image URL is valid and not a placeholder
+  const getValidImageUrl = (url: string | null | undefined): string | null => {
+    // Return null if the URL is missing, empty, or contains placeholder text
+    if (!url || typeof url !== 'string' || url.trim() === '') {
+      return null;
+    }
+    
+    // If the URL contains "placeholder" or "gravatar" or "unsplash", it's likely a placeholder
+    if (url.includes('placeholder') || url.includes('gravatar') || url.includes('unsplash')) {
+      return null;
+    }
+    
+    return url;
+  };
+
   // Prepares structured coffee data from a review object
   const coffee = {
     id: review.coffee_id,
     name: review.coffees?.name || "Unnamed Coffee",
     origin: (review.coffees?.origin || "Ethiopia") as CoffeeOrigin,
     roaster: review.coffees?.roasters?.name || "Unknown Roaster",
-    image: review.coffees?.image_url && review.coffees.image_url.trim() !== "" ? review.coffees.image_url : null,
+    image: getValidImageUrl(review.coffees?.image_url),
     rating: review.rating,
     price: review.coffees?.price || 0,
     roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,

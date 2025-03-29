@@ -10,8 +10,23 @@ interface ReviewCardImageProps {
 }
 
 const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, formatDate }) => {
-  // Don't render anything if no image
-  if (!review.coffees?.image_url || typeof review.coffees.image_url !== 'string' || review.coffees.image_url.trim() === '') {
+  // Helper to check if image is valid and not a placeholder
+  const hasValidImage = (): boolean => {
+    const imageUrl = review.coffees?.image_url;
+    if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
+      return false;
+    }
+    
+    // Don't show placeholder images
+    if (imageUrl.includes('placeholder') || imageUrl.includes('gravatar') || imageUrl.includes('unsplash')) {
+      return false;
+    }
+    
+    return true;
+  };
+  
+  // Don't render anything if no valid image
+  if (!hasValidImage()) {
     return null;
   }
 

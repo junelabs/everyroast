@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -45,12 +44,22 @@ export function useCoffeeExplorer() {
           const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
           const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
           
+          // Only use actual uploaded images, not placeholders
+          let imageUrl = null;
+          if (coffee.image_url && 
+              typeof coffee.image_url === 'string' && 
+              coffee.image_url.trim() !== '' && 
+              !coffee.image_url.includes('placeholder') && 
+              !coffee.image_url.includes('unsplash')) {
+            imageUrl = coffee.image_url;
+          }
+          
           return {
             id: coffee.id,
             name: coffee.name,
             origin: coffee.origin || 'Unknown',
             roaster: coffee.roasters?.name || 'Unknown Roaster',
-            image: coffee.image_url || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+            image: imageUrl,
             rating: parseFloat(averageRating.toFixed(1)),
             price: coffee.price || 0,
             roastLevel: coffee.roast_level || 'Medium',

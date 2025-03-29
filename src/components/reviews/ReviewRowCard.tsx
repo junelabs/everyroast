@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -150,7 +151,7 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
             </span>
           </div>
           
-          {/* Content area */}
+          {/* Content area with optional image on the right */}
           <div className="flex">
             {/* Left side: Roaster, rating, review text */}
             <div className="flex-1">
@@ -169,6 +170,17 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
                 <p className="text-gray-700 line-clamp-3">{review.review_text}</p>
               )}
             </div>
+            
+            {/* Right side: Only render if a valid image exists (not a placeholder) */}
+            {coffee.image && (
+              <div className="w-20 h-20 flex-shrink-0 ml-4">
+                <img 
+                  src={coffee.image} 
+                  alt={coffee.name} 
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+            )}
           </div>
         </div>
       </Card>
