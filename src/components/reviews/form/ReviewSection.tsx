@@ -20,8 +20,6 @@ const ReviewSection = ({
 }: ReviewSectionProps) => {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium">Your Review</h3>
-      
       <ReviewDetails
         rating={rating}
         setRating={setRating}

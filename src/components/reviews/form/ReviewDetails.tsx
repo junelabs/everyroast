@@ -1,14 +1,5 @@
 
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import StarRating from "./StarRating";
-
-type BrewingMethod = "Espresso" | "Chemex" | "Kalita" | "Aeropress" | "French Press" | "Pour Over (other)" | "Automatic Drip" | "";
 
 interface ReviewDetailsProps {
   rating: number;
@@ -27,38 +18,9 @@ const ReviewDetails = ({
   reviewText,
   setReviewText
 }: ReviewDetailsProps) => {
-  const brewingMethods: BrewingMethod[] = [
-    "Espresso", 
-    "Chemex", 
-    "Kalita", 
-    "Aeropress", 
-    "French Press", 
-    "Pour Over (other)",
-    "Automatic Drip"
-  ];
-
   return (
     <>
       <StarRating rating={rating} onRatingChange={setRating} />
-      
-      <div className="space-y-2">
-        <label htmlFor="brewingMethod" className="block text-sm font-medium">
-          Brewing Method
-        </label>
-        <Select 
-          value={brewingMethod} 
-          onValueChange={(value) => setBrewingMethod(value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select brewing method" />
-          </SelectTrigger>
-          <SelectContent>
-            {brewingMethods.map((method) => (
-              <SelectItem key={method} value={method}>{method}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
       
       <div className="space-y-2">
         <label htmlFor="reviewText" className="block text-sm font-medium">
