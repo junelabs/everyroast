@@ -16,7 +16,7 @@ const StarRating = ({ rating, onRatingChange, showError = false }: StarRatingPro
       <label htmlFor="rating" className="block text-sm font-medium">
         Rating *
       </label>
-      <div className="flex items-center space-x-1">
+      <div className={`flex items-center space-x-1 p-2 rounded-md ${showError && rating === 0 ? 'bg-red-50 border border-red-400' : ''}`}>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -30,7 +30,7 @@ const StarRating = ({ rating, onRatingChange, showError = false }: StarRatingPro
               className={`h-6 w-6 ${
                 (hoverRating || rating) >= star 
                   ? "text-yellow-400 fill-yellow-400" 
-                  : "text-gray-300"
+                  : showError && rating === 0 ? "text-red-400" : "text-gray-300"
               }`} 
             />
           </button>
@@ -39,12 +39,6 @@ const StarRating = ({ rating, onRatingChange, showError = false }: StarRatingPro
           {rating > 0 ? `${rating} star${rating !== 1 ? 's' : ''}` : 'Select a rating'}
         </span>
       </div>
-      
-      {showError && rating === 0 && (
-        <div className="text-sm text-red-500 mt-1">
-          Please select a rating
-        </div>
-      )}
     </div>
   );
 };

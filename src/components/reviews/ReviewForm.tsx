@@ -92,6 +92,12 @@ const ReviewForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAttemptedSubmit(true);
+    
+    // Only proceed if rating is valid
+    if (currentStep === FORM_STEPS.REVIEW_INFO && form.rating === 0) {
+      return Promise.resolve(); // Return resolved promise but don't proceed
+    }
+    
     return form.handleSubmit(e);
   };
 
