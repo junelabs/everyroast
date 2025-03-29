@@ -153,11 +153,11 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
           
           {/* Coffee image below the first row, if available */}
           {coffee.image && (
-            <div className="mb-3">
+            <div className="mb-3 w-20 h-20 inline-block">
               <img 
                 src={coffee.image} 
                 alt={coffee.name} 
-                className="w-full h-36 object-cover rounded-md"
+                className="w-full h-full object-cover rounded-md"
               />
             </div>
           )}
