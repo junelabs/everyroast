@@ -7,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Flame, Droplets } from "lucide-react"; 
+import { Flame, Droplets, HelpCircle } from "lucide-react"; 
 import { RoastLevel, ProcessMethod } from "@/types/coffee";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CoffeeProcessDetailsProps {
   roastLevel: RoastLevel;
@@ -20,6 +21,7 @@ interface CoffeeProcessDetailsProps {
   roastLevels: RoastLevel[];
   processMethods: ProcessMethod[];
   readOnly?: boolean;
+  showHelpText?: boolean;
 }
 
 const CoffeeProcessDetails = ({
@@ -31,7 +33,8 @@ const CoffeeProcessDetails = ({
   setFlavor,
   roastLevels,
   processMethods,
-  readOnly = false
+  readOnly = false,
+  showHelpText = false
 }: CoffeeProcessDetailsProps) => {
   return (
     <>
@@ -40,6 +43,18 @@ const CoffeeProcessDetails = ({
           <label htmlFor="roastLevel" className="block text-sm font-medium flex items-center gap-1">
             <Flame className="h-4 w-4 text-orange-500" />
             Roast Level
+            {showHelpText && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3.5 w-3.5 text-gray-400 ml-1 cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs max-w-[200px]">Light roasts are more acidic, dark roasts more bitter</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </label>
           <Select 
             value={roastLevel} 
@@ -62,6 +77,18 @@ const CoffeeProcessDetails = ({
           <label htmlFor="processMethod" className="block text-sm font-medium flex items-center gap-1">
             <Droplets className="h-4 w-4 text-blue-500" />
             Process Method
+            {showHelpText && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3.5 w-3.5 text-gray-400 ml-1 cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs max-w-[200px]">Not sure? Check the coffee bag or make your best guess</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </label>
           <Select 
             value={processMethod} 
@@ -81,8 +108,20 @@ const CoffeeProcessDetails = ({
       </div>
       
       <div className="space-y-2">
-        <label htmlFor="flavor" className="block text-sm font-medium">
+        <label htmlFor="flavor" className="block text-sm font-medium flex items-center gap-1">
           Flavor Notes (separate by commas)
+          {showHelpText && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3.5 w-3.5 text-gray-400 ml-1 cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs max-w-[200px]">What does it taste like? Check the bag for ideas or just note what you taste</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </label>
         <Input
           id="flavor"

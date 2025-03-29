@@ -3,9 +3,8 @@ import { Coffee, CupSoda } from "lucide-react";
 
 // Define steps for the multi-step form as constants
 export const FORM_STEPS = {
-  SELECT_COFFEE: 0,
-  COFFEE_INFO: 1,
-  BREW_INFO: 2
+  COFFEE_INFO: 0,
+  BREW_INFO: 1
 };
 
 interface StepInfo {
@@ -21,12 +20,6 @@ interface StepManagerProps {
 
 export const getStepInfo = ({ currentStep, isEdit }: StepManagerProps): StepInfo => {
   switch (currentStep) {
-    case FORM_STEPS.SELECT_COFFEE:
-      return {
-        icon: <Coffee className="h-5 w-5 text-roast-500" />,
-        title: "Select Coffee",
-        description: "Select a recent coffee or add a new one"
-      };
     case FORM_STEPS.COFFEE_INFO:
       return {
         icon: <Coffee className="h-5 w-5 text-roast-500" />,
@@ -37,7 +30,7 @@ export const getStepInfo = ({ currentStep, isEdit }: StepManagerProps): StepInfo
       return {
         icon: <CupSoda className="h-5 w-5 text-roast-500" />,
         title: "Brewing Recipe",
-        description: "Enter your brewing method, dose, water, temperature and time"
+        description: "Enter your brewing method and recipe details"
       };
     default:
       return {

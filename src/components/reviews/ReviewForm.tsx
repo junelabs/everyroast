@@ -17,6 +17,7 @@ import RecentCoffeesSelector from "./form/RecentCoffeesSelector";
 import { FORM_STEPS, getStepInfo } from "./form/StepManager";
 import BrewingMethodInput from "./form/BrewingMethodInput";
 import { toast } from "@/components/ui/use-toast";
+import { Progress } from "@/components/ui/progress";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -47,7 +48,7 @@ const ReviewForm = ({
   reviewCount = 0
 }: ReviewFormProps) => {
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
+  const [currentStep, setCurrentStep] = useState(FORM_STEPS.COFFEE_INFO);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [coffeeInfoValidation, setCoffeeInfoValidation] = useState({
@@ -69,7 +70,7 @@ const ReviewForm = ({
       // Give the dialog time to animate closed before resetting form
       setTimeout(() => {
         form.resetForm();
-        setCurrentStep(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
+        setCurrentStep(FORM_STEPS.COFFEE_INFO);
         setSelectedCoffeeId(coffeeId);
         setAttemptedSubmit(false);
         setCoffeeInfoValidation({ attempted: false, isValid: false });
@@ -109,10 +110,30 @@ const ReviewForm = ({
     return isNameValid && isRoasterValid && isRatingValid;
   };
 
-  // Validate brewing step - this step is optional, so we always return true
-  const validateBrewingStep = () => {
-    return true;
+  // Calculate recipe completeness for popular brewing methods
+  const calculateRecipeCompleteness = () => {
+    const popularMethods = ["V60", "AeroPress", "Chemex", "French Press", "Espresso"];
+    if (!popularMethods.some(method => form.brewingMethod.includes(method))) {
+      return null;
+    }
+    
+    let filledFields = 0;
+    let totalFields = 5;
+    
+    if (form.brewingMethod) filledFields++;
+    if (form.dosage) filledFields++;
+    if (form.water) filledFields++;
+    if (form.brewTime) filledFields++;
+    if (form.temperature) filledFields++;
+    
+    return {
+      filled: filledFields,
+      total: totalFields,
+      percentage: (filledFields / totalFields) * 100
+    };
   };
+
+  const recipeCompleteness = calculateRecipeCompleteness();
 
   const handleNextStep = () => {
     // Validate current step before moving to next
@@ -120,8 +141,6 @@ const ReviewForm = ({
     
     if (currentStep === FORM_STEPS.COFFEE_INFO) {
       canProceed = validateCoffeeInfo();
-    } else if (currentStep === FORM_STEPS.BREW_INFO) {
-      canProceed = validateBrewingStep();
     } else {
       canProceed = true;
     }
@@ -132,17 +151,11 @@ const ReviewForm = ({
   };
 
   const handlePrevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE));
+    setCurrentStep(FORM_STEPS.COFFEE_INFO);
   };
 
   const handleSelectCoffee = (id: string) => {
     setSelectedCoffeeId(id);
-    setCurrentStep(FORM_STEPS.COFFEE_INFO); // Go to coffee info when selecting existing coffee
-  };
-
-  const handleAddNewCoffee = () => {
-    setSelectedCoffeeId(undefined);
-    setCurrentStep(FORM_STEPS.COFFEE_INFO);
   };
 
   // Handle submit for final step
@@ -168,6 +181,8 @@ const ReviewForm = ({
   // Get current step information
   const stepInfo = getStepInfo({ currentStep, isEdit });
 
+  if (!user) return null;
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -181,11 +196,11 @@ const ReviewForm = ({
           </DialogDescription>
         </DialogHeader>
         
-        {currentStep === FORM_STEPS.SELECT_COFFEE ? (
+        {selectedCoffeeId === undefined && !isEdit ? (
           <RecentCoffeesSelector
             reviewCount={reviewCount}
             onSelectCoffee={handleSelectCoffee}
-            onAddNewCoffee={handleAddNewCoffee}
+            onAddNewCoffee={() => {}}
             onClose={onClose}
           />
         ) : (
@@ -194,11 +209,11 @@ const ReviewForm = ({
             onClose={onClose}
             isEdit={isEdit}
             onSubmit={handleSubmit}
-            currentStep={currentStep - 1} // Adjust since we're skipping the first step in the step indicator
+            currentStep={currentStep}
             totalSteps={2}
             onNextStep={handleNextStep}
             onPrevStep={handlePrevStep}
-            showStepIndicator={currentStep > FORM_STEPS.SELECT_COFFEE}
+            showStepIndicator={true}
             isLastStep={currentStep === FORM_STEPS.BREW_INFO}
           >
             {currentStep === FORM_STEPS.COFFEE_INFO && (
@@ -232,16 +247,16 @@ const ReviewForm = ({
                   readOnly={false}
                   hidePriceSize={true}
                   showValidationErrors={coffeeInfoValidation.attempted}
+                  showHelpText={true}
                 />
                 
-                {!isEdit && (
-                  <ImageUpload 
-                    imageUrl={form.imageUrl}
-                    setImageUrl={form.setImageUrl}
-                  />
-                )}
+                <ImageUpload 
+                  imageUrl={form.imageUrl}
+                  setImageUrl={form.setImageUrl}
+                  helpText="Uploading a bag photo helps others identify this coffee"
+                />
                 
-                {/* Add Rating and Review section to the Coffee Info step */}
+                {/* Review Section */}
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-md font-medium mb-3">Your Review</h3>
                   <ReviewSection
@@ -258,20 +273,35 @@ const ReviewForm = ({
             )}
             
             {currentStep === FORM_STEPS.BREW_INFO && (
-              <BrewingMethodInput
-                brewingMethod={form.brewingMethod}
-                setBrewingMethod={form.setBrewingMethod}
-                dosage={form.dosage}
-                setDosage={form.setDosage}
-                water={form.water}
-                setWater={form.setWater}
-                temperature={form.temperature}
-                setTemperature={form.setTemperature}
-                brewTime={form.brewTime}
-                setBrewTime={form.setBrewTime}
-                brewNotes={form.brewNotes}
-                setBrewNotes={form.setBrewNotes}
-              />
+              <>
+                <BrewingMethodInput
+                  brewingMethod={form.brewingMethod}
+                  setBrewingMethod={form.setBrewingMethod}
+                  dosage={form.dosage}
+                  setDosage={form.setDosage}
+                  water={form.water}
+                  setWater={form.setWater}
+                  temperature={form.temperature}
+                  setTemperature={form.setTemperature}
+                  brewTime={form.brewTime}
+                  setBrewTime={form.setBrewTime}
+                  brewNotes={form.brewNotes}
+                  setBrewNotes={form.setBrewNotes}
+                  showHelpText={true}
+                />
+                
+                {recipeCompleteness && (
+                  <div className="mt-4 p-3 bg-amber-50 rounded-md border border-amber-100">
+                    <h4 className="text-sm font-medium text-amber-800 mb-2">
+                      Recipe Completeness
+                    </h4>
+                    <Progress value={recipeCompleteness.percentage} className="h-2 mb-2" />
+                    <p className="text-xs text-amber-700">
+                      You've logged {recipeCompleteness.filled} of {recipeCompleteness.total} details — complete your recipe to help others brew it too.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </FormLayout>
         )}

@@ -33,6 +33,7 @@ interface CoffeeDetailsSectionProps {
   readOnly?: boolean;
   hidePriceSize?: boolean;
   showValidationErrors?: boolean;
+  showHelpText?: boolean;
 }
 
 const CoffeeDetailsSection = ({
@@ -63,7 +64,8 @@ const CoffeeDetailsSection = ({
   sizeUnits,
   readOnly = false,
   hidePriceSize = false,
-  showValidationErrors = false
+  showValidationErrors = false,
+  showHelpText = false
 }: CoffeeDetailsSectionProps) => {
   return (
     <div className="space-y-4 border-b pb-4">
@@ -80,6 +82,7 @@ const CoffeeDetailsSection = ({
         coffeeTypes={coffeeTypes}
         readOnly={readOnly}
         showValidationErrors={showValidationErrors}
+        showHelpText={showHelpText}
       />
       
       {!hidePriceSize && (
@@ -105,6 +108,7 @@ const CoffeeDetailsSection = ({
         roastLevels={roastLevels}
         processMethods={processMethods}
         readOnly={readOnly}
+        showHelpText={showHelpText}
       />
     </div>
   );

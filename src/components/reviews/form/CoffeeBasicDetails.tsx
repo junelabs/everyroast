@@ -7,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin } from "lucide-react";
+import { MapPin, HelpCircle } from "lucide-react";
 import { CoffeeOrigin, CoffeeType } from "@/types/coffee";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CoffeeBasicDetailsProps {
   coffeeName: string;
@@ -23,6 +24,7 @@ interface CoffeeBasicDetailsProps {
   coffeeTypes: CoffeeType[];
   readOnly?: boolean;
   showValidationErrors?: boolean;
+  showHelpText?: boolean;
 }
 
 const CoffeeBasicDetails = ({
@@ -37,7 +39,8 @@ const CoffeeBasicDetails = ({
   origins,
   coffeeTypes,
   readOnly = false,
-  showValidationErrors = false
+  showValidationErrors = false,
+  showHelpText = false
 }: CoffeeBasicDetailsProps) => {
   const isNameEmpty = showValidationErrors && coffeeName.trim().length === 0;
   const isRoasterEmpty = showValidationErrors && roaster.trim().length === 0;
@@ -85,6 +88,18 @@ const CoffeeBasicDetails = ({
           <label htmlFor="origin" className="block text-sm font-medium flex items-center gap-1">
             <MapPin className="h-4 w-4 text-gray-500" />
             Origin
+            {showHelpText && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3.5 w-3.5 text-gray-400 ml-1 cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs max-w-[200px]">Not sure? Just make your best guess or leave as default</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </label>
           <Select 
             value={origin} 

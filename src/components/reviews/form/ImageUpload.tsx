@@ -1,107 +1,142 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Image, Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ImageUploadProps {
   imageUrl: string | null;
   setImageUrl: (url: string | null) => void;
+  helpText?: string;
 }
 
-const ImageUpload = ({ imageUrl, setImageUrl }: ImageUploadProps) => {
+const ImageUpload = ({ imageUrl, setImageUrl, helpText }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setIsUploading(true);
-    const file = files[0];
-
-    try {
-      // Create unique file path
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-      const filePath = `coffee_images/${fileName}`;
-
-      // Upload the file to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('coffee_images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL for the uploaded image
-      const { data } = supabase.storage
-        .from('coffee_images')
-        .getPublicUrl(filePath);
-
-      setImageUrl(data.publicUrl);
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
       toast({
-        title: "Image uploaded successfully",
-        description: "Your coffee image has been uploaded.",
+        title: "Invalid file type",
+        description: "Please upload an image file",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Upload image
+    setIsUploading(true);
+    
+    try {
+      const filename = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('coffee-images')
+        .upload(filename, file);
+      
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage
+        .from('coffee-images')
+        .getPublicUrl(data.path);
+      
+      setImageUrl(publicUrl);
+      
+      toast({
+        title: "Image uploaded",
+        description: "Your image has been uploaded successfully",
       });
     } catch (error) {
       console.error("Error uploading image:", error);
       toast({
         title: "Upload failed",
-        description: "There was a problem uploading your image.",
+        description: "There was a problem uploading your image",
         variant: "destructive"
       });
     } finally {
       setIsUploading(false);
-      if (e.target) {
-        e.target.value = '';
-      }
     }
   };
 
-  const removeImage = () => {
+  const handleRemoveImage = () => {
     setImageUrl(null);
   };
 
   return (
-    <div className="space-y-4">
+    <div className="mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-medium">
+          Coffee Bag Image
+        </label>
+        {helpText && (
+          <p className="text-xs text-gray-500">{helpText}</p>
+        )}
+      </div>
+      
       {imageUrl ? (
         <div className="relative">
           <img 
             src={imageUrl} 
-            alt="Coffee" 
-            className="w-full h-40 object-cover rounded-md" 
+            alt="Coffee bag" 
+            className="w-full h-48 object-cover rounded-md"
           />
           <button
             type="button"
-            onClick={removeImage}
-            className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70"
+            onClick={handleRemoveImage}
+            className="absolute top-2 right-2 p-1 bg-gray-800 bg-opacity-70 rounded-full text-white"
+            aria-label="Remove image"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
       ) : (
-        <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
+        <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
           <input
-            type="file"
             id="coffee-image"
+            type="file"
             accept="image/*"
-            onChange={handleImageUpload}
+            onChange={handleFileChange}
             className="hidden"
-            disabled={isUploading}
           />
-          <label 
-            htmlFor="coffee-image"
-            className="cursor-pointer flex flex-col items-center justify-center"
-          >
-            <Upload className="h-6 w-6 text-gray-400 mb-2" />
-            <span className="text-sm text-gray-500">
-              {isUploading ? 'Uploading...' : 'Upload coffee image'}
-            </span>
-            <span className="text-xs text-gray-400 mt-1">
-              JPG, PNG, GIF up to 5MB
-            </span>
-          </label>
+          <div className="flex flex-col items-center">
+            <Image className="h-8 w-8 text-gray-400 mb-2" />
+            <p className="text-sm text-gray-600 mb-2">Upload coffee bag photo</p>
+            <label htmlFor="coffee-image">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                className="cursor-pointer"
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <>
+                    <div className="animate-spin mr-2 h-4 w-4 border-b-2 border-current rounded-full" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Select Image
+                  </>
+                )}
+              </Button>
+            </label>
+          </div>
         </div>
       )}
     </div>

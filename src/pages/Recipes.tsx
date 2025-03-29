@@ -40,9 +40,6 @@ const Recipes = () => {
             roasters (
               name
             )
-          ),
-          user:user_id (
-            username:profiles(username)
           )
         `)
         .not('brewing_method', 'is', null)
@@ -51,7 +48,21 @@ const Recipes = () => {
       
       if (error) throw error;
       
-      console.log('Recipes data:', data);
+      // Get user profiles separately to avoid join issues
+      const userIds = [...new Set(data.map(item => item.user_id))];
+      
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+      
+      if (profilesError) throw profilesError;
+      
+      // Create a map of user_id to username
+      const userMap = profilesData.reduce((acc, profile) => {
+        acc[profile.id] = profile.username;
+        return acc;
+      }, {});
       
       // Transform the data to match our Recipe interface
       const formattedRecipes = data.map(recipe => ({
@@ -65,7 +76,7 @@ const Recipes = () => {
         temperature: recipe.temperature,
         brew_time: recipe.brew_time,
         brew_notes: recipe.brew_notes,
-        user_name: recipe.user?.username,
+        user_name: userMap[recipe.user_id] || 'Anonymous',
         created_at: recipe.created_at,
         image_url: null // Not passing the image URL to the recipe card
       }));
