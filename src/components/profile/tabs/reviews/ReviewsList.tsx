@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import ReviewCard from "@/components/reviews/ReviewCard";
+import ReviewRowCard from "@/components/reviews/ReviewRowCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ReviewsListProps {
@@ -13,10 +13,10 @@ interface ReviewsListProps {
 const ReviewsList = memo(({ reviews, isLoading, onEdit, onDelete }: ReviewsListProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="space-y-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="aspect-square">
-            <Skeleton className="w-full h-full rounded-xl" />
+          <div key={i} className="w-full">
+            <Skeleton className="w-full h-28 rounded-lg" />
           </div>
         ))}
       </div>
@@ -24,9 +24,9 @@ const ReviewsList = memo(({ reviews, isLoading, onEdit, onDelete }: ReviewsListP
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-4">
       {reviews.map((review) => (
-        <ReviewCard 
+        <ReviewRowCard 
           key={review.id} 
           review={review} 
           onEdit={onEdit}
