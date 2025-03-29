@@ -135,11 +135,6 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
     );
   };
 
-  // Helper function to check if image exists and is valid
-  const hasValidImage = () => {
-    return coffee.image && typeof coffee.image === 'string' && coffee.image.trim() !== '';
-  };
-
   return (
     <>
       <Card 
@@ -155,10 +150,10 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
             </span>
           </div>
           
-          {/* Content area with image on the right */}
+          {/* Content area with optional image on the right */}
           <div className="flex">
             {/* Left side: Roaster, rating, review text */}
-            <div className={`flex-1 ${hasValidImage() ? 'pr-4' : ''}`}>
+            <div className="flex-1">
               {/* Roaster */}
               <div className="text-gray-600 mb-2">
                 {coffee.roaster}
@@ -175,9 +170,9 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
               )}
             </div>
             
-            {/* Right side: Only show image if it exists and is valid */}
-            {hasValidImage() && (
-              <div className="w-20 h-20 flex-shrink-0">
+            {/* Right side: Only render if image exists */}
+            {coffee.image && (
+              <div className="w-20 h-20 flex-shrink-0 ml-4">
                 <img 
                   src={coffee.image} 
                   alt={coffee.name} 

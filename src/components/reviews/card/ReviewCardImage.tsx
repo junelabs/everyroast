@@ -11,25 +11,20 @@ interface ReviewCardImageProps {
 
 const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, formatDate }) => {
   // Helper to check if image is valid
-  const getImageUrl = () => {
+  const hasValidImage = (): boolean => {
     const imageUrl = review.coffees?.image_url;
-    if (!imageUrl || imageUrl.trim() === "") {
-      return null;
-    }
-    return imageUrl;
+    return Boolean(imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '');
   };
-
-  const imageUrl = getImageUrl();
   
-  // Don't render if no image
-  if (!imageUrl) {
+  // Don't render anything if no image
+  if (!hasValidImage()) {
     return null;
   }
 
   return (
     <div className="w-full h-full relative">
       <img 
-        src={imageUrl} 
+        src={review.coffees?.image_url} 
         alt={review.coffees?.name || "Coffee"} 
         className="w-full h-full object-cover"
         loading="lazy"
