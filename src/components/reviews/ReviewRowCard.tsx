@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -170,16 +171,16 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
               )}
             </div>
             
-            {/* Right side: Coffee image if available */}
-            {coffee.image && (
-              <div className="w-20 h-20 flex-shrink-0">
+            {/* Right side: Always reserve space for coffee image */}
+            <div className="w-20 h-20 flex-shrink-0">
+              {coffee.image && (
                 <img 
                   src={coffee.image} 
                   alt={coffee.name} 
                   className="w-full h-full object-cover rounded-md"
                 />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </Card>
