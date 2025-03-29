@@ -22,6 +22,7 @@ interface CoffeeBasicDetailsProps {
   origins: CoffeeOrigin[];
   coffeeTypes: CoffeeType[];
   readOnly?: boolean;
+  showValidationErrors?: boolean;
 }
 
 const CoffeeBasicDetails = ({
@@ -35,8 +36,12 @@ const CoffeeBasicDetails = ({
   setCoffeeType,
   origins,
   coffeeTypes,
-  readOnly = false
+  readOnly = false,
+  showValidationErrors = false
 }: CoffeeBasicDetailsProps) => {
+  const isNameEmpty = showValidationErrors && coffeeName.trim().length === 0;
+  const isRoasterEmpty = showValidationErrors && roaster.trim().length === 0;
+
   return (
     <>
       <div className="space-y-2">
@@ -50,8 +55,11 @@ const CoffeeBasicDetails = ({
           onChange={(e) => setCoffeeName(e.target.value)}
           required
           readOnly={readOnly}
-          className={readOnly ? "bg-gray-100" : ""}
+          className={`${readOnly ? "bg-gray-100" : ""} ${isNameEmpty ? "border-red-400 bg-red-50" : ""}`}
         />
+        {isNameEmpty && (
+          <p className="text-sm text-red-500 mt-1">Coffee name is required</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -65,8 +73,11 @@ const CoffeeBasicDetails = ({
           onChange={(e) => setRoaster(e.target.value)}
           required
           readOnly={readOnly}
-          className={readOnly ? "bg-gray-100" : ""}
+          className={`${readOnly ? "bg-gray-100" : ""} ${isRoasterEmpty ? "border-red-400 bg-red-50" : ""}`}
         />
+        {isRoasterEmpty && (
+          <p className="text-sm text-red-500 mt-1">Roaster name is required</p>
+        )}
       </div>
       
       <div className="grid grid-cols-2 gap-4">

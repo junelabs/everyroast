@@ -16,6 +16,7 @@ import { useAuth } from "@/context/auth";
 import RecentCoffeesSelector from "./form/RecentCoffeesSelector";
 import { FORM_STEPS, getStepInfo } from "./form/StepManager";
 import BrewingMethodInput from "./form/BrewingMethodInput";
+import { toast } from "@/components/ui/use-toast";
 
 interface ReviewFormProps {
   isOpen: boolean;
@@ -49,6 +50,10 @@ const ReviewForm = ({
   const [currentStep, setCurrentStep] = useState(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [coffeeInfoValidation, setCoffeeInfoValidation] = useState({
+    attempted: false,
+    isValid: false
+  });
   
   const form = useReviewForm({
     coffeeId: selectedCoffeeId,
@@ -67,12 +72,56 @@ const ReviewForm = ({
         setCurrentStep(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
         setSelectedCoffeeId(coffeeId);
         setAttemptedSubmit(false);
+        setCoffeeInfoValidation({ attempted: false, isValid: false });
       }, 200);
     }
   }, [isOpen]);
 
+  // Validate coffee info step
+  const validateCoffeeInfo = () => {
+    const isNameValid = form.coffeeName.trim().length > 0;
+    const isRoasterValid = form.roaster.trim().length > 0;
+    
+    setCoffeeInfoValidation({
+      attempted: true,
+      isValid: isNameValid && isRoasterValid
+    });
+    
+    return isNameValid && isRoasterValid;
+  };
+
+  // Validate brewing step - this step is optional, so we always return true
+  const validateBrewingStep = () => {
+    return true;
+  };
+
+  // Validate review step
+  const validateReviewStep = () => {
+    return form.rating > 0;
+  };
+
   const handleNextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, FORM_STEPS.REVIEW_INFO));
+    // Validate current step before moving to next
+    let canProceed = false;
+    
+    if (currentStep === FORM_STEPS.COFFEE_INFO) {
+      canProceed = validateCoffeeInfo();
+      if (!canProceed) {
+        toast({
+          title: "Required Fields",
+          description: "Please fill in all required fields before proceeding.",
+          variant: "destructive"
+        });
+      }
+    } else if (currentStep === FORM_STEPS.BREW_INFO) {
+      canProceed = validateBrewingStep();
+    } else {
+      canProceed = true;
+    }
+    
+    if (canProceed) {
+      setCurrentStep(prev => Math.min(prev + 1, FORM_STEPS.REVIEW_INFO));
+    }
   };
 
   const handlePrevStep = () => {
@@ -98,7 +147,12 @@ const ReviewForm = ({
       setAttemptedSubmit(true);
       
       // Only proceed if rating is valid
-      if (form.rating === 0) {
+      if (!validateReviewStep()) {
+        toast({
+          title: "Rating Required",
+          description: "Please select a star rating before submitting your review.",
+          variant: "destructive"
+        });
         return Promise.resolve(); // Return resolved promise but don't proceed
       }
     }
@@ -171,6 +225,7 @@ const ReviewForm = ({
                   sizeUnits={form.sizeUnits}
                   readOnly={false}
                   hidePriceSize={true}
+                  showValidationErrors={coffeeInfoValidation.attempted}
                 />
                 
                 {!isEdit && (
