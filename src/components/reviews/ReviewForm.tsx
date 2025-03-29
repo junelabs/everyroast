@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -92,7 +93,7 @@ const ReviewForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Set attemptedSubmit to true ONLY when actual submission is attempted
+    // Set attemptedSubmit to true ONLY when trying to submit the final review step
     if (currentStep === FORM_STEPS.REVIEW_INFO) {
       setAttemptedSubmit(true);
       
