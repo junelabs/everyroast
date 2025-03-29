@@ -142,36 +142,39 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
         className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
         onClick={() => setIsModalOpen(true)}
       >
-        <div className="p-4 flex justify-between">
-          <div className="flex-1 pr-4">
-            <div className="flex justify-between mb-2">
-              <h3 className="text-xl font-bold">{coffee.name}</h3>
-              <span className="text-sm text-gray-500">
-                {review.created_at && `${getTimeAgo(review.created_at)} ago`}
-              </span>
-            </div>
-            
-            <div className="text-gray-600 mb-2">
-              {coffee.roaster}
-            </div>
-            
-            <div className="mb-2">
-              {renderRating(review.rating)}
-            </div>
-            
-            {review.review_text && (
-              <p className="text-gray-700 line-clamp-2">{review.review_text}</p>
-            )}
+        <div className="p-4">
+          {/* First row: Coffee name and date */}
+          <div className="flex justify-between mb-3">
+            <h3 className="text-xl font-bold">{coffee.name}</h3>
+            <span className="text-sm text-gray-500">
+              {review.created_at && `${getTimeAgo(review.created_at)} ago`}
+            </span>
           </div>
           
+          {/* Coffee image below the first row, if available */}
           {coffee.image && (
-            <div className="flex-shrink-0 w-20 h-20">
+            <div className="mb-3">
               <img 
                 src={coffee.image} 
                 alt={coffee.name} 
-                className="w-full h-full object-cover rounded-md"
+                className="w-full h-36 object-cover rounded-md"
               />
             </div>
+          )}
+          
+          {/* Roaster */}
+          <div className="text-gray-600 mb-2">
+            {coffee.roaster}
+          </div>
+          
+          {/* Rating stars */}
+          <div className="mb-2">
+            {renderRating(review.rating)}
+          </div>
+          
+          {/* Review text if available */}
+          {review.review_text && (
+            <p className="text-gray-700 line-clamp-3">{review.review_text}</p>
           )}
         </div>
       </Card>
