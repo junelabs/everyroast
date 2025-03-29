@@ -50,6 +50,7 @@ const ReviewForm = ({
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(FORM_STEPS.COFFEE_INFO);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
+  const [showSelector, setShowSelector] = useState<boolean>(!coffeeId && !isEdit);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [coffeeInfoValidation, setCoffeeInfoValidation] = useState({
     attempted: false,
@@ -72,11 +73,12 @@ const ReviewForm = ({
         form.resetForm();
         setCurrentStep(FORM_STEPS.COFFEE_INFO);
         setSelectedCoffeeId(coffeeId);
+        setShowSelector(!coffeeId && !isEdit);
         setAttemptedSubmit(false);
         setCoffeeInfoValidation({ attempted: false, isValid: false });
       }, 200);
     }
-  }, [isOpen]);
+  }, [isOpen, coffeeId, isEdit]);
 
   // Validate coffee info step
   const validateCoffeeInfo = () => {
@@ -156,6 +158,12 @@ const ReviewForm = ({
 
   const handleSelectCoffee = (id: string) => {
     setSelectedCoffeeId(id);
+    setShowSelector(false);
+  };
+
+  const handleAddNewCoffee = () => {
+    setSelectedCoffeeId(undefined);
+    setShowSelector(false);
   };
 
   // Handle submit for final step
@@ -196,11 +204,11 @@ const ReviewForm = ({
           </DialogDescription>
         </DialogHeader>
         
-        {selectedCoffeeId === undefined && !isEdit ? (
+        {showSelector ? (
           <RecentCoffeesSelector
             reviewCount={reviewCount}
             onSelectCoffee={handleSelectCoffee}
-            onAddNewCoffee={() => {}}
+            onAddNewCoffee={handleAddNewCoffee}
             onClose={onClose}
           />
         ) : (
