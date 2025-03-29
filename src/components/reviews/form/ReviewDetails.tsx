@@ -26,9 +26,6 @@ const ReviewDetails = ({
       <StarRating rating={rating} onRatingChange={setRating} showError={showRatingError} />
       
       <div className="space-y-2">
-        <label htmlFor="reviewText" className="block text-sm font-medium">
-          Your Review
-        </label>
         <textarea
           id="reviewText"
           rows={4}
