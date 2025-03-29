@@ -41,7 +41,7 @@ const Recipes = () => {
               name
             )
           ),
-          profiles:user_id (
+          profiles (
             username
           )
         `)
