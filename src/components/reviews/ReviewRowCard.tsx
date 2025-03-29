@@ -171,16 +171,16 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
               )}
             </div>
             
-            {/* Right side: Always reserve space for coffee image */}
-            <div className="w-20 h-20 flex-shrink-0">
-              {coffee.image && (
+            {/* Right side: Only show image container when an image exists */}
+            {coffee.image && coffee.image !== "" && (
+              <div className="w-20 h-20 flex-shrink-0">
                 <img 
                   src={coffee.image} 
                   alt={coffee.name} 
                   className="w-full h-full object-cover rounded-md"
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </Card>
