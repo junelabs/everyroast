@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -151,31 +150,37 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
             </span>
           </div>
           
-          {/* Coffee image below the first row, if available */}
-          {coffee.image && (
-            <div className="mb-3 w-20 h-20 inline-block">
-              <img 
-                src={coffee.image} 
-                alt={coffee.name} 
-                className="w-full h-full object-cover rounded-md"
-              />
+          {/* Content area with image on the right */}
+          <div className="flex">
+            {/* Left side: Roaster, rating, review text */}
+            <div className="flex-1 pr-4">
+              {/* Roaster */}
+              <div className="text-gray-600 mb-2">
+                {coffee.roaster}
+              </div>
+              
+              {/* Rating stars */}
+              <div className="mb-2">
+                {renderRating(review.rating)}
+              </div>
+              
+              {/* Review text if available */}
+              {review.review_text && (
+                <p className="text-gray-700 line-clamp-3">{review.review_text}</p>
+              )}
             </div>
-          )}
-          
-          {/* Roaster */}
-          <div className="text-gray-600 mb-2">
-            {coffee.roaster}
+            
+            {/* Right side: Coffee image if available */}
+            {coffee.image && (
+              <div className="w-20 h-20 flex-shrink-0">
+                <img 
+                  src={coffee.image} 
+                  alt={coffee.name} 
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+            )}
           </div>
-          
-          {/* Rating stars */}
-          <div className="mb-2">
-            {renderRating(review.rating)}
-          </div>
-          
-          {/* Review text if available */}
-          {review.review_text && (
-            <p className="text-gray-700 line-clamp-3">{review.review_text}</p>
-          )}
         </div>
       </Card>
 
