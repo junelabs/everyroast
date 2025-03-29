@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -14,6 +13,7 @@ import CoffeeAttributes from '@/components/coffee/modal/CoffeeAttributes';
 import ReviewSection from '@/components/coffee/modal/ReviewSection';
 import ActionButtons from '@/components/coffee/modal/ActionButtons';
 import DeleteConfirmDialog from '@/components/coffee/modal/DeleteConfirmDialog';
+import { Star } from 'lucide-react';
 
 interface CoffeeDetailModalProps {
   coffee: Coffee & { reviewDate?: string; reviewId?: string };
@@ -155,46 +155,58 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-2xl p-6 overflow-auto max-h-[90vh]">
           <DialogTitle className="sr-only">Coffee Details</DialogTitle>
-          <div className="grid md:grid-cols-2">
-            <ImageSection imageSrc={coffee.image} altText={coffee.name} />
-            
-            <div className="p-6 bg-white">
-              <div className="flex items-center gap-4 mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
-                <RatingBadge rating={coffee.rating} />
+          
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
+            {coffee.rating > 0 && (
+              <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium">{coffee.rating}</span>
               </div>
-              
-              <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
-              
-              <CoffeeAttributes
-                origin={coffee.origin}
-                price={coffee.price}
-                roastLevel={coffee.roastLevel}
-                processMethod={coffee.processMethod}
-                type={coffee.type}
-              />
-              
-              <ReviewSection
-                flavor={coffee.flavor}
-                brewingMethod={coffee.brewingMethod}
-                reviewDate={coffee.reviewDate}
-              />
-              
-              <ActionButtons
-                showActionButtons={showActionButtons}
-                customActions={customActions}
-                onReview={onReview}
-                onDelete={coffee.reviewId ? () => openDeleteDialog('review') : canDelete ? () => openDeleteDialog('coffee', false) : undefined}
-                onUpvote={handleUpvote}
-                isDeleting={isDeleting}
-                hasReviewId={!!coffee.reviewId}
-                hasCoffeeId={canDelete}
-                upvotes={coffee.upvotes}
-              />
-            </div>
+            )}
           </div>
+          
+          <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
+          
+          {/* Image section - only if image exists */}
+          {coffee.image && (
+            <ImageSection imageSrc={coffee.image} altText={coffee.name} />
+          )}
+
+          {/* Coffee attributes */}
+          <div className="mb-6">
+            <CoffeeAttributes
+              origin={coffee.origin}
+              price={coffee.price}
+              roastLevel={coffee.roastLevel}
+              processMethod={coffee.processMethod}
+              type={coffee.type}
+            />
+          </div>
+          
+          {/* Review information */}
+          <div className="mb-6">
+            <ReviewSection
+              flavor={coffee.flavor}
+              brewingMethod={coffee.brewingMethod}
+              reviewDate={coffee.reviewDate}
+            />
+          </div>
+          
+          {/* Action buttons */}
+          <ActionButtons
+            showActionButtons={showActionButtons}
+            customActions={customActions}
+            onReview={onReview}
+            onDelete={coffee.reviewId ? () => openDeleteDialog('review') : canDelete ? () => openDeleteDialog('coffee', false) : undefined}
+            onUpvote={handleUpvote}
+            isDeleting={isDeleting}
+            hasReviewId={!!coffee.reviewId}
+            hasCoffeeId={canDelete}
+            upvotes={coffee.upvotes}
+          />
         </DialogContent>
       </Dialog>
 
@@ -211,4 +223,3 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
 };
 
 export default CoffeeDetailModal;
-

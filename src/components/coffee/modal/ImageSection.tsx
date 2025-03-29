@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Maximize2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
 
 interface ImageSectionProps {
   imageSrc: string;
@@ -13,8 +12,13 @@ interface ImageSectionProps {
 const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
+  // Don't render anything if no image provided
+  if (!imageSrc) {
+    return null;
+  }
+
   return (
-    <div className="relative h-72 md:h-full">
+    <div className="relative h-48 w-full overflow-hidden rounded-lg mb-4">
       <div 
         className="w-full h-full cursor-pointer relative"
         onClick={() => setFullscreenOpen(true)}
@@ -22,7 +26,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
         <img 
           src={imageSrc} 
           alt={altText} 
-          className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
+          className="w-full h-full object-cover"
         />
         
         <TooltipProvider>
