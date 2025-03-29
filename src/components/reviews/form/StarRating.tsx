@@ -39,9 +39,6 @@ const StarRating = ({ rating, onRatingChange, showError = false }: StarRatingPro
           {rating > 0 ? `${rating} star${rating !== 1 ? 's' : ''}` : 'Select a rating'}
         </span>
       </div>
-      {showError && (
-        <p className="text-sm text-red-500 mt-1">Please select a rating</p>
-      )}
     </div>
   );
 };
