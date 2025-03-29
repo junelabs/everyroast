@@ -18,7 +18,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
   }
 
   return (
-    <div className="relative h-48 w-full overflow-hidden rounded-lg mb-4">
+    <div className="relative h-24 w-24 overflow-hidden rounded-lg flex-shrink-0">
       <div 
         className="w-full h-full cursor-pointer relative"
         onClick={() => setFullscreenOpen(true)}
@@ -32,8 +32,8 @@ const ImageSection: React.FC<ImageSectionProps> = ({ imageSrc, altText }) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="absolute bottom-3 right-3 bg-black/40 p-1.5 rounded-full hover:bg-black/60 transition-colors">
-                <Maximize2 className="h-4 w-4 text-white" />
+              <div className="absolute bottom-2 right-2 bg-black/40 p-1 rounded-full hover:bg-black/60 transition-colors">
+                <Maximize2 className="h-3 w-3 text-white" />
               </div>
             </TooltipTrigger>
             <TooltipContent side="left">

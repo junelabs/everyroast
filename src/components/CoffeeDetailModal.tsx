@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -158,23 +159,27 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
         <DialogContent className="sm:max-w-2xl p-6 overflow-auto max-h-[90vh]">
           <DialogTitle className="sr-only">Coffee Details</DialogTitle>
           
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
-            {coffee.rating > 0 && (
-              <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{coffee.rating}</span>
-              </div>
+          <div className="flex items-start gap-4 mb-6">
+            {/* Image section - only if image exists, now inline */}
+            {coffee.image && (
+              <ImageSection imageSrc={coffee.image} altText={coffee.name} />
             )}
+            
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
+                {coffee.rating > 0 && (
+                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-medium">{coffee.rating}</span>
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
+            </div>
           </div>
           
-          <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
-          
-          {/* Image section - only if image exists */}
-          {coffee.image && (
-            <ImageSection imageSrc={coffee.image} altText={coffee.name} />
-          )}
-
           {/* Coffee attributes */}
           <div className="mb-6">
             <CoffeeAttributes
