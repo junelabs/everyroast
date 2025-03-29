@@ -89,9 +89,10 @@ const ReviewForm = ({
     setCurrentStep(FORM_STEPS.COFFEE_INFO);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Update the handleSubmit function to return a Promise
+  const handleSubmit = async (e: React.FormEvent) => {
     setAttemptedSubmit(true);
-    form.handleSubmit(e);
+    return form.handleSubmit(e);
   };
 
   // Get current step information
