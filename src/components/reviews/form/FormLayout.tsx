@@ -13,6 +13,7 @@ interface FormLayoutProps {
   onNextStep?: () => void;
   onPrevStep?: () => void;
   showStepIndicator?: boolean;
+  isLastStep?: boolean;
 }
 
 const FormLayout = ({
@@ -25,10 +26,10 @@ const FormLayout = ({
   totalSteps = 1,
   onNextStep,
   onPrevStep,
-  showStepIndicator = true
+  showStepIndicator = true,
+  isLastStep = false
 }: FormLayoutProps) => {
   const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === totalSteps - 1;
   
   return (
     <form onSubmit={onSubmit} className="space-y-6 pt-4">
@@ -67,8 +68,7 @@ const FormLayout = ({
               )}
             </Button>
             <Button
-              type={isLastStep ? "submit" : "button"}
-              onClick={!isLastStep ? onNextStep : undefined}
+              type="submit"
               disabled={isSubmitting}
               className="bg-roast-500 hover:bg-roast-600"
             >

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -80,23 +81,37 @@ const ReviewForm = ({
   const validateCoffeeInfo = () => {
     const isNameValid = form.coffeeName.trim().length > 0;
     const isRoasterValid = form.roaster.trim().length > 0;
+    const isRatingValid = form.rating > 0;
     
     setCoffeeInfoValidation({
       attempted: true,
-      isValid: isNameValid && isRoasterValid
+      isValid: isNameValid && isRoasterValid && isRatingValid
     });
     
-    return isNameValid && isRoasterValid;
+    if (!isRatingValid) {
+      toast({
+        title: "Rating Required",
+        description: "Please provide a rating before proceeding.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (!isNameValid || !isRoasterValid) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill in all required fields before proceeding.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    return isNameValid && isRoasterValid && isRatingValid;
   };
 
   // Validate brewing step - this step is optional, so we always return true
   const validateBrewingStep = () => {
     return true;
-  };
-
-  // Validate review step
-  const validateReviewStep = () => {
-    return form.rating > 0;
   };
 
   const handleNextStep = () => {
@@ -105,13 +120,6 @@ const ReviewForm = ({
     
     if (currentStep === FORM_STEPS.COFFEE_INFO) {
       canProceed = validateCoffeeInfo();
-      if (!canProceed) {
-        toast({
-          title: "Required Fields",
-          description: "Please fill in all required fields before proceeding.",
-          variant: "destructive"
-        });
-      }
     } else if (currentStep === FORM_STEPS.BREW_INFO) {
       canProceed = validateBrewingStep();
     } else {
@@ -119,7 +127,7 @@ const ReviewForm = ({
     }
     
     if (canProceed) {
-      setCurrentStep(prev => Math.min(prev + 1, FORM_STEPS.REVIEW_INFO));
+      setCurrentStep(prev => Math.min(prev + 1, FORM_STEPS.BREW_INFO));
     }
   };
 
@@ -129,7 +137,7 @@ const ReviewForm = ({
 
   const handleSelectCoffee = (id: string) => {
     setSelectedCoffeeId(id);
-    setCurrentStep(FORM_STEPS.REVIEW_INFO); // Skip to review info when selecting existing coffee
+    setCurrentStep(FORM_STEPS.COFFEE_INFO); // Go to coffee info when selecting existing coffee
   };
 
   const handleAddNewCoffee = () => {
@@ -137,21 +145,24 @@ const ReviewForm = ({
     setCurrentStep(FORM_STEPS.COFFEE_INFO);
   };
 
-  // Update the handleSubmit function to handle validation without toast for rating
+  // Handle submit for final step
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Set attemptedSubmit to true ONLY when trying to submit the final review step
-    if (currentStep === FORM_STEPS.REVIEW_INFO) {
+    // For the final step (BREW_INFO), proceed with form submission
+    if (currentStep === FORM_STEPS.BREW_INFO) {
+      return form.handleSubmit(e);
+    }
+    
+    // For the COFFEE_INFO step, validate and move to next step
+    if (currentStep === FORM_STEPS.COFFEE_INFO) {
       setAttemptedSubmit(true);
-      
-      // Only proceed if rating is valid, but don't show toast anymore
-      if (!validateReviewStep()) {
-        return Promise.resolve(); // Return resolved promise but don't proceed
+      if (validateCoffeeInfo()) {
+        handleNextStep();
       }
     }
     
-    return form.handleSubmit(e);
+    return Promise.resolve();
   };
 
   // Get current step information
@@ -184,10 +195,11 @@ const ReviewForm = ({
             isEdit={isEdit}
             onSubmit={handleSubmit}
             currentStep={currentStep - 1} // Adjust since we're skipping the first step in the step indicator
-            totalSteps={3}
+            totalSteps={2}
             onNextStep={handleNextStep}
             onPrevStep={handlePrevStep}
             showStepIndicator={currentStep > FORM_STEPS.SELECT_COFFEE}
+            isLastStep={currentStep === FORM_STEPS.BREW_INFO}
           >
             {currentStep === FORM_STEPS.COFFEE_INFO && (
               <>
@@ -228,6 +240,20 @@ const ReviewForm = ({
                     setImageUrl={form.setImageUrl}
                   />
                 )}
+                
+                {/* Add Rating and Review section to the Coffee Info step */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-md font-medium mb-3">Your Review</h3>
+                  <ReviewSection
+                    rating={form.rating}
+                    setRating={form.setRating}
+                    reviewText={form.reviewText}
+                    setReviewText={form.setReviewText}
+                    brewingMethod={form.brewingMethod}
+                    setBrewingMethod={form.setBrewingMethod}
+                    showRatingError={attemptedSubmit && form.rating === 0}
+                  />
+                </div>
               </>
             )}
             
@@ -245,18 +271,6 @@ const ReviewForm = ({
                 setBrewTime={form.setBrewTime}
                 brewNotes={form.brewNotes}
                 setBrewNotes={form.setBrewNotes}
-              />
-            )}
-            
-            {currentStep === FORM_STEPS.REVIEW_INFO && (
-              <ReviewSection
-                rating={form.rating}
-                setRating={form.setRating}
-                reviewText={form.reviewText}
-                setReviewText={form.setReviewText}
-                brewingMethod={form.brewingMethod}
-                setBrewingMethod={form.setBrewingMethod}
-                showRatingError={attemptedSubmit && form.rating === 0}
               />
             )}
           </FormLayout>
