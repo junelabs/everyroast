@@ -41,8 +41,8 @@ const Recipes = () => {
               name
             )
           ),
-          profiles (
-            username
+          user:user_id (
+            username:profiles(username)
           )
         `)
         .not('brewing_method', 'is', null)
@@ -50,6 +50,8 @@ const Recipes = () => {
         .limit(20);
       
       if (error) throw error;
+      
+      console.log('Recipes data:', data);
       
       // Transform the data to match our Recipe interface
       const formattedRecipes = data.map(recipe => ({
@@ -63,7 +65,7 @@ const Recipes = () => {
         temperature: recipe.temperature,
         brew_time: recipe.brew_time,
         brew_notes: recipe.brew_notes,
-        user_name: recipe.profiles?.username,
+        user_name: recipe.user?.username,
         created_at: recipe.created_at,
         image_url: null // Not passing the image URL to the recipe card
       }));
