@@ -51,16 +51,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
             </h3>
             <p className="text-sm text-muted-foreground">{roaster}</p>
           </div>
-          
-          {imageUrl && (
-            <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
-              <img 
-                src={imageUrl} 
-                alt={coffeeName} 
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
         </div>
       </CardHeader>
       
