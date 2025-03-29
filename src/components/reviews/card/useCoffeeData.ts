@@ -8,7 +8,7 @@ export const useCoffeeData = (review: any) => {
     name: review.coffees?.name || "Unnamed Coffee",
     origin: (review.coffees?.origin || "Ethiopia") as CoffeeOrigin,
     roaster: review.coffees?.roasters?.name || "Unknown Roaster",
-    image: review.coffees?.image_url || "",
+    image: review.coffees?.image_url || null, // Changed to null instead of empty string
     rating: review.rating,
     price: review.coffees?.price || 0,
     roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,

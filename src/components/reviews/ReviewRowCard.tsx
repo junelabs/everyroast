@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -136,6 +135,11 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
     );
   };
 
+  // Helper function to check if image exists and is valid
+  const hasValidImage = () => {
+    return coffee.image && typeof coffee.image === 'string' && coffee.image.trim() !== '';
+  };
+
   return (
     <>
       <Card 
@@ -154,7 +158,7 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
           {/* Content area with image on the right */}
           <div className="flex">
             {/* Left side: Roaster, rating, review text */}
-            <div className="flex-1 pr-4">
+            <div className={`flex-1 ${hasValidImage() ? 'pr-4' : ''}`}>
               {/* Roaster */}
               <div className="text-gray-600 mb-2">
                 {coffee.roaster}
@@ -171,8 +175,8 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
               )}
             </div>
             
-            {/* Right side: Only show image container when an image exists */}
-            {coffee.image && coffee.image !== "" && (
+            {/* Right side: Only show image if it exists and is valid */}
+            {hasValidImage() && (
               <div className="w-20 h-20 flex-shrink-0">
                 <img 
                   src={coffee.image} 
@@ -185,6 +189,7 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
         </div>
       </Card>
 
+      
       <CoffeeDetailModal 
         coffee={coffee} 
         isOpen={isModalOpen} 
