@@ -150,7 +150,7 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
             </span>
           </div>
           
-          {/* Content area with optional image on the right */}
+          {/* Content area */}
           <div className="flex">
             {/* Left side: Roaster, rating, review text */}
             <div className="flex-1">
@@ -169,22 +169,10 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
                 <p className="text-gray-700 line-clamp-3">{review.review_text}</p>
               )}
             </div>
-            
-            {/* Right side: Only render if image exists */}
-            {coffee.image && (
-              <div className="w-20 h-20 flex-shrink-0 ml-4">
-                <img 
-                  src={coffee.image} 
-                  alt={coffee.name} 
-                  className="w-full h-full object-cover rounded-md"
-                />
-              </div>
-            )}
           </div>
         </div>
       </Card>
 
-      
       <CoffeeDetailModal 
         coffee={coffee} 
         isOpen={isModalOpen} 

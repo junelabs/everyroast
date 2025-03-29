@@ -2,21 +2,13 @@
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
 export const useCoffeeData = (review: any) => {
-  // Helper function to check if image URL is valid
-  const getValidImageUrl = (url: string | null | undefined): string | null => {
-    if (!url || typeof url !== 'string' || url.trim() === '') {
-      return null;
-    }
-    return url;
-  };
-
   // Prepares structured coffee data from a review object
   const coffee = {
     id: review.coffee_id,
     name: review.coffees?.name || "Unnamed Coffee",
     origin: (review.coffees?.origin || "Ethiopia") as CoffeeOrigin,
     roaster: review.coffees?.roasters?.name || "Unknown Roaster",
-    image: getValidImageUrl(review.coffees?.image_url),
+    image: review.coffees?.image_url && review.coffees.image_url.trim() !== "" ? review.coffees.image_url : null,
     rating: review.rating,
     price: review.coffees?.price || 0,
     roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,
