@@ -26,11 +26,11 @@ const ReviewDetails = ({
       <StarRating rating={rating} onRatingChange={setRating} showError={showRatingError} />
       
       <div className="space-y-2">
-        <textarea
+        <Textarea
           id="reviewText"
           rows={4}
           placeholder="Share your thoughts about this coffee..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-roast-500"
+          className="w-full"
           value={reviewText}
           onChange={(e) => setReviewText(e.target.value)}
         />

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -91,6 +90,7 @@ const ReviewForm = ({
 
   // Update the handleSubmit function to return a Promise
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setAttemptedSubmit(true);
     return form.handleSubmit(e);
   };
