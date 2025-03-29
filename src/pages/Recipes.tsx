@@ -41,7 +41,7 @@ const Recipes = () => {
               name
             )
           ),
-          profiles:user_id (
+          profiles (
             username
           )
         `)
@@ -63,7 +63,7 @@ const Recipes = () => {
         temperature: recipe.temperature,
         brew_time: recipe.brew_time,
         brew_notes: recipe.brew_notes,
-        user_name: recipe.profiles?.username,
+        user_name: recipe.profiles.username,
         created_at: recipe.created_at,
         image_url: recipe.coffees.image_url
       }));
