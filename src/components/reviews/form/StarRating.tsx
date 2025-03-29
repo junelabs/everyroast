@@ -5,9 +5,10 @@ import { Star } from "lucide-react";
 interface StarRatingProps {
   rating: number;
   onRatingChange: (rating: number) => void;
+  showError?: boolean;
 }
 
-const StarRating = ({ rating, onRatingChange }: StarRatingProps) => {
+const StarRating = ({ rating, onRatingChange, showError = false }: StarRatingProps) => {
   const [hoverRating, setHoverRating] = useState(0);
 
   return (
@@ -38,6 +39,12 @@ const StarRating = ({ rating, onRatingChange }: StarRatingProps) => {
           {rating > 0 ? `${rating} star${rating !== 1 ? 's' : ''}` : 'Select a rating'}
         </span>
       </div>
+      
+      {showError && rating === 0 && (
+        <div className="text-sm text-red-500 mt-1">
+          Please select a rating
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 
 import StarRating from "./StarRating";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ReviewDetailsProps {
   rating: number;
@@ -8,6 +9,7 @@ interface ReviewDetailsProps {
   setBrewingMethod: (method: string) => void;
   reviewText: string;
   setReviewText: (text: string) => void;
+  showRatingError?: boolean;
 }
 
 const ReviewDetails = ({
@@ -16,11 +18,12 @@ const ReviewDetails = ({
   brewingMethod,
   setBrewingMethod,
   reviewText,
-  setReviewText
+  setReviewText,
+  showRatingError = false
 }: ReviewDetailsProps) => {
   return (
     <>
-      <StarRating rating={rating} onRatingChange={setRating} />
+      <StarRating rating={rating} onRatingChange={setRating} showError={showRatingError} />
       
       <div className="space-y-2">
         <label htmlFor="reviewText" className="block text-sm font-medium">

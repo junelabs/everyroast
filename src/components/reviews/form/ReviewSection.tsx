@@ -8,6 +8,7 @@ interface ReviewSectionProps {
   setBrewingMethod: (method: string) => void;
   reviewText: string;
   setReviewText: (text: string) => void;
+  showRatingError?: boolean;
 }
 
 const ReviewSection = ({
@@ -16,7 +17,8 @@ const ReviewSection = ({
   brewingMethod,
   setBrewingMethod,
   reviewText,
-  setReviewText
+  setReviewText,
+  showRatingError = false
 }: ReviewSectionProps) => {
   return (
     <div className="space-y-4">
@@ -27,6 +29,7 @@ const ReviewSection = ({
         setBrewingMethod={setBrewingMethod}
         reviewText={reviewText}
         setReviewText={setReviewText}
+        showRatingError={showRatingError}
       />
     </div>
   );

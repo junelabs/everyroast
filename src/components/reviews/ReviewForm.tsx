@@ -48,6 +48,7 @@ const ReviewForm = ({
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   
   const form = useReviewForm({
     coffeeId: selectedCoffeeId,
@@ -65,6 +66,7 @@ const ReviewForm = ({
         form.resetForm();
         setCurrentStep(isEdit ? FORM_STEPS.COFFEE_INFO : FORM_STEPS.SELECT_COFFEE);
         setSelectedCoffeeId(coffeeId);
+        setAttemptedSubmit(false);
       }, 200);
     }
   }, [isOpen]);
@@ -85,6 +87,11 @@ const ReviewForm = ({
   const handleAddNewCoffee = () => {
     setSelectedCoffeeId(undefined);
     setCurrentStep(FORM_STEPS.COFFEE_INFO);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    setAttemptedSubmit(true);
+    form.handleSubmit(e);
   };
 
   // Get current step information
@@ -115,7 +122,7 @@ const ReviewForm = ({
             isSubmitting={form.isSubmitting}
             onClose={onClose}
             isEdit={isEdit}
-            onSubmit={form.handleSubmit}
+            onSubmit={handleSubmit}
             currentStep={currentStep - 1} // Adjust since we're skipping the first step in the step indicator
             totalSteps={3}
             onNextStep={handleNextStep}
@@ -188,6 +195,7 @@ const ReviewForm = ({
                 setReviewText={form.setReviewText}
                 brewingMethod={form.brewingMethod}
                 setBrewingMethod={form.setBrewingMethod}
+                showRatingError={attemptedSubmit}
               />
             )}
           </FormLayout>
