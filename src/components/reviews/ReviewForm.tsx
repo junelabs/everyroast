@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -35,7 +36,7 @@ interface ReviewFormProps {
   };
   isEdit?: boolean;
   reviewCount?: number;
-  showSelector?: boolean; // New prop to control selector visibility
+  showSelector?: boolean; // Prop to control selector visibility
 }
 
 const ReviewForm = ({ 
@@ -51,9 +52,12 @@ const ReviewForm = ({
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(FORM_STEPS.COFFEE_INFO);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
+  
+  // Force showSelector to false when in edit mode
   const [showSelector, setShowSelector] = useState<boolean>(
-    initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
+    isEdit ? false : (initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit))
   );
+  
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [coffeeInfoValidation, setCoffeeInfoValidation] = useState({
     attempted: false,
@@ -76,10 +80,16 @@ const ReviewForm = ({
         form.resetForm();
         setCurrentStep(FORM_STEPS.COFFEE_INFO);
         setSelectedCoffeeId(coffeeId);
-        // Use the prop for initial state if provided, otherwise calculate
-        setShowSelector(
-          initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
-        );
+        
+        // Always ensure showSelector is false in edit mode
+        if (isEdit) {
+          setShowSelector(false);
+        } else {
+          setShowSelector(
+            initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
+          );
+        }
+        
         setAttemptedSubmit(false);
         setCoffeeInfoValidation({ attempted: false, isValid: false });
       }, 200);
@@ -205,6 +215,9 @@ const ReviewForm = ({
 
   // For edit mode, we don't need the two-step process - just show the review form
   const showDirectEditForm = isEdit;
+
+  // Add a console log to debug the showSelector state
+  console.log("ReviewForm state:", { isEdit, showSelector, initialShowSelector });
 
   if (!user) return null;
 

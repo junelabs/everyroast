@@ -29,6 +29,7 @@ const ReviewFormModal = ({
   isEdit,
   reviewCount 
 }: ReviewFormModalProps) => {
+  // Always set showSelector to false when in edit mode
   return (
     <ReviewForm 
       isOpen={isOpen} 
@@ -38,7 +39,7 @@ const ReviewFormModal = ({
       initialData={initialData}
       isEdit={isEdit}
       reviewCount={reviewCount}
-      showSelector={!isEdit && !coffeeId} // Add this prop to control the selector display
+      showSelector={isEdit ? false : (!isEdit && !coffeeId)} // Force false for edit mode
     />
   );
 };
