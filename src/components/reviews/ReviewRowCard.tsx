@@ -219,6 +219,7 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
           brewNotes: review.brew_notes || ""
         }}
         isEdit={true}
+        showSelector={false} // Explicitly set to false for edit mode
       />
 
       <ReviewDeleteDialog

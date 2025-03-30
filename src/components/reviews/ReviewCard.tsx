@@ -156,6 +156,7 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
           brewNotes: review.brew_notes || ""
         }}
         isEdit={true}
+        showSelector={false} // Explicitly set to false for edit mode
       />
 
       <ReviewDeleteDialog

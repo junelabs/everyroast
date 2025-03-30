@@ -38,6 +38,7 @@ const ReviewFormModal = ({
       initialData={initialData}
       isEdit={isEdit}
       reviewCount={reviewCount}
+      showSelector={!isEdit && !coffeeId} // Add this prop to control the selector display
     />
   );
 };

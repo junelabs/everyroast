@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -36,6 +35,7 @@ interface ReviewFormProps {
   };
   isEdit?: boolean;
   reviewCount?: number;
+  showSelector?: boolean; // New prop to control selector visibility
 }
 
 const ReviewForm = ({ 
@@ -45,12 +45,15 @@ const ReviewForm = ({
   reviewId, 
   initialData, 
   isEdit = false,
-  reviewCount = 0
+  reviewCount = 0,
+  showSelector: initialShowSelector // Use the prop as initial state
 }: ReviewFormProps) => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(FORM_STEPS.COFFEE_INFO);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
-  const [showSelector, setShowSelector] = useState<boolean>(!coffeeId && !isEdit);
+  const [showSelector, setShowSelector] = useState<boolean>(
+    initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
+  );
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [coffeeInfoValidation, setCoffeeInfoValidation] = useState({
     attempted: false,
@@ -73,12 +76,15 @@ const ReviewForm = ({
         form.resetForm();
         setCurrentStep(FORM_STEPS.COFFEE_INFO);
         setSelectedCoffeeId(coffeeId);
-        setShowSelector(!coffeeId && !isEdit);
+        // Use the prop for initial state if provided, otherwise calculate
+        setShowSelector(
+          initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
+        );
         setAttemptedSubmit(false);
         setCoffeeInfoValidation({ attempted: false, isValid: false });
       }, 200);
     }
-  }, [isOpen, coffeeId, isEdit]);
+  }, [isOpen, coffeeId, isEdit, initialShowSelector]);
 
   // Validate coffee info step
   const validateCoffeeInfo = () => {
