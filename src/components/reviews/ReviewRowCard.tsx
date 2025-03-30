@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -212,7 +211,12 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
         initialData={{
           rating: review.rating || 0,
           reviewText: review.review_text || "",
-          brewingMethod: review.brewing_method || ""
+          brewingMethod: review.brewing_method || "",
+          dosage: review.dosage || 0,
+          water: review.water || 0,
+          temperature: review.temperature || 0,
+          brewTime: review.brew_time || "",
+          brewNotes: review.brew_notes || ""
         }}
         isEdit={true}
       />

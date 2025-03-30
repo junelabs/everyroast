@@ -82,6 +82,9 @@ const ReviewForm = ({
 
   // Validate coffee info step
   const validateCoffeeInfo = () => {
+    // Skip validation in edit mode since coffee details shouldn't be editable
+    if (isEdit) return true;
+    
     const isNameValid = form.coffeeName.trim().length > 0;
     const isRoasterValid = form.roaster.trim().length > 0;
     const isRatingValid = form.rating > 0;
@@ -170,6 +173,11 @@ const ReviewForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // When editing, we can just submit the form without going through steps
+    if (isEdit) {
+      return form.handleSubmit(e);
+    }
+    
     // For the final step (BREW_INFO), proceed with form submission
     if (currentStep === FORM_STEPS.BREW_INFO) {
       return form.handleSubmit(e);
@@ -189,6 +197,9 @@ const ReviewForm = ({
   // Get current step information
   const stepInfo = getStepInfo({ currentStep, isEdit });
 
+  // For edit mode, we don't need the two-step process - just show the review form
+  const showDirectEditForm = isEdit;
+
   if (!user) return null;
 
   return (
@@ -197,10 +208,10 @@ const ReviewForm = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {stepInfo.icon}
-            {stepInfo.title}
+            {isEdit ? "Edit Review" : stepInfo.title}
           </DialogTitle>
           <DialogDescription>
-            {stepInfo.description}
+            {isEdit ? "Update your coffee review" : stepInfo.description}
           </DialogDescription>
         </DialogHeader>
         
@@ -221,93 +232,147 @@ const ReviewForm = ({
             totalSteps={2}
             onNextStep={handleNextStep}
             onPrevStep={handlePrevStep}
-            showStepIndicator={true}
-            isLastStep={currentStep === FORM_STEPS.BREW_INFO}
+            showStepIndicator={!showDirectEditForm}
+            isLastStep={showDirectEditForm || currentStep === FORM_STEPS.BREW_INFO}
           >
-            {currentStep === FORM_STEPS.COFFEE_INFO && (
+            {showDirectEditForm ? (
               <>
-                <CoffeeDetailsSection 
-                  coffeeName={form.coffeeName}
-                  setCoffeeName={form.setCoffeeName}
-                  roaster={form.roaster}
-                  setRoaster={form.setRoaster}
-                  origin={form.origin}
-                  setOrigin={form.setOrigin}
-                  coffeeType={form.coffeeType}
-                  setCoffeeType={form.setCoffeeType}
-                  price={form.price}
-                  setPrice={form.setPrice}
-                  size={form.size}
-                  setSize={form.setSize}
-                  sizeUnit={form.sizeUnit}
-                  setSizeUnit={form.setSizeUnit}
-                  roastLevel={form.roastLevel}
-                  setRoastLevel={form.setRoastLevel}
-                  processMethod={form.processMethod}
-                  setProcessMethod={form.setProcessMethod}
-                  flavor={form.flavor}
-                  setFlavor={form.setFlavor}
-                  origins={form.origins}
-                  roastLevels={form.roastLevels}
-                  processMethods={form.processMethods}
-                  coffeeTypes={form.coffeeTypes}
-                  sizeUnits={form.sizeUnits}
-                  readOnly={false}
-                  hidePriceSize={true}
-                  showValidationErrors={coffeeInfoValidation.attempted}
-                  showHelpText={true}
-                />
-                
-                <ImageUpload 
-                  imageUrl={form.imageUrl}
-                  setImageUrl={form.setImageUrl}
-                  helpText="Uploading a bag photo helps others identify this coffee"
-                />
-                
-                {/* Review Section */}
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="text-md font-medium mb-3">Your Review</h3>
-                  <ReviewSection
-                    rating={form.rating}
-                    setRating={form.setRating}
-                    reviewText={form.reviewText}
-                    setReviewText={form.setReviewText}
-                    brewingMethod={form.brewingMethod}
-                    setBrewingMethod={form.setBrewingMethod}
-                    showRatingError={attemptedSubmit && form.rating === 0}
-                  />
+                {/* Edit mode - show both sections together */}
+                <div className="space-y-4">
+                  <div className="mb-4">
+                    <h3 className="text-md font-medium mb-2">Your Review</h3>
+                    <ReviewSection
+                      rating={form.rating}
+                      setRating={form.setRating}
+                      reviewText={form.reviewText}
+                      setReviewText={form.setReviewText}
+                      brewingMethod={form.brewingMethod}
+                      setBrewingMethod={form.setBrewingMethod}
+                      showRatingError={attemptedSubmit && form.rating === 0}
+                    />
+                  </div>
+                  
+                  <div className="mt-6">
+                    <h3 className="text-md font-medium mb-2">Brewing Recipe</h3>
+                    <BrewingMethodInput
+                      brewingMethod={form.brewingMethod}
+                      setBrewingMethod={form.setBrewingMethod}
+                      dosage={form.dosage}
+                      setDosage={form.setDosage}
+                      water={form.water}
+                      setWater={form.setWater}
+                      temperature={form.temperature}
+                      setTemperature={form.setTemperature}
+                      brewTime={form.brewTime}
+                      setBrewTime={form.setBrewTime}
+                      brewNotes={form.brewNotes}
+                      setBrewNotes={form.setBrewNotes}
+                      showHelpText={true}
+                    />
+                    
+                    {recipeCompleteness && (
+                      <div className="mt-4 p-3 bg-amber-50 rounded-md border border-amber-100">
+                        <h4 className="text-sm font-medium text-amber-800 mb-2">
+                          Recipe Completeness
+                        </h4>
+                        <Progress value={recipeCompleteness.percentage} className="h-2 mb-2" />
+                        <p className="text-xs text-amber-700">
+                          You've logged {recipeCompleteness.filled} of {recipeCompleteness.total} details — complete your recipe to help others brew it too.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
-            )}
-            
-            {currentStep === FORM_STEPS.BREW_INFO && (
+            ) : (
               <>
-                <BrewingMethodInput
-                  brewingMethod={form.brewingMethod}
-                  setBrewingMethod={form.setBrewingMethod}
-                  dosage={form.dosage}
-                  setDosage={form.setDosage}
-                  water={form.water}
-                  setWater={form.setWater}
-                  temperature={form.temperature}
-                  setTemperature={form.setTemperature}
-                  brewTime={form.brewTime}
-                  setBrewTime={form.setBrewTime}
-                  brewNotes={form.brewNotes}
-                  setBrewNotes={form.setBrewNotes}
-                  showHelpText={true}
-                />
+                {/* Add mode - show steps */}
+                {currentStep === FORM_STEPS.COFFEE_INFO && (
+                  <>
+                    <CoffeeDetailsSection 
+                      coffeeName={form.coffeeName}
+                      setCoffeeName={form.setCoffeeName}
+                      roaster={form.roaster}
+                      setRoaster={form.setRoaster}
+                      origin={form.origin}
+                      setOrigin={form.setOrigin}
+                      coffeeType={form.coffeeType}
+                      setCoffeeType={form.setCoffeeType}
+                      price={form.price}
+                      setPrice={form.setPrice}
+                      size={form.size}
+                      setSize={form.setSize}
+                      sizeUnit={form.sizeUnit}
+                      setSizeUnit={form.setSizeUnit}
+                      roastLevel={form.roastLevel}
+                      setRoastLevel={form.setRoastLevel}
+                      processMethod={form.processMethod}
+                      setProcessMethod={form.setProcessMethod}
+                      flavor={form.flavor}
+                      setFlavor={form.setFlavor}
+                      origins={form.origins}
+                      roastLevels={form.roastLevels}
+                      processMethods={form.processMethods}
+                      coffeeTypes={form.coffeeTypes}
+                      sizeUnits={form.sizeUnits}
+                      readOnly={false}
+                      hidePriceSize={true}
+                      showValidationErrors={coffeeInfoValidation.attempted}
+                      showHelpText={true}
+                    />
+                    
+                    <ImageUpload 
+                      imageUrl={form.imageUrl}
+                      setImageUrl={form.setImageUrl}
+                      helpText="Uploading a bag photo helps others identify this coffee"
+                    />
+                    
+                    {/* Review Section */}
+                    <div className="border-t pt-4 mt-4">
+                      <h3 className="text-md font-medium mb-3">Your Review</h3>
+                      <ReviewSection
+                        rating={form.rating}
+                        setRating={form.setRating}
+                        reviewText={form.reviewText}
+                        setReviewText={form.setReviewText}
+                        brewingMethod={form.brewingMethod}
+                        setBrewingMethod={form.setBrewingMethod}
+                        showRatingError={attemptedSubmit && form.rating === 0}
+                      />
+                    </div>
+                  </>
+                )}
                 
-                {recipeCompleteness && (
-                  <div className="mt-4 p-3 bg-amber-50 rounded-md border border-amber-100">
-                    <h4 className="text-sm font-medium text-amber-800 mb-2">
-                      Recipe Completeness
-                    </h4>
-                    <Progress value={recipeCompleteness.percentage} className="h-2 mb-2" />
-                    <p className="text-xs text-amber-700">
-                      You've logged {recipeCompleteness.filled} of {recipeCompleteness.total} details — complete your recipe to help others brew it too.
-                    </p>
-                  </div>
+                {currentStep === FORM_STEPS.BREW_INFO && (
+                  <>
+                    <BrewingMethodInput
+                      brewingMethod={form.brewingMethod}
+                      setBrewingMethod={form.setBrewingMethod}
+                      dosage={form.dosage}
+                      setDosage={form.setDosage}
+                      water={form.water}
+                      setWater={form.setWater}
+                      temperature={form.temperature}
+                      setTemperature={form.setTemperature}
+                      brewTime={form.brewTime}
+                      setBrewTime={form.setBrewTime}
+                      brewNotes={form.brewNotes}
+                      setBrewNotes={form.setBrewNotes}
+                      showHelpText={true}
+                    />
+                    
+                    {recipeCompleteness && (
+                      <div className="mt-4 p-3 bg-amber-50 rounded-md border border-amber-100">
+                        <h4 className="text-sm font-medium text-amber-800 mb-2">
+                          Recipe Completeness
+                        </h4>
+                        <Progress value={recipeCompleteness.percentage} className="h-2 mb-2" />
+                        <p className="text-xs text-amber-700">
+                          You've logged {recipeCompleteness.filled} of {recipeCompleteness.total} details — complete your recipe to help others brew it too.
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}
