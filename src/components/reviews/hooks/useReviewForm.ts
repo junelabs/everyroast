@@ -44,13 +44,30 @@ export const useReviewForm = ({
   
   useEffect(() => {
     if (isEdit && coffeeId) {
+      console.log("Fetching coffee details for edit mode with ID:", coffeeId);
       coffeeData.fetchCoffeeDetails();
     }
   }, [coffeeId, isEdit]);
 
+  // Update local state when initialData changes
+  useEffect(() => {
+    console.log("Initial data changed:", initialData);
+    if (initialData) {
+      setRating(initialData.rating || 0);
+      setReviewText(initialData.reviewText || "");
+      setBrewingMethod(initialData.brewingMethod || "");
+      setDosage(initialData.dosage || 0);
+      setWater(initialData.water || 0);
+      setTemperature(initialData.temperature || 0);
+      setBrewTime(initialData.brewTime || "");
+      setBrewNotes(initialData.brewNotes || "");
+    }
+  }, [initialData]);
+
   // Update local state when coffeeData changes during edit
   useEffect(() => {
     if (isEdit && coffeeData.rating > 0) {
+      console.log("Coffee data from fetch updated, updating form values");
       setRating(coffeeData.rating);
       setReviewText(coffeeData.reviewText);
       setBrewingMethod(coffeeData.brewingMethod);

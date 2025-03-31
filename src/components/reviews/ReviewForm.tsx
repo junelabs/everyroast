@@ -217,7 +217,8 @@ const ReviewForm = ({
     showSelector, 
     initialShowSelector,
     currentStep,
-    selectedCoffeeId
+    selectedCoffeeId,
+    initialData
   });
 
   if (!user) return null;
