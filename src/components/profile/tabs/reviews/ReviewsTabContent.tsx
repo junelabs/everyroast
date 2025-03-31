@@ -14,7 +14,7 @@ interface ReviewsTabContentProps {
 const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentProps) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
 
-  const { data: reviews, isLoading, refetch } = useQuery({
+  const { data: reviews, isLoading, error, refetch } = useQuery({
     queryKey: ['userReviews', userId],
     queryFn: async () => {
       if (!userId) return [];
@@ -54,6 +54,10 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
     setIsReviewFormOpen(false);
   };
 
+  const handleAddReview = () => {
+    setIsReviewFormOpen(true);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -72,9 +76,8 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
         </h2>
         {showAddButton && (
           <AddReviewButton 
-            isOpen={isReviewFormOpen} 
-            setIsOpen={setIsReviewFormOpen} 
-            onReviewAdded={handleReviewAdded} 
+            isLoading={isLoading}
+            onAddReview={handleAddReview}
           />
         )}
       </div>
@@ -86,7 +89,11 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           showDeleteButton={showAddButton}
         />
       ) : (
-        <ReviewsEmptyState showAddButton={showAddButton} setIsOpen={setIsReviewFormOpen} />
+        <ReviewsEmptyState 
+          isLoading={isLoading}
+          error={error as Error | null}
+          onAddReview={handleAddReview}
+        />
       )}
     </div>
   );

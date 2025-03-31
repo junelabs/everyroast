@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import ReviewRowCard from '@/components/reviews/ReviewRowCard';
 
@@ -37,16 +36,17 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
     <div className="space-y-4">
       {reviews.map((review) => (
         <div key={review.id}>
-          <ReviewRowCard
-            id={review.id}
-            coffeeId={review.coffee_id}
-            coffeeName={review.coffees.name}
-            roasterName={review.coffees.roasters.name}
-            rating={review.rating}
-            reviewText={review.review_text}
-            imageUrl={review.coffees.image_url}
-            date={format(new Date(review.created_at), 'MMM d, yyyy')}
-            brewingMethod={review.brewing_method}
+          <ReviewRowCard 
+            review={{
+              id: review.id,
+              rating: review.rating,
+              review_text: review.review_text,
+              brewing_method: review.brewing_method,
+              created_at: review.created_at,
+              coffee_id: review.coffee_id,
+              coffees: review.coffees
+            }}
+            onEdit={() => {}} // Placeholder, actual edit functionality would be implemented elsewhere
             onDelete={showDeleteButton ? onReviewDeleted : undefined}
           />
         </div>
