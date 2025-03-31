@@ -23,6 +23,9 @@ const ReviewsList = memo(({ reviews, isLoading, onEdit, onDelete }: ReviewsListP
     );
   }
 
+  // Add a debug log to see what reviews are being passed to the component
+  console.log("Reviews being rendered in ReviewsList:", reviews);
+
   return (
     <div className="space-y-4">
       {reviews.map((review) => (

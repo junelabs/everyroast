@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Star } from 'lucide-react';
@@ -138,6 +139,10 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
     );
   };
 
+  // Add debug logs to help troubleshoot why data isn't showing
+  console.log("Review data in row card:", review);
+  console.log("Coffee data from useCoffeeData:", coffee);
+
   return (
     <>
       <Card 
@@ -147,7 +152,7 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
         <div className="p-4">
           {/* First row: Coffee name and date */}
           <div className="flex justify-between mb-3">
-            <h3 className="text-xl font-bold">{coffee.name}</h3>
+            <h3 className="text-xl font-bold">{coffee?.name || "Unnamed Coffee"}</h3>
             <span className="text-sm text-gray-500">
               {review.created_at && `${getTimeAgo(review.created_at)} ago`}
             </span>
@@ -159,12 +164,12 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
             <div className="flex-1">
               {/* Roaster */}
               <div className="text-gray-600 mb-2">
-                {coffee.roaster}
+                {coffee?.roaster || "Unknown Roaster"}
               </div>
               
               {/* Rating stars */}
               <div className="mb-2">
-                {renderRating(review.rating)}
+                {renderRating(review.rating || 0)}
               </div>
               
               {/* Review text if available */}
@@ -174,11 +179,11 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
             </div>
             
             {/* Right side: Only render if a valid image exists (not a placeholder) */}
-            {coffee.image && (
+            {coffee?.image && (
               <div className="w-20 h-20 flex-shrink-0 ml-4">
                 <img 
                   src={coffee.image} 
-                  alt={coffee.name} 
+                  alt={coffee.name || "Coffee"} 
                   className="w-full h-full object-cover rounded-md"
                 />
               </div>
@@ -228,7 +233,7 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
       <ReviewDeleteDialog
         isOpen={isDeleteDialogOpen}
         setIsOpen={setIsDeleteDialogOpen}
-        coffeeName={review.coffees?.name || "this coffee"}
+        coffeeName={coffee?.name || "this coffee"}
         isDeleting={isDeleting}
         onDelete={deleteType === 'review' ? handleDeleteReview : handleDeleteCoffee}
         deleteType={deleteType}
@@ -237,6 +242,6 @@ const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps)
   );
 });
 
-ReviewRowCard.displayName = 'ReviewCard';
+ReviewRowCard.displayName = 'ReviewRowCard';
 
 export default ReviewRowCard;

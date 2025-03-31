@@ -2,6 +2,9 @@
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
 
 export const useCoffeeData = (review: any) => {
+  // Debug log to help troubleshoot
+  console.log("Raw review data in useCoffeeData:", review);
+
   // Helper function to check if an image URL is valid and not a placeholder
   const getValidImageUrl = (url: string | null | undefined): string | null => {
     // Return null if the URL is missing, empty, or contains placeholder text
@@ -19,27 +22,30 @@ export const useCoffeeData = (review: any) => {
 
   // Prepares structured coffee data from a review object
   const coffee = {
-    id: review.coffee_id,
-    name: review.coffees?.name || "Unnamed Coffee",
-    origin: (review.coffees?.origin || "Ethiopia") as CoffeeOrigin,
-    roaster: review.coffees?.roasters?.name || "Unknown Roaster",
-    image: getValidImageUrl(review.coffees?.image_url),
-    rating: review.rating,
-    price: review.coffees?.price || 0,
-    roastLevel: (review.coffees?.roast_level || "Light") as RoastLevel,
-    processMethod: (review.coffees?.process_method || "Washed") as ProcessMethod,
-    flavor: review.coffees?.flavor_notes || review.review_text || "No flavor notes provided",
-    brewingMethod: review.brewing_method || "",
-    reviewDate: review.created_at,
-    reviewId: review.id,
+    id: review?.coffee_id,
+    name: review?.coffees?.name || review?.name || "Unnamed Coffee",
+    origin: (review?.coffees?.origin || review?.origin || "Ethiopia") as CoffeeOrigin,
+    roaster: review?.coffees?.roasters?.name || review?.roaster || "Unknown Roaster",
+    image: getValidImageUrl(review?.coffees?.image_url || review?.image_url),
+    rating: review?.rating || 0,
+    price: review?.coffees?.price || review?.price || 0,
+    roastLevel: (review?.coffees?.roast_level || review?.roast_level || "Light") as RoastLevel,
+    processMethod: (review?.coffees?.process_method || review?.process_method || "Washed") as ProcessMethod,
+    flavor: review?.coffees?.flavor_notes || review?.flavor_notes || review?.review_text || "No flavor notes provided",
+    brewingMethod: review?.brewing_method || "",
+    reviewDate: review?.created_at,
+    reviewId: review?.id,
     // Get the actual type from the database, with fallback only if not present
-    type: review.coffees?.type || "Single Origin",
+    type: review?.coffees?.type || review?.type || "Single Origin",
     poster: {
-      username: review.profiles?.username || "anonymous",
-      avatarUrl: review.profiles?.avatar_url || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
-      userId: review.coffees?.created_by || review.user_id || null
+      username: review?.profiles?.username || "anonymous",
+      avatarUrl: review?.profiles?.avatar_url || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+      userId: review?.coffees?.created_by || review?.user_id || null
     }
   };
+
+  // Debug log for the processed coffee data
+  console.log("Processed coffee data in useCoffeeData:", coffee);
 
   return { coffee };
 };
