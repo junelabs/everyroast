@@ -18,7 +18,14 @@ import Cafes from "./pages/Cafes";
 import Recipes from "./pages/Recipes";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const IndexRouteWrapper = () => {
   const { user, isLoading, authInitialized } = useAuth();

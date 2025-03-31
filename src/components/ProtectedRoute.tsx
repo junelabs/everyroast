@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 
 interface ProtectedRouteProps {
@@ -12,11 +12,30 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   
   // Check if the current route is public (doesn't require authentication)
-  const isPublicRoute = ['/roasters', '/roasters/'].some(path => 
+  const isPublicRoute = [
+    '/roasters', 
+    '/roasters/'
+  ].some(path => 
     location.pathname === path || location.pathname.startsWith('/roasters/')
   );
+  
+  // Check if this is a username profile route
+  const isUsernameRoute = location.pathname.split('/').length === 2 && 
+                          location.pathname !== '/profile' && 
+                          location.pathname !== '/login' && 
+                          location.pathname !== '/signup' &&
+                          !location.pathname.startsWith('/roasters/') &&
+                          !location.pathname.startsWith('/coffee/');
+  
+  console.log("ProtectedRoute check:", { 
+    path: location.pathname, 
+    isPublicRoute, 
+    isUsernameRoute,
+    params
+  });
   
   useEffect(() => {
     let timer: number | undefined;
@@ -34,25 +53,25 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     };
   }, [isLoading, authInitialized]);
 
-  // For public routes, bypass auth check entirely
-  if (isPublicRoute) {
-    console.log("Public route detected, bypassing auth check");
+  // For public routes or username routes, bypass auth check entirely
+  if (isPublicRoute || isUsernameRoute) {
+    console.log("Public or username route detected, bypassing auth check");
     return <>{children}</>;
   }
 
-  // Check auth state once it's initialized, but only for non-public routes
+  // Check auth state once it's initialized, but only for routes requiring auth
   useEffect(() => {
-    if (!isPublicRoute && authInitialized && !isLoading && !user) {
+    if (!isPublicRoute && !isUsernameRoute && authInitialized && !isLoading && !user) {
       console.log("User not authenticated, redirecting to login");
       navigate('/login', { replace: true });
     }
-  }, [authInitialized, isLoading, user, navigate, isPublicRoute]);
+  }, [authInitialized, isLoading, user, navigate, isPublicRoute, isUsernameRoute]);
 
   // Maximum wait time reduced to prevent showing anonymous state
   const maxWaitTime = 2; // Seconds
 
   // Force continue after a shorter timeout if we have a user or on public routes
-  if (timeElapsed >= maxWaitTime && (user || isPublicRoute)) {
+  if (timeElapsed >= maxWaitTime && (user || isPublicRoute || isUsernameRoute)) {
     console.log("ProtectedRoute: Forcing continuation after short timeout");
     return <>{children}</>;
   }
@@ -68,11 +87,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   // If no user and we're not loading, Navigate component will handle redirect
-  if (!user && !isLoading && authInitialized && !isPublicRoute) {
+  if (!user && !isLoading && authInitialized && !isPublicRoute && !isUsernameRoute) {
     return <Navigate to="/login" replace />;
   }
 
-  // User is authenticated or it's a public route, render the content
+  // User is authenticated or it's a public or username route, render the content
   return <>{children}</>;
 };
 

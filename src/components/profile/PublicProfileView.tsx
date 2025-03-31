@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -8,13 +7,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 
-const PublicProfileView = () => {
-  const { userId, username } = useParams();
+interface PublicProfileViewProps {
+  usernameFromPath?: string | null;
+}
+
+const PublicProfileView = ({ usernameFromPath }: PublicProfileViewProps) => {
+  const { userId, username: usernameParam } = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  // Use the username from props, params, or path in that order of priority
+  const username = usernameParam || usernameFromPath;
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -24,7 +30,12 @@ const PublicProfileView = () => {
       try {
         let query;
         
-        console.log("Fetching profile with parameters:", { userId, username });
+        console.log("Fetching profile with parameters:", { 
+          userId, 
+          username,
+          usernameFromPath,
+          usernameParam
+        });
         
         if (userId) {
           // If we have a userId parameter, fetch by ID
@@ -85,8 +96,9 @@ const PublicProfileView = () => {
     };
 
     fetchUserProfile();
-  }, [userId, username, toast, navigate]);
+  }, [userId, username, usernameFromPath, toast, navigate]);
 
+  // Rest of the component remains the same
   if (isLoading) {
     return (
       <div className="container max-w-5xl mx-auto py-8 px-4">

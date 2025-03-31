@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import Header from "@/components/Header";
 import ProfileContainer from "@/components/profile/ProfileContainer";
@@ -12,12 +12,29 @@ const ProfilePage = () => {
   const [redirectToLogin, setRedirectToLogin] = useState(false);
   const navigate = useNavigate();
   const { userId, username } = useParams();
+  const location = useLocation();
   
-  // If we have a username or userId parameter and it's not the current user's ID, we're viewing another profile
-  const isViewingOtherProfile = !!(userId || username) && (userId !== user?.id);
+  // Check if this is a username route (not in /profile or /profile/ID format)
+  const isUsernameRoute = location.pathname.split('/').length === 2 && 
+                         !location.pathname.startsWith('/profile');
+  
+  // If we have a username parameter or the path itself is a username, we're viewing another profile
+  const isViewingOtherProfile = !!(userId || username || isUsernameRoute) && 
+                                (userId !== user?.id);
+  
+  const usernameToUse = username || (isUsernameRoute ? location.pathname.substring(1) : null);
   
   useEffect(() => {
     document.title = "Every Roast | Profile";
+    
+    console.log("Profile page route info:", { 
+      path: location.pathname,
+      userId, 
+      username, 
+      isUsernameRoute,
+      usernameToUse,
+      isViewingOtherProfile
+    });
     
     // Only redirect to login if not viewing another user's profile
     if (!isViewingOtherProfile) {
@@ -38,9 +55,10 @@ const ProfilePage = () => {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [user, isLoading, authInitialized, isViewingOtherProfile, navigate]);
+  }, [user, isLoading, authInitialized, isViewingOtherProfile, navigate, location.pathname, userId, username, isUsernameRoute]);
 
   // If authentication is complete and user is not logged in, redirect to login
+  // But only if we're not viewing another profile
   if (!isViewingOtherProfile && !isLoading && authInitialized && !user || redirectToLogin) {
     console.log("Profile page: Redirecting to login due to no user");
     navigate("/login", { replace: true });
@@ -61,7 +79,7 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       {isViewingOtherProfile ? (
-        <PublicProfileView />
+        <PublicProfileView usernameFromPath={usernameToUse} />
       ) : (
         <ProfileContainer showHeader={false} />
       )}
