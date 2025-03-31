@@ -153,6 +153,24 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
   console.log('Current user:', user);
   console.log('Can delete coffee:', canDelete);
 
+  // Render stars for the rating
+  const renderRating = (rating: number) => {
+    return (
+      <div className="flex items-center">
+        {[...Array(5)].map((_, index) => (
+          <Star
+            key={index}
+            className={`h-4 w-4 ${
+              index < rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "fill-gray-200 text-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -166,17 +184,21 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             )}
             
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
+              <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
+                
+                {/* Stars rating display - moved here to be right under the coffee name */}
                 {coffee.rating > 0 && (
-                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium">{coffee.rating}</span>
+                  <div className="flex items-center">
+                    {renderRating(coffee.rating)}
+                    <span className="ml-2 text-sm text-gray-500">
+                      {coffee.rating.toFixed(1)} / 5
+                    </span>
                   </div>
                 )}
+                
+                <p className="text-roast-500 font-medium">{coffee.roaster}</p>
               </div>
-              
-              <p className="text-roast-500 font-medium mb-4">{coffee.roaster}</p>
             </div>
           </div>
           

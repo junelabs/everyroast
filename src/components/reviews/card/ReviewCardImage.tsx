@@ -30,6 +30,24 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
     return null;
   }
 
+  // Render stars for rating
+  const renderRating = (rating: number) => {
+    return (
+      <div className="flex items-center space-x-0.5">
+        {[...Array(5)].map((_, index) => (
+          <Star
+            key={index}
+            className={`h-3 w-3 ${
+              index < rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "fill-gray-200 text-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-full relative">
       <img 
@@ -44,8 +62,7 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
       
       {review.rating && (
         <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          <span className="text-base font-medium">{review.rating}</span>
+          {renderRating(review.rating)}
         </div>
       )}
       
