@@ -5,6 +5,34 @@ export const useCoffeeData = (review: any) => {
   // Debug log to help troubleshoot
   console.log("Raw review data in useCoffeeData:", review);
 
+  // Early return with default values if review is null or undefined
+  if (!review) {
+    console.error("Review data is missing in useCoffeeData");
+    return { 
+      coffee: {
+        id: null,
+        name: "Unknown Coffee",
+        origin: "Ethiopia" as CoffeeOrigin,
+        roaster: "Unknown Roaster",
+        image: null,
+        rating: 0,
+        price: 0,
+        roastLevel: "Light" as RoastLevel,
+        processMethod: "Washed" as ProcessMethod,
+        flavor: "No flavor notes provided",
+        brewingMethod: "",
+        reviewDate: null,
+        reviewId: null,
+        type: "Single Origin",
+        poster: {
+          username: "anonymous",
+          avatarUrl: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+          userId: null
+        }
+      } 
+    };
+  }
+
   // Helper function to check if an image URL is valid and not a placeholder
   const getValidImageUrl = (url: string | null | undefined): string | null => {
     // Return null if the URL is missing, empty, or contains placeholder text
@@ -22,7 +50,7 @@ export const useCoffeeData = (review: any) => {
 
   // Prepares structured coffee data from a review object
   const coffee = {
-    id: review?.coffee_id,
+    id: review?.coffee_id || review?.coffees?.id,
     name: review?.coffees?.name || review?.name || "Unnamed Coffee",
     origin: (review?.coffees?.origin || review?.origin || "Ethiopia") as CoffeeOrigin,
     roaster: review?.coffees?.roasters?.name || review?.roaster || "Unknown Roaster",
@@ -51,10 +79,17 @@ export const useCoffeeData = (review: any) => {
 };
 
 export const formatReviewDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
+  if (!dateString) return "Unknown date";
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "Invalid date";
+  }
 };

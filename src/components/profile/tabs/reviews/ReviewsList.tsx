@@ -26,13 +26,20 @@ const ReviewsList = memo(({ reviews, isLoading, onEdit, onDelete }: ReviewsListP
   // Add a debug log to see what reviews are being passed to the component
   console.log("Reviews being rendered in ReviewsList:", reviews);
 
+  if (!reviews || reviews.length === 0) {
+    return <div className="text-center text-gray-500">No reviews found</div>;
+  }
+
   return (
     <div className="space-y-4">
       {reviews.map((review) => (
         <ReviewRowCard 
           key={review.id} 
           review={review} 
-          onEdit={onEdit}
+          onEdit={() => {
+            console.log("Editing review with data:", review);
+            onEdit(review);
+          }}
           onDelete={onDelete}
         />
       ))}

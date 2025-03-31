@@ -19,7 +19,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
   const [isAddingNew, setIsAddingNew] = useState(false);
 
   // Fetch user reviews
-  const { data: reviews = [], isLoading, error } = useQuery({
+  const { data: reviews = [], isLoading, error, refetch } = useQuery({
     queryKey: ['userReviews', user?.id],
     queryFn: async () => {
       console.log("Fetching reviews for user ID:", user?.id);
@@ -76,6 +76,7 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
   });
 
   const handleEditReview = (review: any) => {
+    console.log("Selected review for editing:", review);
     setIsAddingNew(false);
     setSelectedReview(review);
     setIsReviewFormOpen(true);
@@ -85,6 +86,8 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
     setIsReviewFormOpen(false);
     setIsAddingNew(false);
     setSelectedReview(null);
+    // Refetch reviews when form is closed to get the latest data
+    refetch();
   };
 
   const handleAddNewReview = () => {
@@ -97,7 +100,16 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
 
   const handleReviewDeleted = () => {
     setSelectedReview(null);
+    refetch();
   };
+
+  // Add debug logs to help troubleshoot
+  console.log("Current state in ReviewsTabContent:", { 
+    isReviewFormOpen, 
+    selectedReview, 
+    isAddingNew,
+    reviewsCount: reviews?.length 
+  });
 
   return (
     <div className="space-y-4">

@@ -29,6 +29,11 @@ const ReviewFormModal = ({
   isEdit,
   reviewCount 
 }: ReviewFormModalProps) => {
+  // Log data being passed to ReviewForm
+  console.log("ReviewFormModal passing data:", { 
+    isOpen, coffeeId, reviewId, initialData, isEdit 
+  });
+  
   // In edit mode, we always want to show the edit form directly
   return (
     <ReviewForm 
