@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -268,6 +269,42 @@ const ReviewForm = ({
                       brewingMethod={form.brewingMethod}
                       setBrewingMethod={form.setBrewingMethod}
                       showRatingError={attemptedSubmit && form.rating === 0}
+                    />
+                  </div>
+                  
+                  {/* Add Coffee Details section in edit mode */}
+                  <div className="mb-4 border-t pt-4">
+                    <h3 className="text-md font-medium mb-2">Coffee Details</h3>
+                    <CoffeeDetailsSection 
+                      coffeeName={form.coffeeName}
+                      setCoffeeName={form.setCoffeeName}
+                      roaster={form.roaster}
+                      setRoaster={form.setRoaster}
+                      origin={form.origin}
+                      setOrigin={form.setOrigin}
+                      coffeeType={form.coffeeType}
+                      setCoffeeType={form.setCoffeeType}
+                      price={form.price}
+                      setPrice={form.setPrice}
+                      size={form.size}
+                      setSize={form.setSize}
+                      sizeUnit={form.sizeUnit}
+                      setSizeUnit={form.setSizeUnit}
+                      roastLevel={form.roastLevel}
+                      setRoastLevel={form.setRoastLevel}
+                      processMethod={form.processMethod}
+                      setProcessMethod={form.setProcessMethod}
+                      flavor={form.flavor}
+                      setFlavor={form.setFlavor}
+                      origins={form.origins}
+                      roastLevels={form.roastLevels}
+                      processMethods={form.processMethods}
+                      coffeeTypes={form.coffeeTypes}
+                      sizeUnits={form.sizeUnits}
+                      readOnly={false}
+                      hidePriceSize={true}
+                      showValidationErrors={false}
+                      showHelpText={true}
                     />
                   </div>
                   

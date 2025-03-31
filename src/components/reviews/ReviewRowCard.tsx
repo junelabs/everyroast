@@ -1,23 +1,23 @@
-import { useState, useCallback } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { Star } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import React, { useState, useCallback } from 'react';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
-import ReviewDeleteDialog from './card/ReviewDeleteDialog';
-import ReviewActions from './card/ReviewActions';
-import { useCoffeeData } from './card/useCoffeeData';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { hardDeleteCoffee } from '@/utils/coffeeOperations';
 
-interface ReviewRowCardProps {
+// Import refactored components
+import ReviewCardImage from './card/ReviewCardImage';
+import ReviewDeleteDialog from './card/ReviewDeleteDialog';
+import ReviewActions from './card/ReviewActions';
+import { useCoffeeData, formatReviewDate } from './card/useCoffeeData';
+
+interface ReviewCardProps {
   review: any;
   onEdit: (review: any) => void;
   onDelete?: () => void;
 }
 
-const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
+const ReviewRowCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -232,6 +232,8 @@ const ReviewRowCard = ({ review, onEdit, onDelete }: ReviewRowCardProps) => {
       />
     </>
   );
-};
+});
+
+ReviewRowCard.displayName = 'ReviewCard';
 
 export default ReviewRowCard;
