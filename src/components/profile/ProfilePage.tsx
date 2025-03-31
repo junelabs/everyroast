@@ -13,7 +13,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { userId, username } = useParams();
   
-  // Determine if we're viewing another user's profile
+  // If we have a username or userId parameter and it's not the current user's ID, we're viewing another profile
   const isViewingOtherProfile = !!(userId || username) && (userId !== user?.id);
   
   useEffect(() => {

@@ -53,15 +53,18 @@ const App = () => (
               <ProfilePage />
             </ProtectedRoute>
           } />
-          {/* Keep the ID-based route for backward compatibility */}
-          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/coffee/:id" element={<CoffeeDetails />} />
           <Route path="/roasters" element={<Roasters />} />
           <Route path="/roasters/:id" element={<RoasterDetails />} />
           <Route path="/cafes" element={<Cafes />} />
           <Route path="/recipes" element={<Recipes />} />
-          {/* Add new username-based route - important to place at the end to avoid conflicts */}
+          
+          {/* Keep the ID-based route for backward compatibility */}
+          <Route path="/profile/:userId" element={<ProfilePage />} />
+          
+          {/* Username route needs to be last to avoid conflicts with other routes */}
           <Route path="/:username" element={<ProfilePage />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
