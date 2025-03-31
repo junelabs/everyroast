@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -45,6 +46,7 @@ const App = () => (
       <Sonner />
       <AuthProvider>
         <Routes>
+          {/* Standard routes */}
           <Route path="/" element={<IndexRouteWrapper />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
@@ -59,10 +61,10 @@ const App = () => (
           <Route path="/cafes" element={<Cafes />} />
           <Route path="/recipes" element={<Recipes />} />
           
-          {/* Keep the ID-based route for backward compatibility */}
+          {/* ID-based profile route (for backward compatibility) */}
           <Route path="/profile/:userId" element={<ProfilePage />} />
           
-          {/* Username route needs to be last to avoid conflicts with other routes */}
+          {/* IMPORTANT: Username route must be LAST to avoid conflicts */}
           <Route path="/:username" element={<ProfilePage />} />
           
           <Route path="*" element={<NotFound />} />

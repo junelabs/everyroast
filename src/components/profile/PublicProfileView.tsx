@@ -24,6 +24,8 @@ const PublicProfileView = () => {
       try {
         let query;
         
+        console.log("Fetching profile with parameters:", { userId, username });
+        
         if (userId) {
           // If we have a userId parameter, fetch by ID
           console.log("Fetching profile by userId:", userId);
