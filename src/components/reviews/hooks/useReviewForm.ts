@@ -42,13 +42,6 @@ export const useReviewForm = ({
   const [brewTime, setBrewTime] = useState(initialData?.brewTime || "");
   const [brewNotes, setBrewNotes] = useState(initialData?.brewNotes || "");
   
-  useEffect(() => {
-    if (isEdit && coffeeId) {
-      console.log("Fetching coffee details for edit mode with ID:", coffeeId);
-      coffeeData.fetchCoffeeDetails();
-    }
-  }, [coffeeId, isEdit]);
-
   // Update local state when initialData changes
   useEffect(() => {
     console.log("Initial data changed:", initialData);
@@ -66,20 +59,32 @@ export const useReviewForm = ({
 
   // Update local state when coffeeData changes during edit
   useEffect(() => {
-    if (isEdit && coffeeData.rating > 0) {
+    if (isEdit) {
       console.log("Coffee data from fetch updated, updating form values");
-      setRating(coffeeData.rating);
-      setReviewText(coffeeData.reviewText);
-      setBrewingMethod(coffeeData.brewingMethod);
-      setDosage(coffeeData.dosage || 0);
-      setWater(coffeeData.water || 0);
-      setTemperature(coffeeData.temperature || 0);
-      setBrewTime(coffeeData.brewTime || "");
-      setBrewNotes(coffeeData.brewNotes || "");
+      // First check if we have review-specific data and set it
+      if (coffeeData.rating > 0) {
+        setRating(coffeeData.rating);
+        setReviewText(coffeeData.reviewText);
+        setBrewingMethod(coffeeData.brewingMethod);
+        setDosage(coffeeData.dosage || 0);
+        setWater(coffeeData.water || 0);
+        setTemperature(coffeeData.temperature || 0);
+        setBrewTime(coffeeData.brewTime || "");
+        setBrewNotes(coffeeData.brewNotes || "");
+      }
+      
+      // Log coffee data for debugging
+      console.log("Coffee data for form:", {
+        name: coffeeData.coffeeName,
+        roaster: coffeeData.roaster,
+        origin: coffeeData.origin,
+        roastLevel: coffeeData.roastLevel,
+        // etc.
+      });
     }
   }, [isEdit, coffeeData.rating, coffeeData.reviewText, coffeeData.brewingMethod, 
       coffeeData.dosage, coffeeData.water, coffeeData.temperature, coffeeData.brewTime,
-      coffeeData.brewNotes]);
+      coffeeData.brewNotes, coffeeData.coffeeName, coffeeData.roaster, coffeeData.origin]);
 
   const resetForm = () => {
     if (!isEdit) {

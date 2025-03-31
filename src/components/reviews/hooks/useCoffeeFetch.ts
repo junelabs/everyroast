@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { CoffeeOrigin, RoastLevel, ProcessMethod, CoffeeType, SizeUnit } from "@/types/coffee";
@@ -31,24 +31,91 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
   const [water, setWater] = useState(0);
   const [temperature, setTemperature] = useState(0);
   const [brewTime, setBrewTime] = useState("");
-  const [brewNotes, setBrewNotes] = useState(""); // Add the missing brewNotes state
+  const [brewNotes, setBrewNotes] = useState("");
+
+  // Automatically fetch coffee details when the component mounts and coffeeId changes
+  useEffect(() => {
+    if (coffeeId || reviewId) {
+      console.log("Auto-fetching coffee details based on IDs:", { coffeeId, reviewId });
+      fetchCoffeeDetails();
+    }
+  }, [coffeeId, reviewId]);
 
   const fetchCoffeeDetails = async () => {
     try {
       console.log("Fetching coffee details for ID:", coffeeId);
       
-      if (!coffeeId) {
-        console.log("No coffee ID provided, skipping fetch");
+      if (!coffeeId && !reviewId) {
+        console.log("No coffee ID or review ID provided, skipping fetch");
         return;
       }
       
+      // If we have a reviewId, fetch the review first to get the coffee_id if not provided
+      let actualCoffeeId = coffeeId;
+      
+      if (reviewId) {
+        console.log("Fetching review data first with ID:", reviewId);
+        const { data: reviewData, error: reviewError } = await supabase
+          .from('reviews')
+          .select('*, coffees(*)')
+          .eq('id', reviewId)
+          .single();
+          
+        if (reviewError) {
+          console.error("Error fetching review:", reviewError);
+          toast({
+            title: "Error",
+            description: "Could not load review details.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        console.log("Review data retrieved:", reviewData);
+        
+        if (reviewData) {
+          // Set review-specific data
+          setRating(reviewData.rating || 0);
+          setReviewText(reviewData.review_text || "");
+          setBrewingMethod(reviewData.brewing_method || "");
+          setDosage(reviewData.dosage || 0);
+          setWater(reviewData.water || 0);
+          setTemperature(reviewData.temperature || 0);
+          setBrewTime(reviewData.brew_time || "");
+          setBrewNotes(reviewData.brew_notes || "");
+          
+          // Get the coffee_id for the subsequent coffee fetch
+          actualCoffeeId = reviewData.coffee_id;
+          
+          // If the review data includes coffee data, set it immediately
+          if (reviewData.coffees) {
+            console.log("Setting coffee data from review:", reviewData.coffees);
+            setCoffeeName(reviewData.coffees.name || "");
+            setOrigin(reviewData.coffees.origin as CoffeeOrigin || "Ethiopia");
+            setRoastLevel(reviewData.coffees.roast_level as RoastLevel || "Medium");
+            setProcessMethod(reviewData.coffees.process_method as ProcessMethod || "Washed");
+            setImageUrl(reviewData.coffees.image_url);
+            setPrice(reviewData.coffees.price || 0);
+            setFlavor(reviewData.coffees.flavor_notes || "");
+            setCoffeeType(reviewData.coffees.type as CoffeeType || "Single Origin");
+          }
+        }
+      }
+      
+      // If we still have no coffee ID, we can't fetch coffee details
+      if (!actualCoffeeId) {
+        console.log("No coffee ID available after review fetch, skipping coffee fetch");
+        return;
+      }
+      
+      // Now fetch the coffee details to get roaster and other info
       const { data: coffeeData, error: coffeeError } = await supabase
         .from('coffees')
         .select(`
           *,
-          roasters (name)
+          roasters (id, name)
         `)
-        .eq('id', coffeeId)
+        .eq('id', actualCoffeeId)
         .is('deleted_at', null) // Make sure to filter out deleted coffees
         .single();
       
@@ -80,6 +147,8 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
           return;
         }
         
+        // Set coffee details - even if they're already set from the review data above
+        // This ensures we have the most up-to-date data
         setCoffeeName(coffeeData.name || "");
         setRoaster(coffeeData.roasters?.name || "");
         setOrigin(coffeeData.origin as CoffeeOrigin || "Ethiopia");
@@ -99,29 +168,6 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
             setSize(parseInt(match[2]));
             setSizeUnit(match[3] as SizeUnit);
           }
-        }
-      }
-      
-      if (reviewId) {
-        const { data: reviewData, error: reviewError } = await supabase
-          .from('reviews')
-          .select('*')
-          .eq('id', reviewId)
-          .single();
-          
-        if (reviewError) throw reviewError;
-        
-        console.log("Review data retrieved:", reviewData);
-        
-        if (reviewData) {
-          setRating(reviewData.rating || 0);
-          setReviewText(reviewData.review_text || "");
-          setBrewingMethod(reviewData.brewing_method || "");
-          setDosage(reviewData.dosage || 0);
-          setWater(reviewData.water || 0);
-          setTemperature(reviewData.temperature || 0);
-          setBrewTime(reviewData.brew_time || "");
-          setBrewNotes(reviewData.brew_notes || ""); // Add this line to set brewNotes from review data
         }
       }
     } catch (error) {
@@ -156,7 +202,7 @@ export const useCoffeeFetch = ({ coffeeId, reviewId }: UseCoffeeFetchProps) => {
     water, setWater,
     temperature, setTemperature,
     brewTime, setBrewTime,
-    brewNotes, setBrewNotes, // Add this line to expose the brewNotes state and setter
+    brewNotes, setBrewNotes,
     
     // Functions
     fetchCoffeeDetails
