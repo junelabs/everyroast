@@ -1,43 +1,54 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Coffee, Store, UtensilsCrossed } from "lucide-react";
-import ReviewsTab from "./tabs/ReviewsTab";
-import FavoritesTab from "./tabs/FavoritesTab";
-import SavedTab from "./tabs/SavedTab";
+import { Card } from "@/components/ui/card";
+import ReviewsTabContent from "@/components/profile/tabs/reviews/ReviewsTabContent";
+import FavoritesTab from "@/components/profile/tabs/FavoritesTab";
+import SavedTab from "@/components/profile/tabs/SavedTab";
+import { useAuth } from "@/context/auth";
 
-const ProfileTabs = () => {
-  const [activeTab, setActiveTab] = useState<string>("coffee");
+interface ProfileTabsProps {
+  viewingUserId?: string;
+}
+
+const ProfileTabs = ({ viewingUserId }: ProfileTabsProps) => {
+  const [activeTab, setActiveTab] = useState("reviews");
+  const { user } = useAuth();
+  
+  const isOwnProfile = !viewingUserId || (user && viewingUserId === user.id);
+  const effectiveUserId = viewingUserId || user?.id;
 
   return (
-    <Tabs defaultValue="coffee" className="w-full" onValueChange={setActiveTab}>
-      <TabsList className="grid grid-cols-3 max-w-md mb-8">
-        <TabsTrigger value="coffee" className="flex items-center gap-2">
-          <Coffee className="h-4 w-4" />
-          <span>Coffee</span>
-        </TabsTrigger>
-        <TabsTrigger value="roasters" className="flex items-center gap-2">
-          <Store className="h-4 w-4" />
-          <span>Roasters</span>
-        </TabsTrigger>
-        <TabsTrigger value="recipes" className="flex items-center gap-2">
-          <UtensilsCrossed className="h-4 w-4" />
-          <span>Recipes</span>
-        </TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="coffee">
-        <ReviewsTab defaultTab={activeTab === "coffee"} />
-      </TabsContent>
-      
-      <TabsContent value="roasters">
-        <FavoritesTab />
-      </TabsContent>
-      
-      <TabsContent value="recipes">
-        <SavedTab />
-      </TabsContent>
-    </Tabs>
+    <Card className="p-6">
+      <Tabs defaultValue="reviews" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-3 mb-6">
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          {isOwnProfile && <TabsTrigger value="favorites">Favorites</TabsTrigger>}
+          {isOwnProfile && <TabsTrigger value="saved">Saved</TabsTrigger>}
+          {!isOwnProfile && <TabsTrigger value="none" disabled className="opacity-50">Favorites</TabsTrigger>}
+          {!isOwnProfile && <TabsTrigger value="none2" disabled className="opacity-50">Saved</TabsTrigger>}
+        </TabsList>
+        
+        <TabsContent value="reviews" className="space-y-4">
+          <ReviewsTabContent 
+            userId={effectiveUserId} 
+            showAddButton={isOwnProfile} 
+          />
+        </TabsContent>
+        
+        {isOwnProfile && (
+          <>
+            <TabsContent value="favorites" className="space-y-4">
+              <FavoritesTab />
+            </TabsContent>
+            
+            <TabsContent value="saved" className="space-y-4">
+              <SavedTab />
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+    </Card>
   );
 };
 

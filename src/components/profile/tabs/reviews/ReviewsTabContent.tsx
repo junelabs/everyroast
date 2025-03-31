@@ -1,28 +1,24 @@
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/context/auth";
-import ReviewsList from "./ReviewsList";
-import ReviewsEmptyState from "./ReviewsEmptyState";
-import ReviewFormModal from "./ReviewFormModal";
-import AddReviewButton from "./AddReviewButton";
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import ReviewsList from './ReviewsList';
+import ReviewsEmptyState from './ReviewsEmptyState';
+import AddReviewButton from './AddReviewButton';
 
 interface ReviewsTabContentProps {
-  defaultTab?: boolean;
+  userId?: string;
+  showAddButton?: boolean;
 }
 
-const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
-  const { user } = useAuth();
+const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentProps) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<any>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
 
-  // Fetch user reviews
-  const { data: reviews = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['userReviews', user?.id],
+  const { data: reviews, isLoading, refetch } = useQuery({
+    queryKey: ['userReviews', userId],
     queryFn: async () => {
-      console.log("Fetching reviews for user ID:", user?.id);
+      if (!userId) return [];
+      
       const { data, error } = await supabase
         .from('reviews')
         .select(`
@@ -30,130 +26,68 @@ const ReviewsTabContent = ({ defaultTab = false }: ReviewsTabContentProps) => {
           rating,
           review_text,
           brewing_method,
-          dosage,
-          water,
-          temperature,
-          brew_time,
-          brew_notes,
           created_at,
           coffee_id,
           coffees (
             id,
             name,
-            image_url,
             roaster_id,
-            origin,
-            roast_level,
-            process_method,
-            price,
-            flavor_notes,
-            type,
-            deleted_at,
-            roasters (
-              name
-            )
+            image_url,
+            roasters (name)
           )
         `)
-        .eq('user_id', user?.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
-
+      
       if (error) {
-        console.error("Error fetching reviews:", error);
-        throw error;
+        console.error('Error fetching reviews:', error);
+        throw new Error('Failed to fetch reviews');
       }
       
-      console.log("Reviews fetched successfully:", data);
-      
-      // Filter out reviews for deleted coffees
-      const validReviews = data?.filter(review => !review.coffees?.deleted_at) || [];
-      console.log("Valid reviews (excluding deleted coffees):", validReviews.length);
-      
-      return validReviews;
+      return data || [];
     },
-    enabled: !!user?.id,
-    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
-    staleTime: 1000 * 60 * 2, // Consider data stale after 2 minutes
+    enabled: !!userId,
   });
 
-  const handleEditReview = (review: any) => {
-    console.log("Selected review for editing:", review);
-    setIsAddingNew(false);
-    setSelectedReview(review);
-    setIsReviewFormOpen(true);
-  };
-
-  const handleCloseReviewForm = () => {
+  const handleReviewAdded = () => {
+    refetch();
     setIsReviewFormOpen(false);
-    setIsAddingNew(false);
-    setSelectedReview(null);
-    // Refetch reviews when form is closed to get the latest data
-    refetch();
   };
 
-  const handleAddNewReview = () => {
-    setIsAddingNew(true);
-    setSelectedReview(null);
-    setTimeout(() => {
-      setIsReviewFormOpen(true);
-    }, 100);
-  };
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-roast-500"></div>
+      </div>
+    );
+  }
 
-  const handleReviewDeleted = () => {
-    setSelectedReview(null);
-    refetch();
-  };
-
-  // Add debug logs to help troubleshoot
-  console.log("Current state in ReviewsTabContent:", { 
-    isReviewFormOpen, 
-    selectedReview, 
-    isAddingNew,
-    reviewsCount: reviews?.length 
-  });
+  const hasReviews = reviews && reviews.length > 0;
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Your Coffee Log</h2>
-        <AddReviewButton 
-          isLoading={isLoading}
-          onAddReview={handleAddNewReview}
-        />
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-900">
+          {showAddButton ? 'My Reviews' : 'Reviews'}
+        </h2>
+        {showAddButton && (
+          <AddReviewButton 
+            isOpen={isReviewFormOpen} 
+            setIsOpen={setIsReviewFormOpen} 
+            onReviewAdded={handleReviewAdded} 
+          />
+        )}
       </div>
-
-      {reviews.length > 0 ? (
+      
+      {hasReviews ? (
         <ReviewsList 
-          reviews={reviews}
-          isLoading={isLoading}
-          onEdit={handleEditReview}
-          onDelete={handleReviewDeleted}
+          reviews={reviews} 
+          onReviewDeleted={refetch} 
+          showDeleteButton={showAddButton}
         />
       ) : (
-        <ReviewsEmptyState 
-          isLoading={isLoading}
-          error={error} 
-          onAddReview={handleAddNewReview} 
-        />
+        <ReviewsEmptyState showAddButton={showAddButton} setIsOpen={setIsReviewFormOpen} />
       )}
-      
-      <ReviewFormModal 
-        isOpen={isReviewFormOpen} 
-        onClose={handleCloseReviewForm} 
-        coffeeId={selectedReview?.coffee_id}
-        reviewId={!isAddingNew ? selectedReview?.id : undefined}
-        initialData={{
-          rating: selectedReview?.rating || 0,
-          reviewText: selectedReview?.review_text || "",
-          brewingMethod: selectedReview?.brewing_method || "",
-          dosage: selectedReview?.dosage || 0,
-          water: selectedReview?.water || 0,
-          temperature: selectedReview?.temperature || 0,
-          brewTime: selectedReview?.brew_time || "",
-          brewNotes: selectedReview?.brew_notes || ""
-        }}
-        isEdit={!isAddingNew && !!selectedReview}
-        reviewCount={reviews.length}
-      />
     </div>
   );
 };

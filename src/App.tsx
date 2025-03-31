@@ -9,7 +9,7 @@ import { useAuth } from "./context/auth";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
+import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CoffeeDetails from "./pages/CoffeeDetails";
 import Roasters from "./pages/Roasters";
@@ -51,9 +51,10 @@ const App = () => (
           <Route path="/signup" element={<SignUp />} />
           <Route path="/profile" element={
             <ProtectedRoute>
-              <Profile />
+              <ProfilePage />
             </ProtectedRoute>
           } />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/coffee/:id" element={<CoffeeDetails />} />
           <Route path="/roasters" element={<Roasters />} />
           <Route path="/roasters/:id" element={<RoasterDetails />} />

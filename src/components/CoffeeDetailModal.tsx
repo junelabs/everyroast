@@ -170,6 +170,13 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
     );
   };
 
+  const handleViewProfile = () => {
+    if (coffee.poster && coffee.poster.userId) {
+      onClose();
+      navigate(`/profile/${coffee.poster.userId}`);
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -223,6 +230,34 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
               reviewDate={coffee.reviewDate}
             />
           </div>
+          
+          {/* Added poster information with clickable profile */}
+          {coffee.poster && coffee.poster.userId && (
+            <div className="flex items-center mb-6 p-3 bg-gray-50 rounded-md">
+              <div 
+                className="flex items-center cursor-pointer" 
+                onClick={handleViewProfile}
+              >
+                <Avatar className="h-8 w-8 mr-3">
+                  {coffee.poster.avatarUrl ? (
+                    <AvatarImage src={coffee.poster.avatarUrl} alt={coffee.poster.username} />
+                  ) : (
+                    <AvatarFallback>
+                      {coffee.poster.username ? coffee.poster.username[0].toUpperCase() : 'U'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium text-blue-600 hover:underline">
+                    {coffee.poster.username}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Coffee added by
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Action buttons */}
           <ActionButtons
