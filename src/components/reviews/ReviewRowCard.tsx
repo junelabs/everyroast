@@ -1,4 +1,7 @@
 import React, { useState, useCallback } from 'react';
+import { Card } from '@/components/ui/card';
+import { Star } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import CoffeeDetailModal from '@/components/CoffeeDetailModal';
 import ReviewForm from '@/components/reviews/ReviewForm';
 import { useToast } from '@/hooks/use-toast';
