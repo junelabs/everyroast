@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { 
   Dialog,
@@ -53,7 +52,8 @@ const ReviewForm = ({
   const [currentStep, setCurrentStep] = useState(FORM_STEPS.COFFEE_INFO);
   const [selectedCoffeeId, setSelectedCoffeeId] = useState<string | undefined>(coffeeId);
   
-  // Force showSelector to false when in edit mode
+  // If we're in edit mode, always set showSelector to false
+  // Otherwise, use the provided initialShowSelector or calculate based on coffeeId
   const [showSelector, setShowSelector] = useState<boolean>(
     isEdit ? false : (initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit))
   );
@@ -81,14 +81,8 @@ const ReviewForm = ({
         setCurrentStep(FORM_STEPS.COFFEE_INFO);
         setSelectedCoffeeId(coffeeId);
         
-        // Always ensure showSelector is false in edit mode
-        if (isEdit) {
-          setShowSelector(false);
-        } else {
-          setShowSelector(
-            initialShowSelector !== undefined ? initialShowSelector : (!coffeeId && !isEdit)
-          );
-        }
+        // Always set showSelector to false in edit mode
+        setShowSelector(isEdit ? false : initialShowSelector ?? (!coffeeId && !isEdit));
         
         setAttemptedSubmit(false);
         setCoffeeInfoValidation({ attempted: false, isValid: false });
@@ -216,8 +210,14 @@ const ReviewForm = ({
   // For edit mode, we don't need the two-step process - just show the review form
   const showDirectEditForm = isEdit;
 
-  // Add a console log to debug the showSelector state
-  console.log("ReviewForm state:", { isEdit, showSelector, initialShowSelector });
+  // Add console logs to debug the component state
+  console.log("ReviewForm state:", { 
+    isEdit, 
+    showSelector, 
+    initialShowSelector,
+    currentStep,
+    selectedCoffeeId
+  });
 
   if (!user) return null;
 
@@ -234,7 +234,7 @@ const ReviewForm = ({
           </DialogDescription>
         </DialogHeader>
         
-        {showSelector ? (
+        {showSelector && !isEdit ? (
           <RecentCoffeesSelector
             reviewCount={reviewCount}
             onSelectCoffee={handleSelectCoffee}

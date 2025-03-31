@@ -29,7 +29,7 @@ const ReviewFormModal = ({
   isEdit,
   reviewCount 
 }: ReviewFormModalProps) => {
-  // Always set showSelector to false when in edit mode
+  // In edit mode, we always want to show the edit form directly
   return (
     <ReviewForm 
       isOpen={isOpen} 
@@ -39,7 +39,7 @@ const ReviewFormModal = ({
       initialData={initialData}
       isEdit={isEdit}
       reviewCount={reviewCount}
-      showSelector={isEdit ? false : (!isEdit && !coffeeId)} // Force false for edit mode
+      showSelector={false} // Always false to skip selector completely
     />
   );
 };
