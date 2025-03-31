@@ -14,7 +14,7 @@ const ProfilePage = () => {
   const { userId, username } = useParams();
   
   // Determine if we're viewing another user's profile
-  const isViewingOtherProfile = !!(userId || username) && userId !== user?.id;
+  const isViewingOtherProfile = !!(userId || username) && (userId !== user?.id);
   
   useEffect(() => {
     document.title = "Every Roast | Profile";

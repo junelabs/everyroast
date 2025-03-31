@@ -26,6 +26,7 @@ const PublicProfileView = () => {
         
         if (userId) {
           // If we have a userId parameter, fetch by ID
+          console.log("Fetching profile by userId:", userId);
           query = supabase
             .from("profiles")
             .select("*")
@@ -33,6 +34,7 @@ const PublicProfileView = () => {
             .single();
         } else if (username) {
           // If we have a username parameter, fetch by username
+          console.log("Fetching profile by username:", username);
           query = supabase
             .from("profiles")
             .select("*")
@@ -45,17 +47,21 @@ const PublicProfileView = () => {
         const { data, error } = await query;
 
         if (error) {
+          console.error("Supabase query error:", error);
           throw error;
         }
 
         if (data) {
+          console.log("Profile found:", data.username);
           setProfile(data as Profile);
           
           // If we accessed via userId but have a username, redirect to username URL for better SEO
           if (userId && data.username && !username) {
+            console.log("Redirecting to username URL:", data.username);
             navigate(`/${data.username}`, { replace: true });
           }
         } else {
+          console.log("No profile found for", userId || username);
           setError("User profile not found");
           toast({
             title: "Profile not found",
