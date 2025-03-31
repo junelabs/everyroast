@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import Header from "@/components/Header";
 import ProfileContainer from "@/components/profile/ProfileContainer";
@@ -11,8 +11,10 @@ const ProfilePage = () => {
   const { user, isLoading, authInitialized } = useAuth();
   const [redirectToLogin, setRedirectToLogin] = useState(false);
   const navigate = useNavigate();
-  const urlPath = window.location.pathname;
-  const isViewingOtherProfile = urlPath.startsWith('/profile/') && urlPath !== '/profile';
+  const { userId, username } = useParams();
+  
+  // Determine if we're viewing another user's profile
+  const isViewingOtherProfile = !!(userId || username) && userId !== user?.id;
   
   useEffect(() => {
     document.title = "Every Roast | Profile";

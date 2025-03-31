@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/context/auth/types";
@@ -9,25 +9,40 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 
 const PublicProfileView = () => {
-  const { userId } = useParams();
+  const { userId, username } = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!userId) return;
-
       setIsLoading(true);
       setError(null);
 
       try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .single();
+        let query;
+        
+        if (userId) {
+          // If we have a userId parameter, fetch by ID
+          query = supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+        } else if (username) {
+          // If we have a username parameter, fetch by username
+          query = supabase
+            .from("profiles")
+            .select("*")
+            .eq("username", username)
+            .single();
+        } else {
+          throw new Error("No userId or username provided");
+        }
+
+        const { data, error } = await query;
 
         if (error) {
           throw error;
@@ -35,6 +50,11 @@ const PublicProfileView = () => {
 
         if (data) {
           setProfile(data as Profile);
+          
+          // If we accessed via userId but have a username, redirect to username URL for better SEO
+          if (userId && data.username && !username) {
+            navigate(`/${data.username}`, { replace: true });
+          }
         } else {
           setError("User profile not found");
           toast({
@@ -57,7 +77,7 @@ const PublicProfileView = () => {
     };
 
     fetchUserProfile();
-  }, [userId, toast]);
+  }, [userId, username, toast, navigate]);
 
   if (isLoading) {
     return (
@@ -120,7 +140,7 @@ const PublicProfileView = () => {
       </div>
 
       {/* Content Tabs */}
-      <ProfileTabs viewingUserId={userId} />
+      <ProfileTabs viewingUserId={profile.id} />
     </div>
   );
 };

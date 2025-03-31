@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -54,7 +53,10 @@ const App = () => (
               <ProfilePage />
             </ProtectedRoute>
           } />
+          {/* Keep the ID-based route for backward compatibility */}
           <Route path="/profile/:userId" element={<ProfilePage />} />
+          {/* Add new username-based route */}
+          <Route path="/:username" element={<ProfilePage />} />
           <Route path="/coffee/:id" element={<CoffeeDetails />} />
           <Route path="/roasters" element={<Roasters />} />
           <Route path="/roasters/:id" element={<RoasterDetails />} />
