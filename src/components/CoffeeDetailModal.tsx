@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Coffee } from '@/types/coffee';
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog';
@@ -184,18 +183,21 @@ const CoffeeDetailModal: React.FC<CoffeeDetailModalProps> = ({
             )}
             
             <div className="flex-1">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
-                
-                {/* Stars rating display - moved here to be right under the coffee name */}
-                {coffee.rating > 0 && (
-                  <div className="flex items-center">
-                    {renderRating(coffee.rating)}
-                    <span className="ml-2 text-sm text-gray-500">
-                      {coffee.rating.toFixed(1)} / 5
-                    </span>
-                  </div>
-                )}
+              <div className="mb-2">
+                {/* Coffee name and rating side by side */}
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="text-2xl font-bold text-gray-900">{coffee.name}</h2>
+                  
+                  {/* Stars rating display - positioned beside the coffee name */}
+                  {coffee.rating > 0 && (
+                    <div className="flex items-center ml-4">
+                      {renderRating(coffee.rating)}
+                      <span className="ml-2 text-sm text-gray-500">
+                        {coffee.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 
                 <p className="text-roast-500 font-medium">{coffee.roaster}</p>
               </div>

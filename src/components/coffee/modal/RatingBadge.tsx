@@ -6,12 +6,14 @@ interface RatingBadgeProps {
   rating: number;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
 const RatingBadge: React.FC<RatingBadgeProps> = ({ 
   rating, 
   showText = true,
-  size = 'md'
+  size = 'md',
+  className = ''
 }) => {
   // Size mappings for different star sizes
   const sizeMap = {
@@ -22,9 +24,8 @@ const RatingBadge: React.FC<RatingBadgeProps> = ({
   
   const starSize = sizeMap[size];
   
-  // For inline display (not in a badge)
   return (
-    <div className="flex items-center">
+    <div className={`flex items-center ${className}`}>
       {[...Array(5)].map((_, index) => (
         <Star
           key={index}
