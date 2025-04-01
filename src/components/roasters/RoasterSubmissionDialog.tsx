@@ -86,7 +86,7 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         instagramHandle = '@' + instagramHandle;
       }
 
-      // Add submission to database
+      // Add submission to database - IMPORTANT: We're not sending the email field to match the database schema
       const { error } = await supabase.from('roaster_submissions').insert({
         name: data.name,
         city: data.city,
@@ -94,7 +94,7 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         website: data.website || null,
         instagram: instagramHandle || null,
         user_id: user?.id || null, // Make user_id optional
-        email: data.email || null, // Email is now truly optional
+        // Removed email field as it doesn't exist in the database schema
       });
 
       if (error) {
