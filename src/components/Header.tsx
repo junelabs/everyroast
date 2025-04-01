@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { Coffee, Menu, User, X } from "lucide-react";
+import { Menu, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -59,7 +60,11 @@ const Header = () => {
     }`}>
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
-        <Coffee className={`h-8 w-8 ${isHomePage ? 'text-white' : 'text-roast-500'}`} />
+        <img 
+          src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+          alt="Every Roast Logo" 
+          className="h-8 w-8"
+        />
         <span className={`text-xl font-bold ${isHomePage ? 'text-white' : 'text-roast-700'}`}>Every Roast</span>
       </Link>
       

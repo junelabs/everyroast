@@ -1,5 +1,4 @@
 
-import { Coffee } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -10,7 +9,11 @@ const Footer = () => {
           {/* Logo and description */}
           <div className="mb-8 md:mb-0 md:w-1/4">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <Coffee className="h-6 w-6 text-roast-400" />
+              <img 
+                src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+                alt="Every Roast Logo" 
+                className="h-6 w-6 text-roast-400" 
+              />
               <span className="text-xl font-bold text-white">Every Roast</span>
             </Link>
             <p className="text-roast-300 max-w-md">

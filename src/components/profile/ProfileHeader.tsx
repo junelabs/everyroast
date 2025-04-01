@@ -1,4 +1,5 @@
-import { Coffee, Menu, Settings, X } from "lucide-react";
+
+import { Menu, Settings, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth";
@@ -50,7 +51,11 @@ const ProfileHeader = () => {
     <header className="w-full py-4 px-6 md:px-8 flex items-center justify-between bg-white border-b z-50 relative">
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
-        <Coffee className="h-6 w-6 text-roast-500" />
+        <img 
+          src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+          alt="Every Roast Logo" 
+          className="h-6 w-6"
+        />
         <span className="text-xl font-bold text-roast-700">EveryRoast</span>
       </Link>
       
