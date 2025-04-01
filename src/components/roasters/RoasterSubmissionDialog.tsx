@@ -27,14 +27,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-// Form validation schema - email is now optional for everyone
+// Form validation schema - email is truly optional
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Roaster name must be at least 2 characters' }),
   city: z.string().min(2, { message: 'City is required' }),
   state: z.string().min(2, { message: 'State or Country is required' }),
   website: z.string().optional(),
   instagram: z.string().optional(),
-  email: z.string().email({ message: 'Please provide a valid email' }).optional(),
+  email: z.union([
+    z.string().email({ message: 'Please provide a valid email' }).optional(),
+    z.literal('')
+  ]).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -91,7 +94,7 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         website: data.website || null,
         instagram: instagramHandle || null,
         user_id: user?.id || null, // Make user_id optional
-        email: data.email || null, // Email is now optional for everyone
+        email: data.email || null, // Email is now truly optional
       });
 
       if (error) {
