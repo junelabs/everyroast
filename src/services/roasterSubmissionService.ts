@@ -35,6 +35,7 @@ export const createRoasterSubmission = async (
   submission: Omit<RoasterSubmission, 'id' | 'created_at' | 'status'>
 ): Promise<RoasterSubmission | null> => {
   try {
+    console.log("Creating submission with data:", submission);
     const { data, error } = await supabase
       .from('roaster_submissions')
       .insert(submission)

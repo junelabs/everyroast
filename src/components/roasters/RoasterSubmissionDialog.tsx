@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/context/auth';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { createRoasterSubmission } from '@/services/roasterSubmissionService';
 
 import {
   Dialog,
@@ -86,20 +86,19 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         instagramHandle = '@' + instagramHandle;
       }
 
-      // Add submission to database - IMPORTANT: We're not sending the email field to match the database schema
-      const { error } = await supabase.from('roaster_submissions').insert({
+      // Use the service function to submit the roaster
+      const result = await createRoasterSubmission({
         name: data.name,
         city: data.city,
         state: data.state,
         website: data.website || null,
         instagram: instagramHandle || null,
-        user_id: user?.id || null, // Make user_id optional
-        // Removed email field as it doesn't exist in the database schema
+        user_id: user?.id || null,
+        // Note: email field is not included as it doesn't exist in the database schema
       });
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+      if (!result) {
+        throw new Error('Failed to submit roaster');
       }
 
       // Invalidate queries to refresh roaster data
