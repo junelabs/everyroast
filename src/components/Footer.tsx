@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -10,10 +9,9 @@ const Footer = () => {
           <div className="mb-8 md:mb-0 md:w-1/4">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img 
-                src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+                src="/lovable-uploads/60970d5c-de35-46cf-89ab-8366cb65e3a9.png" 
                 alt="Every Roast Logo" 
                 className="h-6 w-6"
-                style={{ filter: 'brightness(0) invert(1)' }}
               />
               <span className="text-xl font-bold text-white">Every Roast</span>
             </Link>

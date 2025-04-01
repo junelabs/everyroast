@@ -52,6 +52,11 @@ const Header = () => {
     }
   };
 
+  // Select the appropriate logo based on context
+  const logoSrc = isHomePage 
+    ? "/lovable-uploads/60970d5c-de35-46cf-89ab-8366cb65e3a9.png"  // White logo for home page
+    : "/lovable-uploads/d283c8ca-e1df-4542-bc67-360d48da5afc.png";  // Black logo for other pages
+
   return (
     <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 ${
       isHomePage 
@@ -61,10 +66,9 @@ const Header = () => {
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
         <img 
-          src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+          src={logoSrc}
           alt="Every Roast Logo" 
           className="h-8 w-8"
-          style={{ filter: isHomePage ? 'brightness(0) invert(1)' : 'none' }}
         />
         <span className={`text-xl font-bold ${isHomePage ? 'text-white' : 'text-roast-700'}`}>Every Roast</span>
       </Link>

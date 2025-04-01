@@ -52,7 +52,7 @@ const ProfileHeader = () => {
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
         <img 
-          src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
+          src="/lovable-uploads/d283c8ca-e1df-4542-bc67-360d48da5afc.png" 
           alt="Every Roast Logo" 
           className="h-6 w-6"
         />
