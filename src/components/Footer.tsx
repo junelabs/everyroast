@@ -12,7 +12,8 @@ const Footer = () => {
               <img 
                 src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
                 alt="Every Roast Logo" 
-                className="h-6 w-6 text-roast-400" 
+                className="h-6 w-6"
+                style={{ filter: 'brightness(0) invert(1)' }}
               />
               <span className="text-xl font-bold text-white">Every Roast</span>
             </Link>

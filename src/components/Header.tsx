@@ -64,6 +64,7 @@ const Header = () => {
           src="/lovable-uploads/d573f47e-8f51-4b9e-b754-6f106a486de5.png" 
           alt="Every Roast Logo" 
           className="h-8 w-8"
+          style={{ filter: isHomePage ? 'brightness(0) invert(1)' : 'none' }}
         />
         <span className={`text-xl font-bold ${isHomePage ? 'text-white' : 'text-roast-700'}`}>Every Roast</span>
       </Link>
