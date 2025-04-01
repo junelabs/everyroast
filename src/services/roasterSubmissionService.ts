@@ -38,7 +38,8 @@ export const createRoasterSubmission = async (
   try {
     console.log("Creating submission with data:", submission);
     
-    // Prepare submission data
+    // Prepare submission data without explicitly setting user_id to null
+    // This is important for anonymous submissions with RLS
     const submissionData = {
       name: submission.name,
       city: submission.city,
