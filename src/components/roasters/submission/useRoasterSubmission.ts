@@ -53,28 +53,42 @@ export const useRoasterSubmission = (isOpen: boolean, onOpenChange: (open: boole
         website: data.website || null,
         instagram: instagramHandle || null,
         email: data.email || null,
-        user_id: user?.id || null,
       };
 
-      // Use the service function to submit the roaster
-      const result = await createRoasterSubmission(submissionData);
-
-      if (!result) {
-        throw new Error('Failed to submit roaster');
+      // Only add user_id if user is logged in
+      if (user) {
+        submissionData.user_id = user.id;
       }
 
-      // Invalidate queries to refresh roaster data
-      queryClient.invalidateQueries({ queryKey: ['roasters'] });
+      console.log("Submitting data to service:", submissionData);
       
-      // Show thank you message
-      setShowThankYou(true);
-      form.reset();
-      
-      // Show a toast notification
-      toast.success("Thank you for submitting a roaster!");
+      try {
+        // Use the service function to submit the roaster
+        const result = await createRoasterSubmission(submissionData);
+        
+        if (!result) {
+          throw new Error('No result returned from submission');
+        }
+
+        // Success! Show thank you message and reset form
+        console.log("Submission successful:", result);
+        queryClient.invalidateQueries({ queryKey: ['roasters'] });
+        setShowThankYou(true);
+        form.reset();
+        toast.success("Thank you for submitting a roaster!");
+      } catch (submissionError: any) {
+        console.error('Submission error:', submissionError);
+        let errorMessage = 'Failed to submit roaster. Please try again.';
+        
+        if (submissionError.message) {
+          errorMessage += ` (${submissionError.message})`;
+        }
+        
+        toast.error(errorMessage);
+      }
     } catch (error) {
-      console.error('Error submitting roaster:', error);
-      toast.error('Failed to submit roaster. Please try again.');
+      console.error('Error in form handling:', error);
+      toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

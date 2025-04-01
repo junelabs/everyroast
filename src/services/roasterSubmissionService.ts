@@ -37,17 +37,39 @@ export const createRoasterSubmission = async (
 ): Promise<RoasterSubmission | null> => {
   try {
     console.log("Creating submission with data:", submission);
+    
+    // Prepare submission data
+    const submissionData = {
+      name: submission.name,
+      city: submission.city,
+      state: submission.state,
+      website: submission.website || null,
+      instagram: submission.instagram || null,
+      email: submission.email || null,
+    };
+    
+    // Only add user_id if it exists and is not null
+    if (submission.user_id) {
+      Object.assign(submissionData, { user_id: submission.user_id });
+    }
+
+    console.log("Final submission data being sent to Supabase:", submissionData);
+    
     const { data, error } = await supabase
       .from('roaster_submissions')
-      .insert(submission)
+      .insert(submissionData)
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error during submission:', error);
+      throw error;
+    }
     
+    console.log("Submission successful, returned data:", data);
     return data as RoasterSubmission;
   } catch (error) {
     console.error('Error creating roaster submission:', error);
-    return null;
+    throw error; // Re-throw the error to handle it in the component
   }
 };
