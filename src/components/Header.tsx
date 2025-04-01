@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Menu, User, X } from "lucide-react";
+import { Coffee, Menu, User, X } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/components/ui/use-toast";
@@ -52,11 +51,6 @@ const Header = () => {
     }
   };
 
-  // Select the appropriate logo based on context
-  const logoSrc = isHomePage 
-    ? "/lovable-uploads/60970d5c-de35-46cf-89ab-8366cb65e3a9.png"  // White logo for home page
-    : "/lovable-uploads/d283c8ca-e1df-4542-bc67-360d48da5afc.png";  // Black logo for other pages
-
   return (
     <header className={`w-full py-4 px-6 md:px-8 flex items-center justify-between z-50 ${
       isHomePage 
@@ -65,11 +59,7 @@ const Header = () => {
     }`}>
       {/* Logo - always visible */}
       <Link to="/" className="flex items-center gap-2">
-        <img 
-          src={logoSrc}
-          alt="Every Roast Logo" 
-          className="h-8 w-8"
-        />
+        <Coffee className={`h-8 w-8 ${isHomePage ? 'text-white' : 'text-roast-500'}`} />
         <span className={`text-xl font-bold ${isHomePage ? 'text-white' : 'text-roast-700'}`}>Every Roast</span>
       </Link>
       
