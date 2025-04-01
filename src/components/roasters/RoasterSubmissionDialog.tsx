@@ -93,8 +93,8 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         state: data.state,
         website: data.website || null,
         instagram: instagramHandle || null,
+        email: data.email || null, // Include email in submission
         user_id: user?.id || null,
-        // Note: email field is not included as it doesn't exist in the database schema
       });
 
       if (!result) {
