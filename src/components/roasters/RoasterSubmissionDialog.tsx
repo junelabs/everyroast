@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 import {
   Dialog,
@@ -26,14 +27,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-// Form validation schema
+// Form validation schema - email is now optional for everyone
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Roaster name must be at least 2 characters' }),
   city: z.string().min(2, { message: 'City is required' }),
   state: z.string().min(2, { message: 'State or Country is required' }),
   website: z.string().optional(),
   instagram: z.string().optional(),
-  email: z.string().email({ message: 'Please provide a valid email for confirmation' }).optional(),
+  email: z.string().email({ message: 'Please provide a valid email' }).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -50,6 +51,7 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -72,6 +74,7 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
   }, [isOpen, form]);
 
   const onSubmit = async (data: FormValues) => {
+    console.log("Submitting roaster data:", data);
     setIsSubmitting(true);
     try {
       // Format Instagram handle if provided
@@ -88,11 +91,17 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
         website: data.website || null,
         instagram: instagramHandle || null,
         user_id: user?.id || null, // Make user_id optional
-        email: data.email || null, // Store email for non-authenticated users
+        email: data.email || null, // Email is now optional for everyone
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
+      // Invalidate queries to refresh roaster data
+      queryClient.invalidateQueries({ queryKey: ['roasters'] });
+      
       // Show thank you message
       setShowThankYou(true);
       form.reset();
@@ -199,25 +208,24 @@ const RoasterSubmissionDialog: React.FC<RoasterSubmissionDialogProps> = ({
                   )}
                 />
 
-                {!user && (
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="your@email.com" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+                {/* Email field is now completely optional */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email (optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email" 
+                          placeholder="your@email.com (optional)" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <DialogFooter className="pt-4">
                   <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>

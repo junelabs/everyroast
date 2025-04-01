@@ -8,7 +8,8 @@ export interface RoasterSubmission {
   state: string;
   website?: string | null;
   instagram?: string | null;
-  user_id: string;
+  user_id?: string | null;
+  email?: string | null;
   created_at: string;
   status: 'pending' | 'approved' | 'rejected';
 }
