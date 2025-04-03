@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +14,8 @@ import {
   Instagram, 
   ArrowLeft, 
   Coffee as CoffeeIcon,
-  BookOpen
+  BookOpen,
+  PlusCircle
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -24,8 +26,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from '@/context/auth';
 import { Card } from '@/components/ui/card';
 import { Coffee } from '@/types/coffee';
+import { useToast } from '@/components/ui/use-toast';
 
 const getLogoUrl = (roaster) => {
   if (roaster.logo_url) return roaster.logo_url;
@@ -43,6 +47,8 @@ const RoasterDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState("coffees");
   const [visibleCoffees, setVisibleCoffees] = useState(6);
+  const { user } = useAuth();
+  const { toast } = useToast();
   
   const { data: roaster, isLoading: isRoasterLoading, error: roasterError } = useQuery({
     queryKey: ['roaster', id],
@@ -73,6 +79,24 @@ const RoasterDetails = () => {
 
   const handleLoadMore = () => {
     setVisibleCoffees(prev => prev + 6);
+  };
+
+  const handleAddCoffee = () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "You need to log in to add coffees to this roaster.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // This is where you would navigate to a form or open a modal for adding a coffee
+    toast({
+      title: "Coming Soon",
+      description: "The functionality to add coffees will be available soon.",
+      variant: "default"
+    });
   };
 
   if (isRoasterLoading) {
@@ -241,6 +265,17 @@ const RoasterDetails = () => {
           </TabsList>
           
           <TabsContent value="coffees" className="space-y-8">
+            {/* Admin/Owner controls for adding coffees */}
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleAddCoffee} 
+                className="bg-roast-500 hover:bg-roast-600 text-white"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Add Coffee
+              </Button>
+            </div>
+            
             <CoffeeGrid 
               coffees={enrichedCoffees} 
               isLoading={isCoffeesLoading} 
@@ -262,8 +297,17 @@ const RoasterDetails = () => {
                 </div>
                 <h3 className="text-xl font-medium mb-2">No Coffees Found</h3>
                 <p className="text-gray-600 mb-6">
-                  There are currently no coffees from this roaster in our database.
+                  There are currently no official coffees from this roaster in our database.
                 </p>
+                {user && (
+                  <Button 
+                    onClick={handleAddCoffee}
+                    className="bg-roast-500 hover:bg-roast-600 text-white"
+                  >
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add First Coffee
+                  </Button>
+                )}
               </div>
             )}
           </TabsContent>

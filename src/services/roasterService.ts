@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
@@ -94,10 +95,10 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
   }
 };
 
-// New function to fetch coffees for a specific roaster
+// Updated function to fetch coffees for a specific roaster - now filtered for official entries
 export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> => {
   try {
-    console.log(`Fetching coffees for roaster ID: ${roasterId}`);
+    console.log(`Fetching official coffees for roaster ID: ${roasterId}`);
     
     const { data, error } = await supabase
       .from('coffees')
@@ -110,11 +111,11 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
         process_method,
         flavor_notes,
         type,
-        image_url,
-        reviews (rating)
+        image_url
       `)
       .eq('roaster_id', roasterId)
       .is('deleted_at', null)
+      .is('created_by', null) // Only fetch official coffees, not user-submitted
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -122,27 +123,23 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
       throw error;
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} coffees for roaster`);
+    console.log(`Successfully fetched ${data?.length || 0} official coffees for roaster`);
     
     // Transform the data to match the Coffee interface
     const coffees: Coffee[] = (data || []).map(coffee => {
-      const reviews = coffee.reviews || [];
-      const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
-      const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-      
       return {
         id: coffee.id,
         name: coffee.name,
         roaster: "", // Will be filled in by the component
         origin: coffee.origin || 'Unknown',
         image: coffee.image_url || null,
-        rating: parseFloat(averageRating.toFixed(1)),
+        rating: 0, // No ratings for official coffees
         price: coffee.price || 0,
         roastLevel: coffee.roast_level || 'Medium',
         processMethod: coffee.process_method || 'Washed',
         flavor: coffee.flavor_notes || 'No flavor notes provided',
         type: coffee.type || 'Single Origin',
-        reviewCount: reviews.length
+        reviewCount: 0 // No reviews for official coffees
       };
     });
     
@@ -150,5 +147,46 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
   } catch (error) {
     console.error('Error in fetchRoasterCoffees:', error);
     return [];
+  }
+};
+
+// New function to create a coffee for a roaster (admin or roaster use)
+export const createCoffeeForRoaster = async (
+  roasterId: string, 
+  coffeeData: Omit<Coffee, 'id' | 'roaster' | 'rating' | 'reviewCount'>
+): Promise<{ success: boolean; coffeeId?: string; error?: string }> => {
+  try {
+    const { data: user } = await supabase.auth.getUser();
+    
+    if (!user.user) {
+      return { success: false, error: 'You must be logged in to add a coffee' };
+    }
+    
+    const { data, error } = await supabase
+      .from('coffees')
+      .insert({
+        roaster_id: roasterId,
+        name: coffeeData.name,
+        origin: coffeeData.origin,
+        price: coffeeData.price,
+        roast_level: coffeeData.roastLevel,
+        process_method: coffeeData.processMethod,
+        flavor_notes: coffeeData.flavor,
+        type: coffeeData.type,
+        image_url: coffeeData.image,
+        created_by: user.user.id
+      })
+      .select('id')
+      .single();
+    
+    if (error) {
+      console.error('Error creating coffee:', error);
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true, coffeeId: data.id };
+  } catch (error) {
+    console.error('Error in createCoffeeForRoaster:', error);
+    return { success: false, error: 'Failed to create coffee' };
   }
 };
