@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -197,15 +196,9 @@ const RoasterDetails = () => {
                   </div>
                 </div>
                 
-                <div className="bg-roast-50 text-roast-700 px-3 py-1.5 rounded-md text-sm font-medium flex items-center mt-6 w-fit">
-                  <CoffeeIcon className="h-4 w-4 mr-2 text-roast-500" />
-                  <span className="text-roast-900 font-bold mr-1">{roaster.coffeeCount || 0}</span> 
-                  {(roaster.coffeeCount === 1) ? 'coffee' : 'coffees'} in the database
-                </div>
-                
-                {/* Add About section here */}
+                {/* About section with no grey background */}
                 {roaster.description && (
-                  <div className="mt-6 bg-gray-50 p-4 rounded-md">
+                  <div className="mt-6">
                     <h2 className="text-lg font-semibold text-gray-800 mb-2">About {roaster.name}</h2>
                     <p className="text-gray-600 whitespace-pre-line">{roaster.description}</p>
                   </div>
@@ -219,7 +212,7 @@ const RoasterDetails = () => {
           <TabsList className="grid w-full grid-cols-2 max-w-md mb-6">
             <TabsTrigger value="coffees" className="flex items-center gap-1.5">
               <CoffeeIcon className="h-4 w-4" />
-              Coffees ({roaster.coffeeCount || 0})
+              Coffees
             </TabsTrigger>
             <TabsTrigger value="brew-guides" className="flex items-center gap-1.5">
               <BookOpen className="h-4 w-4" />
