@@ -1,7 +1,7 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
+import { Coffee } from "@/types/coffee";
 
 // Generate a random coffee count between 5 and 20
 const generateCoffeeCount = () => Math.floor(Math.random() * 16) + 5; // Random number between 5 and 20
@@ -91,5 +91,64 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
     // Fall back to mock data if there's an error
     const roaster = roasterData.find(r => r.id === id);
     return roaster ? { ...roaster, coffeeCount: generateCoffeeCount() } : null; // Update with new coffee count
+  }
+};
+
+// New function to fetch coffees for a specific roaster
+export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> => {
+  try {
+    console.log(`Fetching coffees for roaster ID: ${roasterId}`);
+    
+    const { data, error } = await supabase
+      .from('coffees')
+      .select(`
+        id,
+        name,
+        origin,
+        price,
+        roast_level,
+        process_method,
+        flavor_notes,
+        type,
+        image_url,
+        reviews (rating)
+      `)
+      .eq('roaster_id', roasterId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching coffees by roaster ID:', error);
+      throw error;
+    }
+    
+    console.log(`Successfully fetched ${data?.length || 0} coffees for roaster`);
+    
+    // Transform the data to match the Coffee interface
+    const coffees: Coffee[] = (data || []).map(coffee => {
+      const reviews = coffee.reviews || [];
+      const totalRating = reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
+      const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+      
+      return {
+        id: coffee.id,
+        name: coffee.name,
+        roaster: "", // Will be filled in by the component
+        origin: coffee.origin || 'Unknown',
+        image: coffee.image_url || null,
+        rating: parseFloat(averageRating.toFixed(1)),
+        price: coffee.price || 0,
+        roastLevel: coffee.roast_level || 'Medium',
+        processMethod: coffee.process_method || 'Washed',
+        flavor: coffee.flavor_notes || 'No flavor notes provided',
+        type: coffee.type || 'Single Origin',
+        reviewCount: reviews.length
+      };
+    });
+    
+    return coffees;
+  } catch (error) {
+    console.error('Error in fetchRoasterCoffees:', error);
+    return [];
   }
 };

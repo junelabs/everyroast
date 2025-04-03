@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { fetchRoasterById } from '@/services/roasterService';
+import CoffeeGrid from '@/components/coffee/CoffeeGrid';
+import { fetchRoasterById, fetchRoasterCoffees } from '@/services/roasterService';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { 
@@ -12,7 +13,6 @@ import {
   Instagram, 
   ArrowLeft, 
   Coffee as CoffeeIcon,
-  Info,
   BookOpen
 } from 'lucide-react';
 import {
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from '@/components/ui/card';
+import { Coffee } from '@/types/coffee';
 
 const getLogoUrl = (roaster) => {
   if (roaster.logo_url) return roaster.logo_url;
@@ -41,12 +42,28 @@ const getLogoUrl = (roaster) => {
 const RoasterDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState("coffees");
+  const [visibleCoffees, setVisibleCoffees] = useState(6);
   
-  const { data: roaster, isLoading, error } = useQuery({
+  const { data: roaster, isLoading: isRoasterLoading, error: roasterError } = useQuery({
     queryKey: ['roaster', id],
     queryFn: () => id ? fetchRoasterById(id) : Promise.resolve(null),
     enabled: !!id,
   });
+
+  const { data: coffees = [], isLoading: isCoffeesLoading } = useQuery({
+    queryKey: ['roasterCoffees', id],
+    queryFn: () => id ? fetchRoasterCoffees(id) : Promise.resolve([]),
+    enabled: !!id,
+  });
+
+  // Add roaster name to coffee objects
+  const enrichedCoffees = React.useMemo(() => {
+    if (!roaster) return [];
+    return coffees.map(coffee => ({
+      ...coffee,
+      roaster: roaster.name
+    }));
+  }, [coffees, roaster]);
 
   useEffect(() => {
     document.title = roaster 
@@ -54,7 +71,11 @@ const RoasterDetails = () => {
       : "Every Roast | Roaster Details";
   }, [roaster]);
 
-  if (isLoading) {
+  const handleLoadMore = () => {
+    setVisibleCoffees(prev => prev + 6);
+  };
+
+  if (isRoasterLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -84,7 +105,7 @@ const RoasterDetails = () => {
     );
   }
 
-  if (error || !roaster) {
+  if (roasterError || !roaster) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -155,7 +176,6 @@ const RoasterDetails = () => {
                 ) : (
                   <CoffeeIcon className="h-20 w-20 text-roast-400" />
                 )}
-
               </div>
               
               <div className="flex-1">
@@ -221,26 +241,21 @@ const RoasterDetails = () => {
           </TabsList>
           
           <TabsContent value="coffees" className="space-y-8">
-            {roaster.coffeeCount && roaster.coffeeCount > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Will be populated with real coffee data in a future PR */}
-                {Array.from({ length: Math.min(roaster.coffeeCount, 6) }).map((_, index) => (
-                  <Card key={index} className="p-4">
-                    <div className="flex gap-3">
-                      <div className="h-16 w-16 bg-roast-100 rounded-md flex items-center justify-center">
-                        <CoffeeIcon className="h-8 w-8 text-roast-500" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Coffee #{index + 1}</h3>
-                        <p className="text-sm text-gray-500">
-                          Example coffee from {roaster.name}
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+            <CoffeeGrid 
+              coffees={enrichedCoffees} 
+              isLoading={isCoffeesLoading} 
+              visibleCount={visibleCoffees} 
+            />
+            
+            {!isCoffeesLoading && enrichedCoffees.length > visibleCoffees && (
+              <div className="flex justify-center mt-8">
+                <Button onClick={handleLoadMore} variant="outline" className="w-full max-w-md">
+                  Load More Coffees
+                </Button>
               </div>
-            ) : (
+            )}
+            
+            {!isCoffeesLoading && enrichedCoffees.length === 0 && (
               <div className="bg-white rounded-lg shadow-sm p-8 text-center">
                 <div className="bg-gray-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
                   <CoffeeIcon className="h-8 w-8 text-gray-400" />
