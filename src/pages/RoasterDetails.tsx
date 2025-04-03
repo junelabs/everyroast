@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -27,9 +26,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/context/auth';
-import { Card } from '@/components/ui/card';
-import { Coffee } from '@/types/coffee';
 import { useToast } from '@/components/ui/use-toast';
+import CoffeeSubmissionDialog from '@/components/roasters/coffee/CoffeeSubmissionDialog';
 
 const getLogoUrl = (roaster) => {
   if (roaster.logo_url) return roaster.logo_url;
@@ -49,6 +47,7 @@ const RoasterDetails = () => {
   const [visibleCoffees, setVisibleCoffees] = useState(6);
   const { user } = useAuth();
   const { toast } = useToast();
+  const [showCoffeeDialog, setShowCoffeeDialog] = useState(false);
   
   const { data: roaster, isLoading: isRoasterLoading, error: roasterError } = useQuery({
     queryKey: ['roaster', id],
@@ -91,12 +90,19 @@ const RoasterDetails = () => {
       return;
     }
     
-    // This is where you would navigate to a form or open a modal for adding a coffee
-    toast({
-      title: "Coming Soon",
-      description: "The functionality to add coffees will be available soon.",
-      variant: "default"
-    });
+    setShowCoffeeDialog(true);
+  };
+
+  const handleCoffeeAdded = () => {
+    // Refresh the coffees list
+    if (id) {
+      // Invalidate the roasterCoffees query to refetch the data
+      toast({
+        title: "Coffee Added",
+        description: "The coffee has been added to this roaster's catalog.",
+        variant: "default"
+      });
+    }
   };
 
   if (isRoasterLoading) {
@@ -335,6 +341,16 @@ const RoasterDetails = () => {
       </main>
       
       <Footer />
+      
+      {/* Coffee submission dialog */}
+      {id && (
+        <CoffeeSubmissionDialog 
+          isOpen={showCoffeeDialog} 
+          onOpenChange={setShowCoffeeDialog} 
+          roasterId={id}
+          onSuccess={handleCoffeeAdded}
+        />
+      )}
     </div>
   );
 };

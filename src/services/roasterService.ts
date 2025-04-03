@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
@@ -150,7 +149,7 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
   }
 };
 
-// New function to create a coffee for a roaster (admin or roaster use)
+// Updated function to create an official coffee for a roaster (admin use)
 export const createCoffeeForRoaster = async (
   roasterId: string, 
   coffeeData: Omit<Coffee, 'id' | 'roaster' | 'rating' | 'reviewCount'>
@@ -162,6 +161,8 @@ export const createCoffeeForRoaster = async (
       return { success: false, error: 'You must be logged in to add a coffee' };
     }
     
+    // For now, we'll set created_by to null to indicate this is an official coffee
+    // In a production app, you might want to check if the user has admin rights
     const { data, error } = await supabase
       .from('coffees')
       .insert({
@@ -174,7 +175,7 @@ export const createCoffeeForRoaster = async (
         flavor_notes: coffeeData.flavor,
         type: coffeeData.type,
         image_url: coffeeData.image,
-        created_by: user.user.id
+        created_by: null  // Set to null to mark as an official coffee
       })
       .select('id')
       .single();
