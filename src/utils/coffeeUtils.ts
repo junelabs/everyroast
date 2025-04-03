@@ -1,6 +1,5 @@
 
 import { CoffeeOrigin, ProcessMethod, RoastLevel } from "@/types/coffee";
-import { LucideIcon } from "lucide-react";
 
 // These functions return icon names from lucide-react that match the data
 export const getRoastLevelIcon = (level: RoastLevel): string => {

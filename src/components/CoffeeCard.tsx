@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Heart, MessageSquare, ChevronUp } from 'lucide-react';
 import { Coffee } from '@/types/coffee';
-import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
+import { Card, CardContent } from '@/components/ui/card';
 import CoffeeDetailModal from './CoffeeDetailModal';
 import ReviewForm from './reviews/ReviewForm';
 import { Button } from '@/components/ui/button';
@@ -45,58 +45,50 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
 
   return (
     <>
-      <div 
+      <Card 
         onClick={() => setIsModalOpen(true)}
-        className="relative overflow-hidden rounded-xl shadow-md group transition-all hover:shadow-xl block aspect-square bg-white cursor-pointer"
+        className="h-full overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       >
-        <div className="w-full h-full relative">
-          <img 
-            src={coffee.image} 
-            alt={coffee.name} 
-            className="w-full h-full object-cover"
-          />
+        <div className="relative aspect-square">
+          {coffee.image ? (
+            <img 
+              src={coffee.image} 
+              alt={coffee.name} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-roast-100 to-roast-200 flex items-center justify-center">
+              <div className="text-4xl text-roast-500">☕</div>
+            </div>
+          )}
+        </div>
+        
+        <CardContent className="p-4">
+          <h3 className="font-bold text-lg mb-1 line-clamp-1">{coffee.name}</h3>
           
-          {/* Consistent overlay over the whole card */}
-          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
+          <div className="flex justify-between mb-2 text-sm text-gray-600">
+            <span>{coffee.roaster}</span>
+            <span>{coffee.origin}</span>
+          </div>
           
-          {/* Bottom info */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
-            <div className="flex justify-between mb-2">
-              <div>
-                <h3 className="text-2xl font-bold">{coffee.name}</h3>
-              </div>
+          <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 border-t pt-2">
+            <div className="flex flex-col">
+              <span className="text-gray-600 font-medium">Roast</span>
+              <span>{coffee.roastLevel}</span>
             </div>
             
-            <div className="flex justify-between mb-2">
-              <div className="flex items-center text-gray-100">
-                <span className="mr-1">☕️</span>
-                <span>{coffee.roaster}</span>
-              </div>
-              <div className="flex items-center text-gray-200">
-                <span className="mr-1">📍</span>
-                <span>{coffee.origin}</span>
-              </div>
+            <div className="flex flex-col">
+              <span className="text-gray-600 font-medium">Process</span>
+              <span>{coffee.processMethod}</span>
             </div>
             
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
-              <div className="flex items-center">
-                <span className="text-lg mr-1">{getRoastLevelEmoji(coffee.roastLevel)}</span>
-                <div className="text-sm">{coffee.roastLevel}</div>
-              </div>
-              
-              <div className="flex items-center">
-                <span className="text-lg mr-1">{getProcessMethodEmoji(coffee.processMethod)}</span>
-                <div className="text-sm">{coffee.processMethod}</div>
-              </div>
-              
-              <div className="flex items-center justify-end">
-                <span className="text-lg mr-1">💰</span>
-                <div className="text-sm">${coffee.price.toFixed(2)}</div>
-              </div>
+            <div className="flex flex-col items-end">
+              <span className="text-gray-600 font-medium">Price</span>
+              <span>${coffee.price.toFixed(2)}</span>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <CoffeeDetailModal 
         coffee={coffee} 
