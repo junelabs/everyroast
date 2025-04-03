@@ -191,3 +191,45 @@ export const createCoffeeForRoaster = async (
     return { success: false, error: 'Failed to create coffee' };
   }
 };
+
+// New function to bulk add multiple coffees to a roaster
+export const bulkAddCoffeesToRoaster = async (
+  roasterId: string,
+  coffeesList: Array<Omit<Coffee, 'id' | 'roaster' | 'rating' | 'reviewCount'>>
+): Promise<{ 
+  success: boolean; 
+  count?: number; 
+  error?: string;
+  failedCoffees?: string[];
+}> => {
+  try {
+    const { data: user } = await supabase.auth.getUser();
+    
+    if (!user.user) {
+      return { success: false, error: 'You must be logged in to add coffees' };
+    }
+    
+    const results = await Promise.all(
+      coffeesList.map(async (coffee) => {
+        const result = await createCoffeeForRoaster(roasterId, coffee);
+        return {
+          name: coffee.name,
+          success: result.success,
+          error: result.error
+        };
+      })
+    );
+    
+    const successCount = results.filter(r => r.success).length;
+    const failedCoffees = results.filter(r => !r.success).map(r => `${r.name}: ${r.error}`);
+    
+    return { 
+      success: successCount > 0, 
+      count: successCount,
+      failedCoffees: failedCoffees.length > 0 ? failedCoffees : undefined
+    };
+  } catch (error) {
+    console.error('Error in bulkAddCoffeesToRoaster:', error);
+    return { success: false, error: 'Failed to add coffees' };
+  }
+};
