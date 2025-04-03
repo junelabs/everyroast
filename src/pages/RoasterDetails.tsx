@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +13,8 @@ import {
   Instagram, 
   ArrowLeft, 
   Coffee as CoffeeIcon,
-  Info 
+  Info,
+  BookOpen
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -39,7 +41,7 @@ const getLogoUrl = (roaster) => {
 
 const RoasterDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState("about");
+  const [activeTab, setActiveTab] = useState("coffees");
   
   const { data: roaster, isLoading, error } = useQuery({
     queryKey: ['roaster', id],
@@ -200,38 +202,30 @@ const RoasterDetails = () => {
                   <span className="text-roast-900 font-bold mr-1">{roaster.coffeeCount || 0}</span> 
                   {(roaster.coffeeCount === 1) ? 'coffee' : 'coffees'} in the database
                 </div>
+                
+                {/* Add About section here */}
+                {roaster.description && (
+                  <div className="mt-6 bg-gray-50 p-4 rounded-md">
+                    <h2 className="text-lg font-semibold text-gray-800 mb-2">About {roaster.name}</h2>
+                    <p className="text-gray-600 whitespace-pre-line">{roaster.description}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
         
-        <Tabs defaultValue="about" className="w-full" onValueChange={setActiveTab}>
+        <Tabs defaultValue="coffees" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 max-w-md mb-6">
-            <TabsTrigger value="about" className="flex items-center gap-1.5">
-              <Info className="h-4 w-4" />
-              About
-            </TabsTrigger>
             <TabsTrigger value="coffees" className="flex items-center gap-1.5">
               <CoffeeIcon className="h-4 w-4" />
               Coffees ({roaster.coffeeCount || 0})
             </TabsTrigger>
+            <TabsTrigger value="brew-guides" className="flex items-center gap-1.5">
+              <BookOpen className="h-4 w-4" />
+              Brew Guides
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="about" className="space-y-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">About {roaster.name}</h2>
-              {roaster.description ? (
-                <p className="text-gray-600 whitespace-pre-line">{roaster.description}</p>
-              ) : (
-                <div className="bg-gray-50 p-6 rounded-lg text-center">
-                  <Info className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500">
-                    No description available for this roaster.
-                  </p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
           
           <TabsContent value="coffees" className="space-y-8">
             {roaster.coffeeCount && roaster.coffeeCount > 0 ? (
@@ -264,6 +258,18 @@ const RoasterDetails = () => {
                 </p>
               </div>
             )}
+          </TabsContent>
+          
+          <TabsContent value="brew-guides" className="space-y-8">
+            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+              <div className="bg-gray-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-medium mb-2">Brew Guides Coming Soon</h3>
+              <p className="text-gray-600 mb-6">
+                Brewing guides for this roaster will be available soon.
+              </p>
+            </div>
           </TabsContent>
         </Tabs>
         
