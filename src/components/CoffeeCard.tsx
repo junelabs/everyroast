@@ -49,21 +49,17 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
         onClick={() => setIsModalOpen(true)}
         className="h-full overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       >
-        <div className="relative aspect-[4/3]">
-          {coffee.image ? (
+        {coffee.image && (
+          <div className="relative aspect-[4/3]">
             <img 
               src={coffee.image} 
               alt={coffee.name} 
               className="w-full h-full object-cover"
             />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-roast-100 to-roast-200 flex items-center justify-center">
-              <div className="text-roast-500">No image</div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
         
-        <CardContent className="p-3">
+        <CardContent className={`p-3 ${!coffee.image ? 'pt-3' : ''}`}>
           <h3 className="font-bold text-base mb-1 line-clamp-1">{coffee.name}</h3>
           
           <div className="flex justify-between text-xs text-gray-600 mb-1.5">

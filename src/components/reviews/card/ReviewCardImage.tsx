@@ -26,7 +26,55 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
   
   // Don't render anything if no valid image
   if (!hasValidImage()) {
-    return null;
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+        <div className="text-center">
+          <h3 className="text-xl font-bold truncate">{review.coffees?.name || ""}</h3>
+          
+          {review.rating && (
+            <div className="flex justify-center mt-2 mb-3">
+              {renderRating(review.rating)}
+            </div>
+          )}
+          
+          <div className="flex justify-between text-sm mb-2">
+            {review.coffees?.roasters?.name && (
+              <div className="text-gray-700">
+                {review.coffees.roasters.name}
+              </div>
+            )}
+          </div>
+          
+          {review.coffees?.origin && (
+            <div className="text-gray-600 text-sm mb-2">
+              {review.coffees.origin}
+            </div>
+          )}
+          
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-300 text-xs text-gray-600">
+            {review.coffees?.roast_level && (
+              <div>{review.coffees.roast_level}</div>
+            )}
+            
+            {review.coffees?.process_method && (
+              <div>{review.coffees.process_method}</div>
+            )}
+            
+            {review.coffees?.price !== null && review.coffees?.price !== undefined && (
+              <div className="flex justify-end">
+                ${Number(review.coffees.price).toFixed(2)}
+              </div>
+            )}
+          </div>
+          
+          {review.created_at && (
+            <div className="mt-3 text-xs text-gray-500">
+              {formatDate(review.created_at)}
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 
   // Render stars for rating
