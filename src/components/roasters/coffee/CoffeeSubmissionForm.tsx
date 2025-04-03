@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,7 +60,7 @@ const ROAST_LEVELS = ['Light', 'Medium-Light', 'Medium', 'Medium-Dark', 'Dark'];
 const PROCESS_METHODS = ['Washed', 'Natural', 'Honey', 'Anaerobic', 'Wet-Hulled'];
 const COFFEE_TYPES = ['Single Origin', 'Blend', 'Espresso', 'Decaf'];
 
-// Passenger Coffee data for bulk import
+// Passenger Coffee data for bulk import - now with image field
 const PASSENGER_COFFEES = [
   {
     name: 'Bhadra',
@@ -71,6 +70,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Stowaway',
@@ -80,6 +80,7 @@ const PASSENGER_COFFEES = [
     type: 'Blend',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Keystone',
@@ -89,6 +90,7 @@ const PASSENGER_COFFEES = [
     type: 'Blend',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Agaro',
@@ -98,6 +100,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Light',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Cusco',
@@ -107,6 +110,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Montecarlos',
@@ -116,6 +120,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Divino Niño',
@@ -125,6 +130,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Heza',
@@ -134,6 +140,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Light',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
   {
     name: 'Daterra',
@@ -143,6 +150,7 @@ const PASSENGER_COFFEES = [
     type: 'Single Origin',
     roastLevel: 'Medium',
     processMethod: 'Natural',
+    image: null, // Added image property
   },
   {
     name: 'Los Sueños Decaf',
@@ -152,6 +160,7 @@ const PASSENGER_COFFEES = [
     type: 'Decaf',
     roastLevel: 'Medium',
     processMethod: 'Washed',
+    image: null, // Added image property
   },
 ];
 
