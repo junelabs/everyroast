@@ -81,15 +81,7 @@ const RoasterDetails = () => {
   };
 
   const handleAddCoffee = () => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "You need to log in to add coffees to this roaster.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // Admin check happens in the modal itself now
     setShowCoffeeDialog(true);
   };
 
@@ -272,15 +264,17 @@ const RoasterDetails = () => {
           
           <TabsContent value="coffees" className="space-y-8">
             {/* Admin/Owner controls for adding coffees */}
-            <div className="flex justify-end">
-              <Button 
-                onClick={handleAddCoffee} 
-                className="bg-roast-500 hover:bg-roast-600 text-white"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add Coffee
-              </Button>
-            </div>
+            {user && (
+              <div className="flex justify-end">
+                <Button 
+                  onClick={handleAddCoffee} 
+                  className="bg-roast-500 hover:bg-roast-600 text-white"
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Add Coffee (Admin)
+                </Button>
+              </div>
+            )}
             
             <CoffeeGrid 
               coffees={enrichedCoffees} 

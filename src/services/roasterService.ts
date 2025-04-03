@@ -149,7 +149,7 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
   }
 };
 
-// Updated function to create an official coffee for a roaster (admin use)
+// Updated function to create an official coffee for a roaster (admin use only)
 export const createCoffeeForRoaster = async (
   roasterId: string, 
   coffeeData: Omit<Coffee, 'id' | 'roaster' | 'rating' | 'reviewCount'>
@@ -161,8 +161,8 @@ export const createCoffeeForRoaster = async (
       return { success: false, error: 'You must be logged in to add a coffee' };
     }
     
-    // For now, we'll set created_by to null to indicate this is an official coffee
-    // In a production app, you might want to check if the user has admin rights
+    // In a production app, you would check if the user has admin rights here
+    // For now, we're assuming all logged-in users are admins
     const { data, error } = await supabase
       .from('coffees')
       .insert({
