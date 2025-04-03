@@ -1,10 +1,8 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
 import { Coffee } from "@/types/coffee";
-
-// Generate a random coffee count between 5 and 20
-const generateCoffeeCount = () => Math.floor(Math.random() * 16) + 5; // Random number between 5 and 20
 
 // Fetch all roasters from Supabase with optimized query
 export const fetchRoasters = async (): Promise<Roaster[]> => {
@@ -26,25 +24,38 @@ export const fetchRoasters = async (): Promise<Roaster[]> => {
     
     console.log(`Successfully fetched ${data?.length || 0} roasters`);
     
-    // Transform the data to match the Roaster interface
-    const roasters: Roaster[] = (data || []).map(item => ({
-      id: item.id,
-      name: item.name,
-      location: item.location,
-      description: item.description,
-      website: item.website,
-      instagram: item.instagram,
-      logo_url: item.logo_url,
-      coffeeCount: generateCoffeeCount() // Use the new function for coffee count
+    // Transform the data to match the Roaster interface and get real coffee counts
+    const roastersWithCounts = await Promise.all((data || []).map(async (item) => {
+      // Get actual coffee count for each roaster
+      const { count, error: countError } = await supabase
+        .from('coffees')
+        .select('id', { count: 'exact', head: true })
+        .eq('roaster_id', item.id)
+        .is('deleted_at', null);
+      
+      if (countError) {
+        console.error(`Error fetching coffee count for roaster ${item.id}:`, countError);
+      }
+      
+      return {
+        id: item.id,
+        name: item.name,
+        location: item.location,
+        description: item.description,
+        website: item.website,
+        instagram: item.instagram,
+        logo_url: item.logo_url,
+        coffeeCount: count || 0 // Use actual count instead of random number
+      };
     }));
     
-    return roasters;
+    return roastersWithCounts;
   } catch (error) {
     console.error('Error in fetchRoasters:', error);
-    // Fall back to mock data if there's an error, but do it faster
+    // Fall back to mock data if there's an error
     return roasterData.slice(0, 50).map(roaster => ({
       ...roaster,
-      coffeeCount: generateCoffeeCount() // Update mock data with new coffee count range
+      coffeeCount: 0 // Default count for mock data
     }));
   }
 };
@@ -73,6 +84,17 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
     
     console.log(`Successfully fetched roaster: ${data.name}`);
     
+    // Get actual coffee count for this roaster
+    const { count, error: countError } = await supabase
+      .from('coffees')
+      .select('id', { count: 'exact', head: true })
+      .eq('roaster_id', id)
+      .is('deleted_at', null);
+    
+    if (countError) {
+      console.error(`Error fetching coffee count for roaster ${id}:`, countError);
+    }
+    
     // Transform the data to match the Roaster interface
     const roaster: Roaster = {
       id: data.id,
@@ -82,7 +104,7 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
       website: data.website,
       instagram: data.instagram,
       logo_url: data.logo_url,
-      coffeeCount: generateCoffeeCount() // Use the new function for coffee count
+      coffeeCount: count || 0 // Use actual count instead of random number
     };
     
     return roaster;
@@ -90,7 +112,7 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
     console.error('Error in fetchRoasterById:', error);
     // Fall back to mock data if there's an error
     const roaster = roasterData.find(r => r.id === id);
-    return roaster ? { ...roaster, coffeeCount: generateCoffeeCount() } : null; // Update with new coffee count
+    return roaster ? { ...roaster, coffeeCount: 0 } : null;
   }
 };
 
@@ -114,7 +136,6 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
       `)
       .eq('roaster_id', roasterId)
       .is('deleted_at', null)
-      .is('created_by', null) // Only fetch official coffees, not user-submitted
       .order('created_at', { ascending: false });
     
     if (error) {
