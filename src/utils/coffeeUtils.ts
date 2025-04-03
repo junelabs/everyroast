@@ -24,3 +24,12 @@ export const getOriginIcon = (origin: CoffeeOrigin): string => {
 export const getPriceIcon = (): string => {
   return 'dollar-sign';
 };
+
+// Add these text-based functions for backwards compatibility
+export const getRoastLevelEmoji = (level: RoastLevel): string => {
+  return ''; // Return empty string instead of emoji
+};
+
+export const getProcessMethodEmoji = (method: ProcessMethod): string => {
+  return ''; // Return empty string instead of emoji
+};

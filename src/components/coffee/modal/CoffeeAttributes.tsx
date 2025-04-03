@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 
 interface AttributeProps {
   label: string;
@@ -40,24 +39,8 @@ const CoffeeAttributes: React.FC<CoffeeAttributesProps> = ({
       <div className="grid grid-cols-2 gap-4 mb-6">
         <Attribute label="Origin" value={origin} />
         <Attribute label="Price" value={`$${price.toFixed(2)}`} />
-        <Attribute 
-          label="Roast Level" 
-          value={
-            <div className="flex items-center">
-              <span className="mr-1">{getRoastLevelEmoji(roastLevel)}</span>
-              {roastLevel}
-            </div>
-          }
-        />
-        <Attribute 
-          label="Process" 
-          value={
-            <div className="flex items-center">
-              <span className="mr-1">{getProcessMethodEmoji(processMethod)}</span>
-              {processMethod}
-            </div>
-          }
-        />
+        <Attribute label="Roast Level" value={roastLevel} />
+        <Attribute label="Process" value={processMethod} />
         
         {/* Always display the Type attribute when it exists */}
         {type && (

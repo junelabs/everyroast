@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
-import { getRoastLevelEmoji, getProcessMethodEmoji } from '@/utils/coffeeUtils';
 import { RoastLevel, ProcessMethod } from '@/types/coffee';
 
 interface ReviewCardImageProps {
@@ -82,13 +81,11 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
         <div className="flex justify-between mb-3">
           {review.coffees?.roasters?.name && (
             <div className="flex items-center text-gray-100 text-sm">
-              <span className="mr-1">☕️</span>
               <span className="truncate max-w-[100px]">{review.coffees.roasters.name}</span>
             </div>
           )}
           {review.coffees?.origin && (
             <div className="flex items-center text-gray-200 text-sm">
-              <span className="mr-1">📍</span>
               <span className="truncate max-w-[100px]">{review.coffees.origin}</span>
             </div>
           )}
@@ -96,22 +93,15 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
         
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/20">
           {review.coffees?.roast_level && (
-            <div className="flex items-center">
-              <span className="text-lg mr-1">{getRoastLevelEmoji(review.coffees.roast_level as RoastLevel)}</span>
-              <div className="text-xs">{review.coffees.roast_level}</div>
-            </div>
+            <div className="text-xs">{review.coffees.roast_level}</div>
           )}
           
           {review.coffees?.process_method && (
-            <div className="flex items-center">
-              <span className="text-lg mr-1">{getProcessMethodEmoji(review.coffees.process_method as ProcessMethod)}</span>
-              <div className="text-xs">{review.coffees.process_method}</div>
-            </div>
+            <div className="text-xs">{review.coffees.process_method}</div>
           )}
           
           {review.coffees?.price !== null && review.coffees?.price !== undefined && (
             <div className="flex items-center justify-end">
-              <span className="text-lg mr-1">💰</span>
               <div className="text-xs">${Number(review.coffees.price).toFixed(2)}</div>
             </div>
           )}
