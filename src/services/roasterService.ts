@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Roaster } from "@/components/roasters/RoasterCard";
 import { roasterData } from "@/data/mockRoasterData";
@@ -116,10 +115,10 @@ export const fetchRoasterById = async (id: string): Promise<Roaster | null> => {
   }
 };
 
-// Updated function to fetch coffees for a specific roaster - now filtered for official entries
+// Updated function to fetch coffees for a specific roaster - removed filter for official entries
 export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> => {
   try {
-    console.log(`Fetching official coffees for roaster ID: ${roasterId}`);
+    console.log(`Fetching coffees for roaster ID: ${roasterId}`);
     
     const { data, error } = await supabase
       .from('coffees')
@@ -143,7 +142,7 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
       throw error;
     }
     
-    console.log(`Successfully fetched ${data?.length || 0} official coffees for roaster`);
+    console.log(`Successfully fetched ${data?.length || 0} coffees for roaster`);
     
     // Transform the data to match the Coffee interface
     const coffees: Coffee[] = (data || []).map(coffee => {
@@ -170,7 +169,7 @@ export const fetchRoasterCoffees = async (roasterId: string): Promise<Coffee[]> 
   }
 };
 
-// Updated function to create an official coffee for a roaster (admin use only)
+// Updated function to create a coffee for a roaster (admin use only)
 export const createCoffeeForRoaster = async (
   roasterId: string, 
   coffeeData: Omit<Coffee, 'id' | 'roaster' | 'rating' | 'reviewCount'>
@@ -196,7 +195,7 @@ export const createCoffeeForRoaster = async (
         flavor_notes: coffeeData.flavor,
         type: coffeeData.type,
         image_url: coffeeData.image,
-        created_by: null  // Set to null to mark as an official coffee
+        created_by: user.user.id // Set to current user ID
       })
       .select('id')
       .single();

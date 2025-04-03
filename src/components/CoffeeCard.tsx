@@ -7,7 +7,6 @@ import CoffeeDetailModal from './CoffeeDetailModal';
 import ReviewForm from './reviews/ReviewForm';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface CoffeeCardProps {
   coffee: Coffee;
@@ -59,22 +58,6 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
           
           {/* Consistent overlay over the whole card */}
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-          
-          {/* Posted by - in top left */}
-          <div className="absolute top-4 left-4 z-10 flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <span className="text-sm mr-1">Posted by:</span>
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={coffee.poster?.avatarUrl} />
-              <AvatarFallback>{coffee.poster?.username.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm">@{coffee.poster?.username}</span>
-          </div>
-          
-          {/* Upvotes */}
-          <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white">
-            <ChevronUp className="h-4 w-4 text-green-400" />
-            <span className="text-lg font-medium">{coffee.upvotes || 0}</span>
-          </div>
           
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 z-10 text-white p-4">
