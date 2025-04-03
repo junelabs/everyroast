@@ -26,7 +26,7 @@ const CoffeeGrid: React.FC<CoffeeGridProps> = React.memo(({ coffees, isLoading, 
   if (coffees.length === 0) {
     return (
       <div className="text-center py-10">
-        <p className="text-gray-500">No community reviews yet. Be the first to add one!</p>
+        <p className="text-gray-500">No coffees found.</p>
       </div>
     );
   }
