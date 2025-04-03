@@ -276,21 +276,23 @@ const RoasterDetails = () => {
               </div>
             )}
             
-            <CoffeeGrid 
-              coffees={enrichedCoffees} 
-              isLoading={isCoffeesLoading} 
-              visibleCount={visibleCoffees} 
-            />
-            
-            {!isCoffeesLoading && enrichedCoffees.length > visibleCoffees && (
-              <div className="flex justify-center mt-8">
-                <Button onClick={handleLoadMore} variant="outline" className="w-full max-w-md">
-                  Load More Coffees
-                </Button>
-              </div>
-            )}
-            
-            {!isCoffeesLoading && enrichedCoffees.length === 0 && (
+            {!isCoffeesLoading && enrichedCoffees.length > 0 ? (
+              <>
+                <CoffeeGrid 
+                  coffees={enrichedCoffees} 
+                  isLoading={isCoffeesLoading} 
+                  visibleCount={visibleCoffees} 
+                />
+                
+                {enrichedCoffees.length > visibleCoffees && (
+                  <div className="flex justify-center mt-8">
+                    <Button onClick={handleLoadMore} variant="outline" className="w-full max-w-md">
+                      Load More Coffees
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : !isCoffeesLoading ? (
               <div className="bg-white rounded-lg shadow-sm p-8 text-center">
                 <div className="bg-gray-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
                   <CoffeeIcon className="h-8 w-8 text-gray-400" />
@@ -309,6 +311,12 @@ const RoasterDetails = () => {
                   </Button>
                 )}
               </div>
+            ) : (
+              <CoffeeGrid 
+                coffees={[]} 
+                isLoading={isCoffeesLoading} 
+                visibleCount={visibleCoffees} 
+              />
             )}
           </TabsContent>
           
