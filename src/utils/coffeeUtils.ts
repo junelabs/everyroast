@@ -24,19 +24,3 @@ export const getOriginIcon = (origin: CoffeeOrigin): string => {
 export const getPriceIcon = (): string => {
   return 'dollar-sign';
 };
-
-// Add these emoji functions for backwards compatibility
-export const getRoastLevelEmoji = (level: RoastLevel): string => {
-  // Return a single fire emoji regardless of roast level
-  return '🔥';
-};
-
-export const getProcessMethodEmoji = (method: ProcessMethod): string => {
-  switch (method) {
-    case 'Washed': return '💧';
-    case 'Natural': return '🍃';
-    case 'Honey': return '🍯';
-    case 'Anaerobic': return '🧪';
-    default: return '⚗️';
-  }
-};

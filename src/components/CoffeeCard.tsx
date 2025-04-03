@@ -49,7 +49,7 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
         onClick={() => setIsModalOpen(true)}
         className="h-full overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       >
-        <div className="relative aspect-square">
+        <div className="relative aspect-[4/3]">
           {coffee.image ? (
             <img 
               src={coffee.image} 
@@ -58,20 +58,20 @@ const CoffeeCard: React.FC<CoffeeCardProps> = ({ coffee }) => {
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-roast-100 to-roast-200 flex items-center justify-center">
-              <div className="text-4xl text-roast-500">☕</div>
+              <div className="text-roast-500">No image</div>
             </div>
           )}
         </div>
         
-        <CardContent className="p-4">
-          <h3 className="font-bold text-lg mb-1 line-clamp-1">{coffee.name}</h3>
+        <CardContent className="p-3">
+          <h3 className="font-bold text-base mb-1 line-clamp-1">{coffee.name}</h3>
           
-          <div className="flex justify-between mb-2 text-sm text-gray-600">
+          <div className="flex justify-between text-xs text-gray-600 mb-1.5">
             <span>{coffee.roaster}</span>
             <span>{coffee.origin}</span>
           </div>
           
-          <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 border-t pt-2">
+          <div className="grid grid-cols-3 gap-1 text-xs text-gray-500 border-t pt-1.5">
             <div className="flex flex-col">
               <span className="text-gray-600 font-medium">Roast</span>
               <span>{coffee.roastLevel}</span>
