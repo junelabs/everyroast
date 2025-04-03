@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Coffee, X } from 'lucide-react';
+import { Coffee, X, Plus } from 'lucide-react';
 
 // Validation schema for the coffee submission form
 const formSchema = z.object({
@@ -92,6 +91,17 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
           title: 'Coffee Added',
           description: `${data.name} has been added to the roaster successfully.`,
         });
+        // Reset the form while keeping some fields that may be reused for subsequent entries
+        form.reset({
+          name: '',
+          origin: data.origin, // Keep the origin
+          price: data.price, // Keep the price
+          roastLevel: data.roastLevel, // Keep the roast level
+          processMethod: data.processMethod, // Keep the process method
+          flavor: '',
+          type: data.type, // Keep the type
+          image: data.image, // Keep the image URL if reusing
+        });
         onSuccess();
       } else {
         toast({
@@ -113,8 +123,8 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Coffee Name */}
+        {/* Row 1: Coffee Name & Origin */}
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="name"
@@ -129,7 +139,6 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
             )}
           />
 
-          {/* Origin */}
           <FormField
             control={form.control}
             name="origin"
@@ -143,8 +152,10 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
               </FormItem>
             )}
           />
+        </div>
 
-          {/* Price */}
+        {/* Row 2: Price, Type, Roast, Process */}
+        <div className="grid grid-cols-4 gap-4">
           <FormField
             control={form.control}
             name="price"
@@ -165,20 +176,47 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
             )}
           />
 
-          {/* Roast Level */}
           <FormField
             control={form.control}
-            name="roastLevel"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Roast Level*</FormLabel>
+                <FormLabel>Type*</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a roast level" />
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {COFFEE_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="roastLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Roast*</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select roast" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -194,20 +232,19 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
             )}
           />
 
-          {/* Process Method */}
           <FormField
             control={form.control}
             name="processMethod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Process Method*</FormLabel>
+                <FormLabel>Process*</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a process method" />
+                      <SelectValue placeholder="Select process" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -222,72 +259,44 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
               </FormItem>
             )}
           />
+        </div>
 
-          {/* Coffee Type */}
+        {/* Row 3: Flavor Notes & Image URL */}
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="type"
+            name="flavor"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Coffee Type*</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a coffee type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {COFFEE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>Flavor Notes</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="e.g., Blueberry, Dark Chocolate, Floral"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Image URL</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="https://example.com/coffee-image.jpg"
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-
-        {/* Flavor Notes */}
-        <FormField
-          control={form.control}
-          name="flavor"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Flavor Notes</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="e.g., Blueberry, Dark Chocolate, Floral"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Image URL */}
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://example.com/coffee-image.jpg"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <div className="flex justify-end space-x-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
@@ -295,8 +304,8 @@ const CoffeeSubmissionForm: React.FC<CoffeeSubmissionFormProps> = ({
             Cancel
           </Button>
           <Button type="submit" className="bg-roast-500 hover:bg-roast-600">
-            <Coffee className="mr-2 h-4 w-4" />
-            Add Coffee
+            <Plus className="mr-2 h-4 w-4" />
+            Add & Continue
           </Button>
         </div>
       </form>
