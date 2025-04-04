@@ -195,7 +195,7 @@ const CoffeeBasicDetails = ({
                 {isRoastersLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading roasters...</div>
                 ) : (
-                  safeFilter(roasters, roaster || '')
+                  safeFilter<RoasterOption>(roasters || [], roaster || '')
                     .map((r) => (
                       <CommandItem
                         key={r.value}
