@@ -26,14 +26,23 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
   const [deleteType, setDeleteType] = useState<'review' | 'coffee'>('review');
   const { toast } = useToast();
 
-  // Get coffee data from the review
-  const { coffee } = useCoffeeData(review);
+  // Get coffee data from the review with null checks
+  const { coffee } = useCoffeeData(review || {});
 
   const handleEdit = useCallback(() => {
     setIsReviewFormOpen(true);
   }, []);
 
   const handleDeleteReview = useCallback(async () => {
+    if (!review || !review.id) {
+      toast({
+        title: "Error",
+        description: "Review data is missing. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsDeleting(true);
     try {
       const { error } = await supabase
@@ -67,9 +76,18 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
     } finally {
       setIsDeleting(false);
     }
-  }, [review.id, onDelete, toast]);
+  }, [review, onDelete, toast]);
   
   const handleDeleteCoffee = useCallback(async () => {
+    if (!review || !review.coffee_id) {
+      toast({
+        title: "Error",
+        description: "Coffee ID is missing. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsDeleting(true);
     try {
       const coffeeId = review.coffee_id;
@@ -102,12 +120,31 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
     } finally {
       setIsDeleting(false);
     }
-  }, [review.coffee_id, onDelete, toast]);
+  }, [review, onDelete, toast]);
   
   const openDeleteDialog = useCallback((type: 'review' | 'coffee') => {
     setDeleteType(type);
     setIsDeleteDialogOpen(true);
   }, []);
+
+  // If review is null/undefined, don't render anything
+  if (!review) {
+    return null;
+  }
+
+  // Prepare safe initial data for the review form
+  const getInitialData = () => {
+    return {
+      rating: review.rating || 0,
+      reviewText: review.review_text || "",
+      brewingMethod: review.brewing_method || "",
+      dosage: review.dosage || 0,
+      water: review.water || 0,
+      temperature: review.temperature || 0,
+      brewTime: review.brew_time || "",
+      brewNotes: review.brew_notes || ""
+    };
+  };
 
   return (
     <>
@@ -145,16 +182,7 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
         onClose={() => setIsReviewFormOpen(false)}
         coffeeId={review.coffee_id}
         reviewId={review.id}
-        initialData={{
-          rating: review.rating || 0,
-          reviewText: review.review_text || "",
-          brewingMethod: review.brewing_method || "",
-          dosage: review.dosage || 0,
-          water: review.water || 0,
-          temperature: review.temperature || 0,
-          brewTime: review.brew_time || "",
-          brewNotes: review.brew_notes || ""
-        }}
+        initialData={getInitialData()}
         isEdit={true}
         showSelector={false}
       />

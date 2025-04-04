@@ -113,7 +113,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
       
       {hasReviews ? (
         <ReviewsList 
-          reviews={reviews} 
+          reviews={reviews || []} 
           onReviewDeleted={refetch} 
           onReviewEdit={handleEditReview}
           showDeleteButton={showAddButton}
@@ -137,7 +137,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           reviewId={selectedReview?.id}
           initialData={getInitialData(selectedReview)}
           isEdit={!!selectedReview}
-          reviewCount={reviews?.length || 0}
+          reviewCount={(reviews || []).length}
           showSelector={!selectedReview}
         />
       )}

@@ -64,8 +64,8 @@ export const useReviewForm = ({
       // First check if we have review-specific data and set it
       if (coffeeData.rating > 0) {
         setRating(coffeeData.rating);
-        setReviewText(coffeeData.reviewText);
-        setBrewingMethod(coffeeData.brewingMethod);
+        setReviewText(coffeeData.reviewText || "");
+        setBrewingMethod(coffeeData.brewingMethod || "");
         setDosage(coffeeData.dosage || 0);
         setWater(coffeeData.water || 0);
         setTemperature(coffeeData.temperature || 0);
@@ -125,16 +125,16 @@ export const useReviewForm = ({
     brewTime,
     brewNotes,
     imageUrl: coffeeData.imageUrl,
-    coffeeName: coffeeData.coffeeName,
-    roaster: coffeeData.roaster,
-    origin: coffeeData.origin,
-    roastLevel: coffeeData.roastLevel,
-    processMethod: coffeeData.processMethod,
-    coffeeType: coffeeData.coffeeType,
-    price: coffeeData.price,
-    flavor: coffeeData.flavor,
-    size: coffeeData.size,
-    sizeUnit: coffeeData.sizeUnit,
+    coffeeName: coffeeData.coffeeName || "",
+    roaster: coffeeData.roaster || "",
+    origin: coffeeData.origin || "Ethiopia",
+    roastLevel: coffeeData.roastLevel || "Medium",
+    processMethod: coffeeData.processMethod || "Washed",
+    coffeeType: coffeeData.coffeeType || "Single Origin",
+    price: coffeeData.price || 0,
+    flavor: coffeeData.flavor || "",
+    size: coffeeData.size || 0,
+    sizeUnit: coffeeData.sizeUnit || "g",
     resetForm
   });
 
@@ -157,23 +157,23 @@ export const useReviewForm = ({
     
     // Coffee data states from useCoffeeFetch
     imageUrl: coffeeData.imageUrl, setImageUrl: coffeeData.setImageUrl,
-    coffeeName: coffeeData.coffeeName, setCoffeeName: coffeeData.setCoffeeName,
-    roaster: coffeeData.roaster, setRoaster: coffeeData.setRoaster,
-    origin: coffeeData.origin, setOrigin: coffeeData.setOrigin,
-    roastLevel: coffeeData.roastLevel, setRoastLevel: coffeeData.setRoastLevel,
-    processMethod: coffeeData.processMethod, setProcessMethod: coffeeData.setProcessMethod,
-    coffeeType: coffeeData.coffeeType, setCoffeeType: coffeeData.setCoffeeType,
-    price: coffeeData.price, setPrice: coffeeData.setPrice,
-    flavor: coffeeData.flavor, setFlavor: coffeeData.setFlavor,
-    size: coffeeData.size, setSize: coffeeData.setSize,
-    sizeUnit: coffeeData.sizeUnit, setSizeUnit: coffeeData.setSizeUnit,
+    coffeeName: coffeeData.coffeeName || "", setCoffeeName: coffeeData.setCoffeeName,
+    roaster: coffeeData.roaster || "", setRoaster: coffeeData.setRoaster,
+    origin: coffeeData.origin || "Ethiopia", setOrigin: coffeeData.setOrigin,
+    roastLevel: coffeeData.roastLevel || "Medium", setRoastLevel: coffeeData.setRoastLevel,
+    processMethod: coffeeData.processMethod || "Washed", setProcessMethod: coffeeData.setProcessMethod,
+    coffeeType: coffeeData.coffeeType || "Single Origin", setCoffeeType: coffeeData.setCoffeeType,
+    price: coffeeData.price || 0, setPrice: coffeeData.setPrice,
+    flavor: coffeeData.flavor || "", setFlavor: coffeeData.setFlavor,
+    size: coffeeData.size || 0, setSize: coffeeData.setSize,
+    sizeUnit: coffeeData.sizeUnit || "g", setSizeUnit: coffeeData.setSizeUnit,
     
-    // Constants for form options
-    origins,
-    roastLevels,
-    processMethods,
-    coffeeTypes,
-    sizeUnits,
+    // Constants for form options - ensure these are always arrays
+    origins: origins || [],
+    roastLevels: roastLevels || [],
+    processMethods: processMethods || [],
+    coffeeTypes: coffeeTypes || [],
+    sizeUnits: sizeUnits || [],
     
     // Utility functions
     resetForm
