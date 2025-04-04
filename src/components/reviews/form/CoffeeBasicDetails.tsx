@@ -40,7 +40,7 @@ interface RoasterOption {
 interface CoffeeOption {
   value: string;
   label: string;
-  roaster: string;
+  roasterName?: string; // Renamed from 'roaster' to 'roasterName' for clarity
 }
 
 const CoffeeBasicDetails = ({
@@ -123,7 +123,7 @@ const CoffeeBasicDetails = ({
         const formattedCoffees = (data || []).map(c => ({
           value: c.name,
           label: c.name,
-          roaster: c.roaster?.name || 'Unknown Roaster'
+          roasterName: c.roaster?.name || 'Unknown Roaster'
         }));
         
         setCoffees(formattedCoffees);
@@ -142,7 +142,7 @@ const CoffeeBasicDetails = ({
   useEffect(() => {
     if (roaster) {
       const filtered = coffees.filter(c => 
-        c.roaster.toLowerCase() === roaster.toLowerCase()
+        c.roasterName?.toLowerCase() === roaster.toLowerCase()
       );
       setFilteredCoffees(filtered);
     } else {
@@ -255,7 +255,7 @@ const CoffeeBasicDetails = ({
                   safeFilter(filteredCoffees, coffeeName || '')
                     .map((c) => (
                       <CommandItem
-                        key={c.value + c.roaster}
+                        key={c.value}
                         value={c.value}
                         onSelect={(currentValue) => {
                           setCoffeeName(currentValue);
@@ -264,7 +264,7 @@ const CoffeeBasicDetails = ({
                       >
                         <div className="flex flex-col">
                           <span>{c.label}</span>
-                          <span className="text-xs text-gray-500">{c.roaster}</span>
+                          <span className="text-xs text-gray-500">{c.roasterName}</span>
                         </div>
                       </CommandItem>
                     ))
