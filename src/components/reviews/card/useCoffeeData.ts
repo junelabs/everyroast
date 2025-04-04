@@ -23,6 +23,15 @@ export const useCoffeeData = (review: any = {}) => {
         roaster: 'Unknown Roaster',
         rating: 0,
         reviewCount: 0,
+        origin: 'Unknown Origin', // Add missing required fields
+        roastLevel: 'Medium',
+        processMethod: 'Unknown',
+        price: 0,
+        flavor: 'No flavor notes available', // Add required flavor field
+        type: 'Unknown',
+        // Additional fields that might be used
+        reviewDate: review?.created_at || '',
+        reviewId: review?.id || '',
       };
     }
 
@@ -34,13 +43,14 @@ export const useCoffeeData = (review: any = {}) => {
       rating: review.rating || 0,
       reviewCount: 1,
       roasterId: review.coffees?.roaster_id || '',
-      origin: review.coffees?.origin || 'Unknown',
+      origin: review.coffees?.origin || 'Unknown Origin',
       roastLevel: review.coffees?.roast_level || 'Medium',
-      processMethod: review.coffees?.process_method || '',
+      processMethod: review.coffees?.process_method || 'Unknown',
       price: review.coffees?.price || 0,
-      type: review.coffees?.type || '',
+      type: review.coffees?.type || 'Single Origin',
       reviews: Array.isArray(review.reviews) ? review.reviews : [],
-      flavorNotes: review.coffees?.flavor_notes || '',
+      // Make sure flavor is always provided
+      flavor: review.coffees?.flavor_notes || review.review_text || 'No flavor notes available',
       createdAt: review.created_at,
       reviewText: review.review_text || '',
       brewingMethod: review.brewing_method || '',
@@ -49,6 +59,9 @@ export const useCoffeeData = (review: any = {}) => {
       dosage: review.dosage || 0,
       temperature: review.temperature || 0,
       brewNotes: review.brew_notes || '',
+      // Additional fields that might be used
+      reviewDate: review.created_at || '',
+      reviewId: review.id || '',
     };
   }, [review]);
 
