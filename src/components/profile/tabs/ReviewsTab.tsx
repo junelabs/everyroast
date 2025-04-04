@@ -5,7 +5,10 @@ import ReviewsTabContent from "./reviews/ReviewsTabContent";
 const ReviewsTab = () => {
   const { user } = useAuth();
   
-  return <ReviewsTabContent userId={user?.id} />;
+  // Ensure we never pass undefined to ReviewsTabContent
+  const safeUserId = user?.id || null;
+  
+  return <ReviewsTabContent userId={safeUserId} />;
 };
 
 export default ReviewsTab;

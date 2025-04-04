@@ -12,6 +12,17 @@ export const formatReviewDate = (dateStr: string) => {
   }
 };
 
+// Ensure we always have a valid array
+export const ensureArray = <T,>(value: T[] | null | undefined): T[] => {
+  if (value === null || value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return [];
+};
+
 export const useCoffeeData = (review: any = {}) => {
   // Safely extract coffee details from review with null checks
   const coffee = useMemo(() => {
@@ -48,7 +59,7 @@ export const useCoffeeData = (review: any = {}) => {
       processMethod: review.coffees?.process_method || 'Unknown',
       price: review.coffees?.price || 0,
       type: review.coffees?.type || 'Single Origin',
-      reviews: Array.isArray(review.reviews) ? review.reviews : [],
+      reviews: ensureArray(review.reviews),
       // Make sure flavor is always provided
       flavor: review.coffees?.flavor_notes || review.review_text || 'No flavor notes available',
       createdAt: review.created_at,

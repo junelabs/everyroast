@@ -2,7 +2,17 @@
 import React from 'react';
 import { format } from 'date-fns';
 import ReviewRowCard from '@/components/reviews/ReviewRowCard';
-import { ensureArray } from '@/components/ui/command';
+
+// Ensure we always have a valid array, even with deeply nested nullish values
+const ensureArray = <T,>(value: T[] | null | undefined): T[] => {
+  if (value === null || value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return [];
+};
 
 interface Review {
   id: string;
@@ -23,7 +33,7 @@ interface Review {
 }
 
 interface ReviewsListProps {
-  reviews: Review[];
+  reviews: Review[] | null | undefined;
   onReviewDeleted: () => void;
   onReviewEdit: (review: any) => void;
   showDeleteButton?: boolean;

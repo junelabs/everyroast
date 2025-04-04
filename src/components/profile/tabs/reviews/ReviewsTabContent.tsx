@@ -6,10 +6,20 @@ import ReviewsList from './ReviewsList';
 import ReviewsEmptyState from './ReviewsEmptyState';
 import AddReviewButton from './AddReviewButton';
 import ReviewForm from '@/components/reviews/ReviewForm';
-import { ensureArray } from '@/components/ui/command';
+
+// Ensure we always have a valid array, even with deeply nested nullish values
+const ensureArray = <T,>(value: T[] | null | undefined): T[] => {
+  if (value === null || value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return [];
+};
 
 interface ReviewsTabContentProps {
-  userId?: string;
+  userId?: string | null;
   showAddButton?: boolean;
 }
 
