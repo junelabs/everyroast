@@ -14,7 +14,7 @@ interface ReviewsTabContentProps {
 
 const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentProps) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState(null);
+  const [selectedReview, setSelectedReview] = useState<any>(null);
 
   const { data: reviews, isLoading, error, refetch } = useQuery({
     queryKey: ['userReviews', userId],
@@ -67,7 +67,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
     setIsReviewFormOpen(true);
   };
 
-  const handleEditReview = (review) => {
+  const handleEditReview = (review: any) => {
     setSelectedReview(review);
     setIsReviewFormOpen(true);
   };
@@ -80,20 +80,20 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
     );
   }
 
-  const hasReviews = reviews && reviews.length > 0;
+  const hasReviews = Array.isArray(reviews) && reviews.length > 0;
 
   // Prepare initialData for ReviewForm with safe defaults
-  const getInitialData = (review) => {
+  const getInitialData = (review: any) => {
     if (!review) return undefined;
     return {
-      rating: review.rating || 0,
-      reviewText: review.review_text || "",
-      brewingMethod: review.brewing_method || "",
-      dosage: review.dosage || 0,
-      water: review.water || 0,
-      temperature: review.temperature || 0,
-      brewTime: review.brew_time || "",
-      brewNotes: review.brew_notes || ""
+      rating: review?.rating || 0,
+      reviewText: review?.review_text || "",
+      brewingMethod: review?.brewing_method || "",
+      dosage: review?.dosage || 0,
+      water: review?.water || 0,
+      temperature: review?.temperature || 0,
+      brewTime: review?.brew_time || "",
+      brewNotes: review?.brew_notes || ""
     };
   };
 
@@ -137,7 +137,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           reviewId={selectedReview?.id}
           initialData={getInitialData(selectedReview)}
           isEdit={!!selectedReview}
-          reviewCount={(reviews || []).length}
+          reviewCount={Array.isArray(reviews) ? reviews.length : 0}
           showSelector={!selectedReview}
         />
       )}
