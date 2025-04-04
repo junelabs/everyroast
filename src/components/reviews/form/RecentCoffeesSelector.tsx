@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/context/auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,12 +89,8 @@ const RecentCoffeesSelector = ({
       
       console.log("Fetched coffees:", data);
       
-      // Additional client-side filter to ensure no deleted coffees
-      // and filter out coffees with placeholder images
-      const validCoffees = data?.filter(coffee => 
-        !coffee.deleted_at && 
-        !isPlaceholderImage(coffee.image_url)
-      ) || [];
+      // Only filter out deleted coffees, keep coffees with placeholder images
+      const validCoffees = data?.filter(coffee => !coffee.deleted_at) || [];
       
       console.log("Valid coffees after filtering:", validCoffees.length);
       
