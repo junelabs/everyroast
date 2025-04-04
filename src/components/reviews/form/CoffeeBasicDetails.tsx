@@ -110,7 +110,10 @@ const CoffeeBasicDetails = ({
       try {
         const { data, error } = await supabase
           .from('coffees')
-          .select('id, name, roaster:roasters(name)')
+          .select(`
+            id, name, roaster:roasters(name)
+          `)
+          .is('deleted_at', null)
           .order('created_at', { ascending: false })
           .limit(100);
         
@@ -127,9 +130,11 @@ const CoffeeBasicDetails = ({
         }));
         
         setCoffees(formattedCoffees);
+        setFilteredCoffees(formattedCoffees); // Initialize filtered coffees with all coffees
       } catch (err) {
         console.error('Unexpected error fetching coffees:', err);
         setCoffees([]);
+        setFilteredCoffees([]);
       } finally {
         setIsCoffeesLoading(false);
       }
@@ -140,19 +145,19 @@ const CoffeeBasicDetails = ({
   
   // Filter coffees based on selected roaster
   useEffect(() => {
-    if (roaster) {
+    if (roaster && coffees.length > 0) {
       const filtered = coffees.filter(c => 
         c.roasterName?.toLowerCase() === roaster.toLowerCase()
       );
-      setFilteredCoffees(filtered);
+      setFilteredCoffees(filtered.length > 0 ? filtered : []);
     } else {
-      setFilteredCoffees(coffees);
+      setFilteredCoffees(coffees || []);
     }
   }, [roaster, coffees]);
 
   // Safe filter function to handle potential null/undefined values
-  const safeFilter = <T extends RoasterOption | CoffeeOption>(options: T[], searchTerm: string): T[] => {
-    if (!options || !Array.isArray(options)) return [];
+  const safeFilter = <T extends RoasterOption | CoffeeOption>(options: T[] | null | undefined, searchTerm: string): T[] => {
+    if (!options || !Array.isArray(options) || options.length === 0) return [];
     if (!searchTerm) return options;
     
     return options.filter(option => 
