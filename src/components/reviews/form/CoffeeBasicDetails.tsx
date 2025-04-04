@@ -81,10 +81,10 @@ const CoffeeBasicDetails = ({
         return;
       }
       
-      const formattedRoasters = data.map(r => ({
+      const formattedRoasters = data?.map(r => ({
         value: r.name,
         label: r.name
-      }));
+      })) || [];
       
       setRoasters(formattedRoasters);
     };
@@ -106,11 +106,11 @@ const CoffeeBasicDetails = ({
         return;
       }
       
-      const formattedCoffees = data.map(c => ({
+      const formattedCoffees = data?.map(c => ({
         value: c.name,
         label: c.name,
         roaster: c.roaster?.name || 'Unknown Roaster'
-      }));
+      })) || [];
       
       setCoffees(formattedCoffees);
     };
@@ -159,8 +159,8 @@ const CoffeeBasicDetails = ({
               <CommandInput placeholder="Search roasters..." />
               <CommandEmpty>No roaster found.</CommandEmpty>
               <CommandGroup className="max-h-[200px] overflow-y-auto">
-                {roasters
-                  .filter(r => r.label.toLowerCase().includes(roaster.toLowerCase()))
+                {roasters && roasters.length > 0 && roasters
+                  .filter(r => r.label.toLowerCase().includes((roaster || '').toLowerCase()))
                   .map((r) => (
                     <CommandItem
                       key={r.value}
@@ -210,8 +210,8 @@ const CoffeeBasicDetails = ({
               <CommandInput placeholder="Search coffees..." />
               <CommandEmpty>No coffee found.</CommandEmpty>
               <CommandGroup className="max-h-[200px] overflow-y-auto">
-                {filteredCoffees
-                  .filter(c => c.label.toLowerCase().includes(coffeeName.toLowerCase()))
+                {filteredCoffees && filteredCoffees.length > 0 && filteredCoffees
+                  .filter(c => c.label.toLowerCase().includes((coffeeName || '').toLowerCase()))
                   .map((c) => (
                     <CommandItem
                       key={c.value}
