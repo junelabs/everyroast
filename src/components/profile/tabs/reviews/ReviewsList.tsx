@@ -24,12 +24,14 @@ interface Review {
 interface ReviewsListProps {
   reviews: Review[];
   onReviewDeleted: () => void;
+  onReviewEdit: (review: any) => void; // Added missing prop
   showDeleteButton?: boolean;
 }
 
 const ReviewsList: React.FC<ReviewsListProps> = ({ 
   reviews, 
   onReviewDeleted,
+  onReviewEdit,
   showDeleteButton = true
 }) => {
   return (
@@ -46,7 +48,7 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
               coffee_id: review.coffee_id,
               coffees: review.coffees
             }}
-            onEdit={() => {}} // Placeholder, actual edit functionality would be implemented elsewhere
+            onEdit={() => onReviewEdit(review)} // Pass the review object to the edit function
             onDelete={showDeleteButton ? onReviewDeleted : undefined}
           />
         </div>
