@@ -151,7 +151,7 @@ const CoffeeBasicDetails = ({
   }, [roaster, coffees]);
 
   // Safe filter function to handle potential null/undefined values
-  const safeFilter = (options: RoasterOption[] | CoffeeOption[], searchTerm: string) => {
+  const safeFilter = <T extends RoasterOption | CoffeeOption>(options: T[], searchTerm: string): T[] => {
     if (!options || !Array.isArray(options)) return [];
     if (!searchTerm) return options;
     
@@ -253,7 +253,7 @@ const CoffeeBasicDetails = ({
                   <div className="py-6 text-center text-sm text-gray-500">Loading coffees...</div>
                 ) : (
                   (filteredCoffees && filteredCoffees.length > 0) ? 
-                    safeFilter(filteredCoffees, coffeeName || '')
+                    safeFilter<CoffeeOption>(filteredCoffees, coffeeName || '')
                       .map((c) => (
                         <CommandItem
                           key={c.value}
