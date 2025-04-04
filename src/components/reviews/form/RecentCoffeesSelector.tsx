@@ -24,6 +24,15 @@ const RecentCoffeesSelector = ({
   const recentCoffeeLimit = reviewCount < 4 ? reviewCount : 4;
   console.log(`Setting recent coffee limit to: ${recentCoffeeLimit}`);
   
+  // Helper function to check if an image URL is a placeholder
+  const isPlaceholderImage = (url: string | null): boolean => {
+    if (!url) return true;
+    
+    return url.includes('placeholder') || 
+           url.includes('unsplash') || 
+           url.includes('gravatar');
+  };
+  
   // Fetch recent coffees
   const { data: recentCoffees = [], isLoading: isLoadingRecentCoffees } = useQuery({
     queryKey: ['recentCoffees', user?.id, recentCoffeeLimit],
@@ -82,7 +91,12 @@ const RecentCoffeesSelector = ({
       console.log("Fetched coffees:", data);
       
       // Additional client-side filter to ensure no deleted coffees
-      const validCoffees = data?.filter(coffee => !coffee.deleted_at) || [];
+      // and filter out coffees with placeholder images
+      const validCoffees = data?.filter(coffee => 
+        !coffee.deleted_at && 
+        !isPlaceholderImage(coffee.image_url)
+      ) || [];
+      
       console.log("Valid coffees after filtering:", validCoffees.length);
       
       // Sort the valid coffees to match the original review order
@@ -117,7 +131,7 @@ const RecentCoffeesSelector = ({
             >
               <div className="flex items-center p-4">
                 <div className="h-14 w-14 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                  {coffee.image_url ? (
+                  {coffee.image_url && !isPlaceholderImage(coffee.image_url) ? (
                     <img 
                       src={coffee.image_url} 
                       alt={coffee.name} 
