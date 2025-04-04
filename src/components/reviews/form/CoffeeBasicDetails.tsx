@@ -47,24 +47,7 @@ const CoffeeBasicDetails = ({
 
   return (
     <>
-      <div className="space-y-2">
-        <label htmlFor="coffeeName" className="block text-sm font-medium">
-          Coffee Name *
-        </label>
-        <Input
-          id="coffeeName"
-          placeholder="e.g., Ethiopian Yirgacheffe"
-          value={coffeeName}
-          onChange={(e) => setCoffeeName(e.target.value)}
-          required
-          readOnly={readOnly}
-          className={`${readOnly ? "bg-gray-100" : ""} ${isNameEmpty ? "border-red-400 bg-red-50" : ""}`}
-        />
-        {isNameEmpty && (
-          <p className="text-sm text-red-500 mt-1">Coffee name is required</p>
-        )}
-      </div>
-      
+      {/* Switched the order: Roaster field now comes first */}
       <div className="space-y-2">
         <label htmlFor="roaster" className="block text-sm font-medium">
           Roaster *
@@ -80,6 +63,25 @@ const CoffeeBasicDetails = ({
         />
         {isRoasterEmpty && (
           <p className="text-sm text-red-500 mt-1">Roaster name is required</p>
+        )}
+      </div>
+      
+      {/* Coffee Name field moved to second position */}
+      <div className="space-y-2">
+        <label htmlFor="coffeeName" className="block text-sm font-medium">
+          Coffee Name *
+        </label>
+        <Input
+          id="coffeeName"
+          placeholder="e.g., Ethiopian Yirgacheffe"
+          value={coffeeName}
+          onChange={(e) => setCoffeeName(e.target.value)}
+          required
+          readOnly={readOnly}
+          className={`${readOnly ? "bg-gray-100" : ""} ${isNameEmpty ? "border-red-400 bg-red-50" : ""}`}
+        />
+        {isNameEmpty && (
+          <p className="text-sm text-red-500 mt-1">Coffee name is required</p>
         )}
       </div>
       
