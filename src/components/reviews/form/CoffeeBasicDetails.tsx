@@ -40,7 +40,7 @@ interface RoasterOption {
 interface CoffeeOption {
   value: string;
   label: string;
-  roasterName?: string; // Renamed from 'roaster' to 'roasterName' for clarity
+  roasterName?: string;
 }
 
 const CoffeeBasicDetails = ({
@@ -252,22 +252,24 @@ const CoffeeBasicDetails = ({
                 {isCoffeesLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading coffees...</div>
                 ) : (
-                  safeFilter(filteredCoffees, coffeeName || '')
-                    .map((c) => (
-                      <CommandItem
-                        key={c.value}
-                        value={c.value}
-                        onSelect={(currentValue) => {
-                          setCoffeeName(currentValue);
-                          setCoffeeOpen(false);
-                        }}
-                      >
-                        <div className="flex flex-col">
-                          <span>{c.label}</span>
-                          <span className="text-xs text-gray-500">{c.roasterName}</span>
-                        </div>
-                      </CommandItem>
-                    ))
+                  (filteredCoffees && filteredCoffees.length > 0) ? 
+                    safeFilter(filteredCoffees, coffeeName || '')
+                      .map((c) => (
+                        <CommandItem
+                          key={c.value}
+                          value={c.value}
+                          onSelect={(currentValue) => {
+                            setCoffeeName(currentValue);
+                            setCoffeeOpen(false);
+                          }}
+                        >
+                          <div className="flex flex-col">
+                            <span>{c.label}</span>
+                            <span className="text-xs text-gray-500">{c.roasterName}</span>
+                          </div>
+                        </CommandItem>
+                      ))
+                    : <div className="py-6 text-center text-sm text-gray-500">No coffees found</div>
                 )}
               </CommandGroup>
             </Command>
@@ -306,7 +308,7 @@ const CoffeeBasicDetails = ({
               <SelectValue placeholder="Select origin" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
-              {origins.map((o) => (
+              {origins && origins.map((o) => (
                 <SelectItem key={o} value={o}>{o}</SelectItem>
               ))}
             </SelectContent>
@@ -326,7 +328,7 @@ const CoffeeBasicDetails = ({
               <SelectValue placeholder="Select coffee type" />
             </SelectTrigger>
             <SelectContent>
-              {coffeeTypes.map((type) => (
+              {coffeeTypes && coffeeTypes.map((type) => (
                 <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}
             </SelectContent>
