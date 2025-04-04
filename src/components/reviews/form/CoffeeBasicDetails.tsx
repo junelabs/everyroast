@@ -63,6 +63,8 @@ const CoffeeBasicDetails = ({
   const [roasters, setRoasters] = useState<RoasterOption[]>([]);
   const [coffees, setCoffees] = useState<CoffeeOption[]>([]);
   const [filteredCoffees, setFilteredCoffees] = useState<CoffeeOption[]>([]);
+  const [isRoastersLoading, setIsRoastersLoading] = useState(false);
+  const [isCoffeesLoading, setIsCoffeesLoading] = useState(false);
   
   const isNameEmpty = showValidationErrors && coffeeName.trim().length === 0;
   const isRoasterEmpty = showValidationErrors && roaster.trim().length === 0;
@@ -70,6 +72,7 @@ const CoffeeBasicDetails = ({
   // Fetch roasters from Supabase
   useEffect(() => {
     const fetchRoasters = async () => {
+      setIsRoastersLoading(true);
       try {
         const { data, error } = await supabase
           .from('roasters')
@@ -79,18 +82,21 @@ const CoffeeBasicDetails = ({
         
         if (error) {
           console.error('Error fetching roasters:', error);
+          setRoasters([]);
           return;
         }
         
-        const formattedRoasters = data?.map(r => ({
+        const formattedRoasters = (data || []).map(r => ({
           value: r.name,
           label: r.name
-        })) || [];
+        }));
         
         setRoasters(formattedRoasters);
       } catch (err) {
         console.error('Unexpected error fetching roasters:', err);
         setRoasters([]);
+      } finally {
+        setIsRoastersLoading(false);
       }
     };
     
@@ -100,6 +106,7 @@ const CoffeeBasicDetails = ({
   // Fetch coffees from Supabase
   useEffect(() => {
     const fetchCoffees = async () => {
+      setIsCoffeesLoading(true);
       try {
         const { data, error } = await supabase
           .from('coffees')
@@ -109,19 +116,22 @@ const CoffeeBasicDetails = ({
         
         if (error) {
           console.error('Error fetching coffees:', error);
+          setCoffees([]);
           return;
         }
         
-        const formattedCoffees = data?.map(c => ({
+        const formattedCoffees = (data || []).map(c => ({
           value: c.name,
           label: c.name,
           roaster: c.roaster?.name || 'Unknown Roaster'
-        })) || [];
+        }));
         
         setCoffees(formattedCoffees);
       } catch (err) {
         console.error('Unexpected error fetching coffees:', err);
         setCoffees([]);
+      } finally {
+        setIsCoffeesLoading(false);
       }
     };
     
@@ -139,6 +149,16 @@ const CoffeeBasicDetails = ({
       setFilteredCoffees(coffees);
     }
   }, [roaster, coffees]);
+
+  // Safe filter function to handle potential null/undefined values
+  const safeFilter = (options: RoasterOption[] | CoffeeOption[], searchTerm: string) => {
+    if (!options || !Array.isArray(options)) return [];
+    if (!searchTerm) return options;
+    
+    return options.filter(option => 
+      option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
 
   return (
     <>
@@ -172,20 +192,23 @@ const CoffeeBasicDetails = ({
               <CommandInput placeholder="Search roasters..." />
               <CommandEmpty>No roaster found.</CommandEmpty>
               <CommandGroup className="max-h-[200px] overflow-y-auto">
-                {roasters && roasters.length > 0 && roasters
-                  .filter(r => r.label.toLowerCase().includes((roaster || '').toLowerCase()))
-                  .map((r) => (
-                    <CommandItem
-                      key={r.value}
-                      value={r.value}
-                      onSelect={(currentValue) => {
-                        setRoaster(currentValue);
-                        setRoasterOpen(false);
-                      }}
-                    >
-                      {r.label}
-                    </CommandItem>
-                  ))}
+                {isRoastersLoading ? (
+                  <div className="py-6 text-center text-sm text-gray-500">Loading roasters...</div>
+                ) : (
+                  safeFilter(roasters, roaster || '')
+                    .map((r) => (
+                      <CommandItem
+                        key={r.value}
+                        value={r.value}
+                        onSelect={(currentValue) => {
+                          setRoaster(currentValue);
+                          setRoasterOpen(false);
+                        }}
+                      >
+                        {r.label}
+                      </CommandItem>
+                    ))
+                )}
               </CommandGroup>
             </Command>
           </PopoverContent>
@@ -226,23 +249,26 @@ const CoffeeBasicDetails = ({
               <CommandInput placeholder="Search coffees..." />
               <CommandEmpty>No coffee found.</CommandEmpty>
               <CommandGroup className="max-h-[200px] overflow-y-auto">
-                {filteredCoffees && filteredCoffees.length > 0 && filteredCoffees
-                  .filter(c => c.label.toLowerCase().includes((coffeeName || '').toLowerCase()))
-                  .map((c) => (
-                    <CommandItem
-                      key={c.value}
-                      value={c.value}
-                      onSelect={(currentValue) => {
-                        setCoffeeName(currentValue);
-                        setCoffeeOpen(false);
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <span>{c.label}</span>
-                        <span className="text-xs text-gray-500">{c.roaster}</span>
-                      </div>
-                    </CommandItem>
-                  ))}
+                {isCoffeesLoading ? (
+                  <div className="py-6 text-center text-sm text-gray-500">Loading coffees...</div>
+                ) : (
+                  safeFilter(filteredCoffees, coffeeName || '')
+                    .map((c) => (
+                      <CommandItem
+                        key={c.value + c.roaster}
+                        value={c.value}
+                        onSelect={(currentValue) => {
+                          setCoffeeName(currentValue);
+                          setCoffeeOpen(false);
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <span>{c.label}</span>
+                          <span className="text-xs text-gray-500">{c.roaster}</span>
+                        </div>
+                      </CommandItem>
+                    ))
+                )}
               </CommandGroup>
             </Command>
           </PopoverContent>
