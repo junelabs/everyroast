@@ -24,9 +24,9 @@ const ProfileTabs = ({ viewingUserId }: ProfileTabsProps) => {
         <TabsList className="grid grid-cols-3 mb-6">
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
           {isOwnProfile && <TabsTrigger value="favorites">Favorites</TabsTrigger>}
-          {isOwnProfile && <TabsTrigger value="saved">Saved</TabsTrigger>}
+          {isOwnProfile && <TabsTrigger value="saved">Recipes</TabsTrigger>}
           {!isOwnProfile && <TabsTrigger value="none" disabled className="opacity-50">Favorites</TabsTrigger>}
-          {!isOwnProfile && <TabsTrigger value="none2" disabled className="opacity-50">Saved</TabsTrigger>}
+          {!isOwnProfile && <TabsTrigger value="none2" disabled className="opacity-50">Recipes</TabsTrigger>}
         </TabsList>
         
         <TabsContent value="reviews" className="space-y-4">

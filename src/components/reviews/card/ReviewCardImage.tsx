@@ -9,6 +9,24 @@ interface ReviewCardImageProps {
 }
 
 const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, formatDate }) => {
+  // Render stars for rating
+  const renderRating = (rating: number) => {
+    return (
+      <div className="flex items-center space-x-0.5">
+        {[...Array(5)].map((_, index) => (
+          <Star
+            key={index}
+            className={`h-3 w-3 ${
+              index < rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "fill-gray-200 text-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   // Helper to check if image is valid and not a placeholder
   const hasValidImage = (): boolean => {
     const imageUrl = review.coffees?.image_url;
@@ -76,24 +94,6 @@ const ReviewCardImage: React.FC<ReviewCardImageProps> = React.memo(({ review, fo
       </div>
     );
   }
-
-  // Render stars for rating
-  const renderRating = (rating: number) => {
-    return (
-      <div className="flex items-center space-x-0.5">
-        {[...Array(5)].map((_, index) => (
-          <Star
-            key={index}
-            className={`h-3 w-3 ${
-              index < rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-200 text-gray-200"
-            }`}
-          />
-        ))}
-      </div>
-    );
-  };
 
   return (
     <div className="w-full h-full relative">
