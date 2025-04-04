@@ -338,3 +338,4 @@ const CoffeeBasicDetails = ({
 };
 
 export default CoffeeBasicDetails;
+
