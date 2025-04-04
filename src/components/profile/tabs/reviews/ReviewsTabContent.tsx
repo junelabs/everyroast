@@ -30,6 +30,11 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           brewing_method,
           created_at,
           coffee_id,
+          dosage,
+          water,
+          temperature,
+          brew_time,
+          brew_notes,
           coffees (
             id,
             name,
@@ -77,6 +82,21 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
 
   const hasReviews = reviews && reviews.length > 0;
 
+  // Prepare initialData for ReviewForm with safe defaults
+  const getInitialData = (review) => {
+    if (!review) return undefined;
+    return {
+      rating: review.rating || 0,
+      reviewText: review.review_text || "",
+      brewingMethod: review.brewing_method || "",
+      dosage: review.dosage || 0,
+      water: review.water || 0,
+      temperature: review.temperature || 0,
+      brewTime: review.brew_time || "",
+      brewNotes: review.brew_notes || ""
+    };
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -115,16 +135,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           }}
           coffeeId={selectedReview?.coffee_id}
           reviewId={selectedReview?.id}
-          initialData={selectedReview ? {
-            rating: selectedReview.rating || 0,
-            reviewText: selectedReview.review_text || "",
-            brewingMethod: selectedReview.brewing_method || "",
-            dosage: selectedReview.dosage || 0,
-            water: selectedReview.water || 0,
-            temperature: selectedReview.temperature || 0,
-            brewTime: selectedReview.brew_time || "",
-            brewNotes: selectedReview.brew_notes || ""
-          } : undefined}
+          initialData={getInitialData(selectedReview)}
           isEdit={!!selectedReview}
           reviewCount={reviews?.length || 0}
           showSelector={!selectedReview}

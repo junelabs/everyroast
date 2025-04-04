@@ -205,7 +205,7 @@ const CoffeeBasicDetails = ({
                 {isRoastersLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading roasters...</div>
                 ) : (
-                  filteredRoasters.map((r) => (
+                  (filteredRoasters || []).map((r) => (
                     <CommandItem
                       key={r.value}
                       value={r.value}
@@ -261,7 +261,7 @@ const CoffeeBasicDetails = ({
                 {isCoffeesLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading coffees...</div>
                 ) : (
-                  filteredCoffeeOptions.length > 0 ? 
+                  (filteredCoffeeOptions || []).length > 0 ? 
                     filteredCoffeeOptions.map((c) => (
                       <CommandItem
                         key={c.value}
@@ -316,7 +316,7 @@ const CoffeeBasicDetails = ({
               <SelectValue placeholder="Select origin" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
-              {origins && origins.map((o) => (
+              {(origins || []).map((o) => (
                 <SelectItem key={o} value={o}>{o}</SelectItem>
               ))}
             </SelectContent>
@@ -336,7 +336,7 @@ const CoffeeBasicDetails = ({
               <SelectValue placeholder="Select coffee type" />
             </SelectTrigger>
             <SelectContent>
-              {coffeeTypes && coffeeTypes.map((type) => (
+              {(coffeeTypes || []).map((type) => (
                 <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}
             </SelectContent>
