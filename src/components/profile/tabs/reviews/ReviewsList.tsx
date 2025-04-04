@@ -2,6 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import ReviewRowCard from '@/components/reviews/ReviewRowCard';
+import { ensureArray } from '@/components/ui/command';
 
 interface Review {
   id: string;
@@ -24,7 +25,7 @@ interface Review {
 interface ReviewsListProps {
   reviews: Review[];
   onReviewDeleted: () => void;
-  onReviewEdit: (review: any) => void; // Added missing prop
+  onReviewEdit: (review: any) => void;
   showDeleteButton?: boolean;
 }
 
@@ -34,21 +35,29 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
   onReviewEdit,
   showDeleteButton = true
 }) => {
+  // Ensure reviews is always a valid array even if somehow we get null/undefined
+  const safeReviews = ensureArray(reviews);
+  
   return (
     <div className="space-y-4">
-      {reviews.map((review) => (
+      {safeReviews.map((review) => (
         <div key={review.id}>
           <ReviewRowCard 
             review={{
               id: review.id,
               rating: review.rating,
-              review_text: review.review_text,
-              brewing_method: review.brewing_method,
+              review_text: review.review_text || "",
+              brewing_method: review.brewing_method || "",
               created_at: review.created_at,
               coffee_id: review.coffee_id,
-              coffees: review.coffees
+              coffees: review.coffees || { 
+                id: "", 
+                name: "Unknown", 
+                roaster_id: "", 
+                roasters: { name: "Unknown Roaster" } 
+              }
             }}
-            onEdit={() => onReviewEdit(review)} // Pass the review object to the edit function
+            onEdit={() => onReviewEdit(review)}
             onDelete={showDeleteButton ? onReviewDeleted : undefined}
           />
         </div>

@@ -7,9 +7,15 @@ import { Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
-// Safely handle cmdk operations with null/undefined objects
+// Enhanced safety utility function to handle null/undefined values
 const safelyUse = <T,>(maybeObj: T | null | undefined, defaultValue: T): T => {
   return maybeObj === null || maybeObj === undefined ? defaultValue : maybeObj
+}
+
+// Ensures an array-like object is an actual array or returns empty array
+const ensureArray = <T,>(maybeArray: T[] | null | undefined): T[] => {
+  if (maybeArray === null || maybeArray === undefined) return []
+  return Array.isArray(maybeArray) ? maybeArray : []
 }
 
 const Command = React.forwardRef<
@@ -114,21 +120,21 @@ const CommandSeparator = React.forwardRef<
 ))
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
-// Modified CommandItem to handle potential null/undefined items in Array.from()
+// Enhanced CommandItem with comprehensive null/undefined checks
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, ...props }, ref) => {
-  // This component is where Array.from might be used internally
-  // We need to make sure any props passed to this are not null/undefined
-  // Especially children, value, or any other props that might be used with Array.from()
-  
-  // Create a safe version of props where any array-like props are guaranteed to be arrays
+  // Create a safe version of props with null checks for commonly used properties
+  // that might be used with Array.from() internally
   const safeProps = {
     ...props,
-    // If there are specific props that need safety checks, add them here
-    // For example: children: props.children ?? [],
-    // If the children prop is an array and might be null/undefined
+    children: props.children ?? null,
+    value: props.value ?? "",
+    // Add any other properties that might be used with Array.from()
+    onSelect: props.onSelect ? 
+      (value: string) => { props.onSelect?.(value) } : 
+      undefined,
   };
   
   return (
@@ -172,4 +178,5 @@ export {
   CommandShortcut,
   CommandSeparator,
   safelyUse,
+  ensureArray,
 }

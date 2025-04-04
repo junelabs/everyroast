@@ -6,6 +6,7 @@ import ReviewsList from './ReviewsList';
 import ReviewsEmptyState from './ReviewsEmptyState';
 import AddReviewButton from './AddReviewButton';
 import ReviewForm from '@/components/reviews/ReviewForm';
+import { ensureArray } from '@/components/ui/command';
 
 interface ReviewsTabContentProps {
   userId?: string;
@@ -80,8 +81,8 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
     );
   }
 
-  // Make sure reviews is always an array
-  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  // Make sure reviews is always an array with enhanced safety
+  const safeReviews = ensureArray(reviews);
   const hasReviews = safeReviews.length > 0;
 
   // Prepare initialData for ReviewForm with safe defaults
