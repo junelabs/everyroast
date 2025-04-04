@@ -7,9 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, HelpCircle } from "lucide-react";
+import { MapPin, HelpCircle, Coffee } from "lucide-react";
 import { CoffeeOrigin, CoffeeType } from "@/types/coffee";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useState, useEffect } from "react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CoffeeBasicDetailsProps {
   coffeeName: string;
@@ -27,6 +32,17 @@ interface CoffeeBasicDetailsProps {
   showHelpText?: boolean;
 }
 
+interface RoasterOption {
+  value: string;
+  label: string;
+}
+
+interface CoffeeOption {
+  value: string;
+  label: string;
+  roaster: string;
+}
+
 const CoffeeBasicDetails = ({
   coffeeName,
   setCoffeeName,
@@ -42,44 +58,180 @@ const CoffeeBasicDetails = ({
   showValidationErrors = false,
   showHelpText = false
 }: CoffeeBasicDetailsProps) => {
+  const [roasterOpen, setRoasterOpen] = useState(false);
+  const [coffeeOpen, setCoffeeOpen] = useState(false);
+  const [roasters, setRoasters] = useState<RoasterOption[]>([]);
+  const [coffees, setCoffees] = useState<CoffeeOption[]>([]);
+  const [filteredCoffees, setFilteredCoffees] = useState<CoffeeOption[]>([]);
+  
   const isNameEmpty = showValidationErrors && coffeeName.trim().length === 0;
   const isRoasterEmpty = showValidationErrors && roaster.trim().length === 0;
 
+  // Fetch roasters from Supabase
+  useEffect(() => {
+    const fetchRoasters = async () => {
+      const { data, error } = await supabase
+        .from('roasters')
+        .select('id, name')
+        .order('name', { ascending: true })
+        .limit(50);
+      
+      if (error) {
+        console.error('Error fetching roasters:', error);
+        return;
+      }
+      
+      const formattedRoasters = data.map(r => ({
+        value: r.name,
+        label: r.name
+      }));
+      
+      setRoasters(formattedRoasters);
+    };
+    
+    fetchRoasters();
+  }, []);
+  
+  // Fetch coffees from Supabase
+  useEffect(() => {
+    const fetchCoffees = async () => {
+      const { data, error } = await supabase
+        .from('coffees')
+        .select('id, name, roaster:roasters(name)')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (error) {
+        console.error('Error fetching coffees:', error);
+        return;
+      }
+      
+      const formattedCoffees = data.map(c => ({
+        value: c.name,
+        label: c.name,
+        roaster: c.roaster?.name || 'Unknown Roaster'
+      }));
+      
+      setCoffees(formattedCoffees);
+    };
+    
+    fetchCoffees();
+  }, []);
+  
+  // Filter coffees based on selected roaster
+  useEffect(() => {
+    if (roaster) {
+      const filtered = coffees.filter(c => 
+        c.roaster.toLowerCase() === roaster.toLowerCase()
+      );
+      setFilteredCoffees(filtered);
+    } else {
+      setFilteredCoffees(coffees);
+    }
+  }, [roaster, coffees]);
+
   return (
     <>
-      {/* Switched the order: Roaster field now comes first */}
+      {/* Roaster Autocomplete */}
       <div className="space-y-2">
         <label htmlFor="roaster" className="block text-sm font-medium">
           Roaster *
         </label>
-        <Input
-          id="roaster"
-          placeholder="e.g., Stumptown Coffee"
-          value={roaster}
-          onChange={(e) => setRoaster(e.target.value)}
-          required
-          readOnly={readOnly}
-          className={`${readOnly ? "bg-gray-100" : ""} ${isRoasterEmpty ? "border-red-400 bg-red-50" : ""}`}
-        />
+        
+        <Popover open={roasterOpen} onOpenChange={setRoasterOpen}>
+          <PopoverTrigger asChild>
+            <div className="flex w-full items-center relative">
+              <Input
+                id="roaster"
+                placeholder="e.g., Stumptown Coffee"
+                value={roaster}
+                onChange={(e) => setRoaster(e.target.value)}
+                required
+                readOnly={readOnly}
+                className={`${readOnly ? "bg-gray-100" : ""} ${isRoasterEmpty ? "border-red-400 bg-red-50" : ""}`}
+                onClick={() => !readOnly && setRoasterOpen(true)}
+              />
+              <Coffee className="absolute right-3 h-4 w-4 text-gray-400" />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 w-[300px]" align="start">
+            <Command>
+              <CommandInput placeholder="Search roasters..." />
+              <CommandEmpty>No roaster found.</CommandEmpty>
+              <CommandGroup className="max-h-[200px] overflow-y-auto">
+                {roasters
+                  .filter(r => r.label.toLowerCase().includes(roaster.toLowerCase()))
+                  .map((r) => (
+                    <CommandItem
+                      key={r.value}
+                      value={r.value}
+                      onSelect={(currentValue) => {
+                        setRoaster(currentValue);
+                        setRoasterOpen(false);
+                      }}
+                    >
+                      {r.label}
+                    </CommandItem>
+                  ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        
         {isRoasterEmpty && (
           <p className="text-sm text-red-500 mt-1">Roaster name is required</p>
         )}
       </div>
       
-      {/* Coffee Name field moved to second position */}
+      {/* Coffee Name Autocomplete */}
       <div className="space-y-2">
         <label htmlFor="coffeeName" className="block text-sm font-medium">
           Coffee Name *
         </label>
-        <Input
-          id="coffeeName"
-          placeholder="e.g., Ethiopian Yirgacheffe"
-          value={coffeeName}
-          onChange={(e) => setCoffeeName(e.target.value)}
-          required
-          readOnly={readOnly}
-          className={`${readOnly ? "bg-gray-100" : ""} ${isNameEmpty ? "border-red-400 bg-red-50" : ""}`}
-        />
+        
+        <Popover open={coffeeOpen} onOpenChange={setCoffeeOpen}>
+          <PopoverTrigger asChild>
+            <div className="flex w-full items-center relative">
+              <Input
+                id="coffeeName"
+                placeholder="e.g., Ethiopian Yirgacheffe"
+                value={coffeeName}
+                onChange={(e) => setCoffeeName(e.target.value)}
+                required
+                readOnly={readOnly}
+                className={`${readOnly ? "bg-gray-100" : ""} ${isNameEmpty ? "border-red-400 bg-red-50" : ""}`}
+                onClick={() => !readOnly && setCoffeeOpen(true)}
+              />
+              <Coffee className="absolute right-3 h-4 w-4 text-gray-400" />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 w-[300px]" align="start">
+            <Command>
+              <CommandInput placeholder="Search coffees..." />
+              <CommandEmpty>No coffee found.</CommandEmpty>
+              <CommandGroup className="max-h-[200px] overflow-y-auto">
+                {filteredCoffees
+                  .filter(c => c.label.toLowerCase().includes(coffeeName.toLowerCase()))
+                  .map((c) => (
+                    <CommandItem
+                      key={c.value}
+                      value={c.value}
+                      onSelect={(currentValue) => {
+                        setCoffeeName(currentValue);
+                        setCoffeeOpen(false);
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <span>{c.label}</span>
+                        <span className="text-xs text-gray-500">{c.roaster}</span>
+                      </div>
+                    </CommandItem>
+                  ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        
         {isNameEmpty && (
           <p className="text-sm text-red-500 mt-1">Coffee name is required</p>
         )}
