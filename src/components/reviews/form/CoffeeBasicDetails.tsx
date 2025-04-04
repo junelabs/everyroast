@@ -70,23 +70,28 @@ const CoffeeBasicDetails = ({
   // Fetch roasters from Supabase
   useEffect(() => {
     const fetchRoasters = async () => {
-      const { data, error } = await supabase
-        .from('roasters')
-        .select('id, name')
-        .order('name', { ascending: true })
-        .limit(50);
-      
-      if (error) {
-        console.error('Error fetching roasters:', error);
-        return;
+      try {
+        const { data, error } = await supabase
+          .from('roasters')
+          .select('id, name')
+          .order('name', { ascending: true })
+          .limit(50);
+        
+        if (error) {
+          console.error('Error fetching roasters:', error);
+          return;
+        }
+        
+        const formattedRoasters = data?.map(r => ({
+          value: r.name,
+          label: r.name
+        })) || [];
+        
+        setRoasters(formattedRoasters);
+      } catch (err) {
+        console.error('Unexpected error fetching roasters:', err);
+        setRoasters([]);
       }
-      
-      const formattedRoasters = data?.map(r => ({
-        value: r.name,
-        label: r.name
-      })) || [];
-      
-      setRoasters(formattedRoasters);
     };
     
     fetchRoasters();
@@ -95,24 +100,29 @@ const CoffeeBasicDetails = ({
   // Fetch coffees from Supabase
   useEffect(() => {
     const fetchCoffees = async () => {
-      const { data, error } = await supabase
-        .from('coffees')
-        .select('id, name, roaster:roasters(name)')
-        .order('created_at', { ascending: false })
-        .limit(100);
-      
-      if (error) {
-        console.error('Error fetching coffees:', error);
-        return;
+      try {
+        const { data, error } = await supabase
+          .from('coffees')
+          .select('id, name, roaster:roasters(name)')
+          .order('created_at', { ascending: false })
+          .limit(100);
+        
+        if (error) {
+          console.error('Error fetching coffees:', error);
+          return;
+        }
+        
+        const formattedCoffees = data?.map(c => ({
+          value: c.name,
+          label: c.name,
+          roaster: c.roaster?.name || 'Unknown Roaster'
+        })) || [];
+        
+        setCoffees(formattedCoffees);
+      } catch (err) {
+        console.error('Unexpected error fetching coffees:', err);
+        setCoffees([]);
       }
-      
-      const formattedCoffees = data?.map(c => ({
-        value: c.name,
-        label: c.name,
-        roaster: c.roaster?.name || 'Unknown Roaster'
-      })) || [];
-      
-      setCoffees(formattedCoffees);
     };
     
     fetchCoffees();
@@ -138,13 +148,16 @@ const CoffeeBasicDetails = ({
           Roaster *
         </label>
         
-        <Popover open={roasterOpen} onOpenChange={setRoasterOpen}>
+        <Popover 
+          open={roasterOpen} 
+          onOpenChange={setRoasterOpen}
+        >
           <PopoverTrigger asChild>
             <div className="flex w-full items-center relative">
               <Input
                 id="roaster"
                 placeholder="e.g., Stumptown Coffee"
-                value={roaster}
+                value={roaster || ''}
                 onChange={(e) => setRoaster(e.target.value)}
                 required
                 readOnly={readOnly}
@@ -189,13 +202,16 @@ const CoffeeBasicDetails = ({
           Coffee Name *
         </label>
         
-        <Popover open={coffeeOpen} onOpenChange={setCoffeeOpen}>
+        <Popover 
+          open={coffeeOpen} 
+          onOpenChange={setCoffeeOpen}
+        >
           <PopoverTrigger asChild>
             <div className="flex w-full items-center relative">
               <Input
                 id="coffeeName"
                 placeholder="e.g., Ethiopian Yirgacheffe"
-                value={coffeeName}
+                value={coffeeName || ''}
                 onChange={(e) => setCoffeeName(e.target.value)}
                 required
                 readOnly={readOnly}
