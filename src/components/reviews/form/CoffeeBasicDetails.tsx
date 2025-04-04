@@ -120,6 +120,7 @@ const CoffeeBasicDetails = ({
         if (error) {
           console.error('Error fetching coffees:', error);
           setCoffees([]);
+          setFilteredCoffees([]);
           return;
         }
         
@@ -165,6 +166,10 @@ const CoffeeBasicDetails = ({
     );
   };
 
+  // Ensure we always have valid arrays for our CommandGroup components
+  const filteredRoasters = safeFilter<RoasterOption>(roasters, roaster || '');
+  const filteredCoffeeOptions = safeFilter<CoffeeOption>(filteredCoffees, coffeeName || '');
+
   return (
     <>
       {/* Roaster Autocomplete */}
@@ -200,19 +205,18 @@ const CoffeeBasicDetails = ({
                 {isRoastersLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading roasters...</div>
                 ) : (
-                  safeFilter<RoasterOption>(roasters || [], roaster || '')
-                    .map((r) => (
-                      <CommandItem
-                        key={r.value}
-                        value={r.value}
-                        onSelect={(currentValue) => {
-                          setRoaster(currentValue);
-                          setRoasterOpen(false);
-                        }}
-                      >
-                        {r.label}
-                      </CommandItem>
-                    ))
+                  filteredRoasters.map((r) => (
+                    <CommandItem
+                      key={r.value}
+                      value={r.value}
+                      onSelect={(currentValue) => {
+                        setRoaster(currentValue);
+                        setRoasterOpen(false);
+                      }}
+                    >
+                      {r.label}
+                    </CommandItem>
+                  ))
                 )}
               </CommandGroup>
             </Command>
@@ -257,24 +261,23 @@ const CoffeeBasicDetails = ({
                 {isCoffeesLoading ? (
                   <div className="py-6 text-center text-sm text-gray-500">Loading coffees...</div>
                 ) : (
-                  (filteredCoffees && filteredCoffees.length > 0) ? 
-                    safeFilter<CoffeeOption>(filteredCoffees, coffeeName || '')
-                      .map((c) => (
-                        <CommandItem
-                          key={c.value}
-                          value={c.value}
-                          onSelect={(currentValue) => {
-                            setCoffeeName(currentValue);
-                            setCoffeeOpen(false);
-                          }}
-                        >
-                          <div className="flex flex-col">
-                            <span>{c.label}</span>
-                            <span className="text-xs text-gray-500">{c.roasterName}</span>
-                          </div>
-                        </CommandItem>
-                      ))
-                    : <div className="py-6 text-center text-sm text-gray-500">No coffees found</div>
+                  filteredCoffeeOptions.length > 0 ? 
+                    filteredCoffeeOptions.map((c) => (
+                      <CommandItem
+                        key={c.value}
+                        value={c.value}
+                        onSelect={(currentValue) => {
+                          setCoffeeName(currentValue);
+                          setCoffeeOpen(false);
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <span>{c.label}</span>
+                          <span className="text-xs text-gray-500">{c.roasterName}</span>
+                        </div>
+                      </CommandItem>
+                    ))
+                  : <div className="py-6 text-center text-sm text-gray-500">No coffees found</div>
                 )}
               </CommandGroup>
             </Command>
