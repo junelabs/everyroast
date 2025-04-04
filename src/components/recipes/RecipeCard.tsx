@@ -1,122 +1,116 @@
 
 import React from 'react';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { CupSoda, Droplets, Thermometer, Timer, User } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Link } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Card } from '@/components/ui/card';
+import { Trash2 } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 
-interface RecipeCardProps {
-  coffeeName: string;
-  roaster: string;
-  brewingMethod: string;
-  dosage?: number;
-  water?: number;
-  temperature?: number;
-  brewTime?: string;
-  brewNotes?: string;
-  userName?: string;
-  coffeeId?: string;
-  createdAt?: string;
-  imageUrl?: string | null;
+interface Recipe {
+  id: string;
+  coffee_id: string;
+  coffee_name: string;
+  roaster_name: string;
+  brewing_method: string;
+  dosage: number;
+  water: number;
+  temperature: number;
+  brew_time: string;
+  brew_notes?: string;
+  created_at: string;
+  image_url?: string;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({
-  coffeeName,
-  roaster,
-  brewingMethod,
-  dosage,
-  water,
-  temperature,
-  brewTime,
-  brewNotes,
-  userName,
-  coffeeId,
-  createdAt,
-}) => {
+interface RecipeCardProps {
+  recipe: Recipe;
+  onDelete?: () => void;
+}
+
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onDelete }) => {
+  const formatDate = (dateString: string) => {
+    try {
+      return format(parseISO(dateString), 'MMM d, yyyy');
+    } catch (error) {
+      return 'Unknown date';
+    }
+  };
+
+  // Check if we have a valid image URL
+  const hasValidImage = recipe.image_url && 
+                       !recipe.image_url.includes('placeholder') && 
+                       !recipe.image_url.includes('gravatar') && 
+                       !recipe.image_url.includes('unsplash');
+
   return (
-    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div>
-          <h3 className="text-lg font-semibold line-clamp-1">
-            {coffeeId ? (
-              <Link to={`/coffee/${coffeeId}`} className="hover:text-roast-500 transition-colors">
-                {coffeeName}
-              </Link>
-            ) : (
-              coffeeName
-            )}
-          </h3>
-          <p className="text-sm text-muted-foreground">{roaster}</p>
+    <Card className="overflow-hidden h-full flex flex-col">
+      {hasValidImage && (
+        <div className="h-48 overflow-hidden">
+          <img 
+            src={recipe.image_url} 
+            alt={recipe.coffee_name} 
+            className="w-full h-full object-cover"
+          />
         </div>
-      </CardHeader>
+      )}
       
-      <CardContent className="pt-0 pb-2 flex-grow">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <CupSoda className="h-4 w-4 text-roast-500" />
-            <span className="text-sm font-medium">{brewingMethod}</span>
+      <div className="p-4 flex-1 flex flex-col">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold">{recipe.coffee_name}</h3>
+          <p className="text-gray-600 text-sm">{recipe.roaster_name}</p>
+          <p className="text-xs text-gray-500 mt-1">{formatDate(recipe.created_at)}</p>
+        </div>
+
+        <div className="space-y-2 flex-1">
+          <div className="bg-gray-50 p-3 rounded-md">
+            <h4 className="font-medium mb-2">{recipe.brewing_method}</h4>
+            <div className="grid grid-cols-3 gap-2 text-sm">
+              <div>
+                <p className="text-gray-500">Dose</p>
+                <p>{recipe.dosage}g</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Water</p>
+                <p>{recipe.water}g</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Ratio</p>
+                <p>1:{(recipe.water / recipe.dosage).toFixed(1)}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
+              <div>
+                <p className="text-gray-500">Temp</p>
+                <p>{recipe.temperature}°C</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Time</p>
+                <p>{recipe.brew_time}</p>
+              </div>
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            {dosage !== undefined && dosage > 0 && (
-              <div className="flex items-center gap-2">
-                <Droplets className="h-4 w-4 text-blue-500" />
-                <span className="text-sm">{dosage}g coffee</span>
-              </div>
-            )}
-            
-            {water !== undefined && water > 0 && (
-              <div className="flex items-center gap-2">
-                <Droplets className="h-4 w-4 text-blue-500" />
-                <span className="text-sm">{water}ml water</span>
-              </div>
-            )}
-            
-            {temperature !== undefined && temperature > 0 && (
-              <div className="flex items-center gap-2">
-                <Thermometer className="h-4 w-4 text-red-500" />
-                <span className="text-sm">{temperature}°C</span>
-              </div>
-            )}
-            
-            {brewTime && (
-              <div className="flex items-center gap-2">
-                <Timer className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">{brewTime}</span>
-              </div>
-            )}
-          </div>
-          
-          {brewNotes && (
-            <div className="mt-2">
-              <p className="text-sm text-gray-600 line-clamp-2">{brewNotes}</p>
+
+          {recipe.brew_notes && (
+            <div className="text-sm">
+              <p className="font-medium">Notes:</p>
+              <p className="text-gray-700">{recipe.brew_notes}</p>
             </div>
           )}
         </div>
-      </CardContent>
-      
-      <CardFooter className="pt-2 border-t text-xs text-muted-foreground flex justify-between">
-        {userName && (
-          <div className="flex items-center gap-1">
-            <User className="h-3 w-3" />
-            <span>{userName}</span>
+        
+        {onDelete && (
+          <div className="mt-4 pt-3 border-t border-gray-100">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete();
+              }}
+              className="flex items-center text-rose-500 hover:text-rose-600 text-sm"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete Recipe
+            </button>
           </div>
         )}
-        
-        {createdAt && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{new Date(createdAt).toLocaleDateString()}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </CardFooter>
+      </div>
     </Card>
   );
 };
