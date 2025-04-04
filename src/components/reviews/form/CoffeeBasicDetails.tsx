@@ -52,8 +52,8 @@ const CoffeeBasicDetails = ({
   setOrigin,
   coffeeType,
   setCoffeeType,
-  origins,
-  coffeeTypes,
+  origins = [], // Default to empty array
+  coffeeTypes = [], // Default to empty array
   readOnly = false,
   showValidationErrors = false,
   showHelpText = false
@@ -167,8 +167,8 @@ const CoffeeBasicDetails = ({
   };
 
   // Ensure we always have valid arrays for our CommandGroup components
-  const filteredRoasters = safeFilter<RoasterOption>(roasters, roaster || '');
-  const filteredCoffeeOptions = safeFilter<CoffeeOption>(filteredCoffees, coffeeName || '');
+  const filteredRoasters = safeFilter<RoasterOption>(roasters || [], roaster || '');
+  const filteredCoffeeOptions = safeFilter<CoffeeOption>(filteredCoffees || [], coffeeName || '');
 
   return (
     <>
