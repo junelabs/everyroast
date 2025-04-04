@@ -80,7 +80,9 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
     );
   }
 
-  const hasReviews = Array.isArray(reviews) && reviews.length > 0;
+  // Make sure reviews is always an array
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const hasReviews = safeReviews.length > 0;
 
   // Prepare initialData for ReviewForm with safe defaults
   const getInitialData = (review: any) => {
@@ -113,7 +115,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
       
       {hasReviews ? (
         <ReviewsList 
-          reviews={reviews || []} 
+          reviews={safeReviews} 
           onReviewDeleted={refetch} 
           onReviewEdit={handleEditReview}
           showDeleteButton={showAddButton}
@@ -137,7 +139,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           reviewId={selectedReview?.id}
           initialData={getInitialData(selectedReview)}
           isEdit={!!selectedReview}
-          reviewCount={Array.isArray(reviews) ? reviews.length : 0}
+          reviewCount={safeReviews.length}
           showSelector={!selectedReview}
         />
       )}

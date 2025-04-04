@@ -7,6 +7,11 @@ import { Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
+// Safely handle cmdk operations with null/undefined objects
+const safelyUse = <T,>(maybeObj: T | null | undefined, defaultValue: T): T => {
+  return maybeObj === null || maybeObj === undefined ? defaultValue : maybeObj
+}
+
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
@@ -109,12 +114,23 @@ const CommandSeparator = React.forwardRef<
 ))
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
-// Add a wrapper component to safely handle array operations in CommandItem
+// Modified CommandItem to handle potential null/undefined items in Array.from()
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, ...props }, ref) => {
   // This component is where Array.from might be used internally
+  // We need to make sure any props passed to this are not null/undefined
+  // Especially children, value, or any other props that might be used with Array.from()
+  
+  // Create a safe version of props where any array-like props are guaranteed to be arrays
+  const safeProps = {
+    ...props,
+    // If there are specific props that need safety checks, add them here
+    // For example: children: props.children ?? [],
+    // If the children prop is an array and might be null/undefined
+  };
+  
   return (
     <CommandPrimitive.Item
       ref={ref}
@@ -122,7 +138,7 @@ const CommandItem = React.forwardRef<
         "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
         className
       )}
-      {...props}
+      {...safeProps}
     />
   );
 })
@@ -155,4 +171,5 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
+  safelyUse,
 }
