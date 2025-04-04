@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ReviewsList from './ReviewsList';
 import ReviewsEmptyState from './ReviewsEmptyState';
 import AddReviewButton from './AddReviewButton';
+import ReviewForm from '@/components/reviews/ReviewForm';
 
 interface ReviewsTabContentProps {
   userId?: string;
@@ -13,6 +14,7 @@ interface ReviewsTabContentProps {
 
 const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentProps) => {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
 
   const { data: reviews, isLoading, error, refetch } = useQuery({
     queryKey: ['userReviews', userId],
@@ -52,9 +54,16 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
   const handleReviewAdded = () => {
     refetch();
     setIsReviewFormOpen(false);
+    setSelectedReview(null);
   };
 
   const handleAddReview = () => {
+    setSelectedReview(null);
+    setIsReviewFormOpen(true);
+  };
+
+  const handleEditReview = (review) => {
+    setSelectedReview(review);
     setIsReviewFormOpen(true);
   };
 
@@ -86,6 +95,7 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
         <ReviewsList 
           reviews={reviews} 
           onReviewDeleted={refetch} 
+          onReviewEdit={handleEditReview}
           showDeleteButton={showAddButton}
         />
       ) : (
@@ -93,6 +103,31 @@ const ReviewsTabContent = ({ userId, showAddButton = true }: ReviewsTabContentPr
           isLoading={isLoading}
           error={error as Error | null}
           onAddReview={handleAddReview}
+        />
+      )}
+
+      {isReviewFormOpen && (
+        <ReviewForm 
+          isOpen={isReviewFormOpen}
+          onClose={() => {
+            setIsReviewFormOpen(false);
+            setSelectedReview(null);
+          }}
+          coffeeId={selectedReview?.coffee_id}
+          reviewId={selectedReview?.id}
+          initialData={selectedReview ? {
+            rating: selectedReview.rating || 0,
+            reviewText: selectedReview.review_text || "",
+            brewingMethod: selectedReview.brewing_method || "",
+            dosage: selectedReview.dosage || 0,
+            water: selectedReview.water || 0,
+            temperature: selectedReview.temperature || 0,
+            brewTime: selectedReview.brew_time || "",
+            brewNotes: selectedReview.brew_notes || ""
+          } : undefined}
+          isEdit={!!selectedReview}
+          reviewCount={reviews?.length || 0}
+          showSelector={!selectedReview}
         />
       )}
     </div>

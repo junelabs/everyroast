@@ -30,8 +30,8 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
   const { coffee } = useCoffeeData(review);
 
   const handleEdit = useCallback(() => {
-    onEdit(review);
-  }, [review, onEdit]);
+    setIsReviewFormOpen(true);
+  }, []);
 
   const handleDeleteReview = useCallback(async () => {
     setIsDeleting(true);
@@ -127,7 +127,7 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
         onClose={() => setIsModalOpen(false)} 
         onReview={() => {
           setIsModalOpen(false);
-          onEdit(review);
+          handleEdit();
         }}
         showActionButtons={true}
         customActions={
@@ -156,7 +156,7 @@ const ReviewCard = React.memo(({ review, onEdit, onDelete }: ReviewCardProps) =>
           brewNotes: review.brew_notes || ""
         }}
         isEdit={true}
-        showSelector={false} // Explicitly set to false
+        showSelector={false}
       />
 
       <ReviewDeleteDialog

@@ -20,7 +20,11 @@ const ReviewActions = React.memo(({ review, onEdit, onOpenDeleteDialog, isDeleti
         <Button 
           variant="outline"
           className="flex-1"
-          onClick={onEdit}
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            onEdit();
+          }}
         >
           Edit Review
         </Button>
